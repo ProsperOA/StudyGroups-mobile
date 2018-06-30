@@ -1,3 +1,6 @@
+export const AUTH_START = 'AUTH_START';
+export type  AUTH_START = typeof AUTH_START;
+
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export type  LOGIN_SUCCESS =  typeof LOGIN_SUCCESS;
 

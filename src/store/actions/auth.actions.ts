@@ -1,9 +1,13 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
-import { AxiosResponse }                   from 'axios';
+import { AxiosResponse, AxiosError }                   from 'axios';
 
 import axios               from '../../shared/axios';
 import * as types          from './types';
 import { AuthCredentials } from '../../models/auth-credentials.model';
+
+export interface IAuthStart extends Action {
+  type: types.AUTH_START
+}
 
 export interface ILoginSuccess extends Action {
   type:    types.LOGIN_SUCCESS;
@@ -14,14 +18,15 @@ export interface ILoginSuccess extends Action {
 }
 
 export interface ILoginFailed extends Action {
-  type: types.LOGIN_FAILED
+  type: types.LOGIN_FAILED;
+  payload: string;
 }
 
 export interface ISignUpSuccess extends Action {
   type: types.SIGNUP_SUCCESS;
   payload: {
     user: any;
-    token: string;
+    token: any;
   }
 }
 
@@ -30,6 +35,7 @@ export interface ISignUpFailed extends Action {
 }
 
 export type AuthAction =
+  | IAuthStart
   | ILoginSuccess
   | ILoginFailed
   | ISignUpSuccess
@@ -43,8 +49,9 @@ const loginSuccess: ActionCreator<ILoginSuccess> = (data: any): ILoginSuccess =>
   }
 });
 
-const loginFailed: ActionCreator<ILoginFailed> = (): ILoginFailed => ({
-  type: types.LOGIN_FAILED
+const loginFailed: ActionCreator<ILoginFailed> = (errMsg: any): ILoginFailed => ({
+  type: types.LOGIN_FAILED,
+  payload: errMsg
 });
 
 const signUpSuccess: ActionCreator<ISignUpSuccess> = (data: any): ISignUpSuccess => ({
@@ -52,18 +59,22 @@ const signUpSuccess: ActionCreator<ISignUpSuccess> = (data: any): ISignUpSuccess
   payload: {
     user: data.user,
     token: data.auth_token
-  } 
+  }
 });
 
 const signUpFailed: ActionCreator<ISignUpFailed> = (): ISignUpFailed => ({
   type: types.SIGNUP_FAILED,
 });
 
+export const authStart: ActionCreator<IAuthStart> = (): IAuthStart => ({
+  type: types.AUTH_START
+});
+
 export const login = ({ email, password }: AuthCredentials): any =>
   (dispatch: Dispatch<AuthAction>): void => {
     axios.post('/login', { email, password })
       .then(({ data }: AxiosResponse) => dispatch(loginSuccess(data.data)))
-      .catch(() => dispatch(loginFailed()));
+      .catch((err: AxiosError) => dispatch(loginFailed(err.response.data.message)));
 };
 
 export const signUp = (credentials: AuthCredentials): any =>

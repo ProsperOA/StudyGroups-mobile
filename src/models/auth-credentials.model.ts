@@ -1,10 +1,12 @@
 import * as t          from 'tcomb-form-native';
 import { EMAIL_REGEX } from '../shared/utils';
 
-const Email = t.refinement(t.String, val => EMAIL_REGEX.test(val))
+const Email = t.refinement(t.String, (val: string) => EMAIL_REGEX.test(val))
+const Password = t.refinement(t.String, (val: string) => val.length >= 6);
 
 const EmailOptions = {
   textContentType: 'emailAddress',
+  keyboardType:    'email-address',
   placeholder:     'email'
 };
 
@@ -12,21 +14,20 @@ const PasswordOptions = {
   textContentType: 'password',
   placeholder:     'password',
   secureTextEntry:  true,
-  minLength:        6,
   maxLength:        50
 };
 
 export interface AuthCredentials {
-  email:            string;
-  password:         string;
-  firstName?:       string;
-  lastName?:        string;
+  email:      string;
+  password:   string;
+  firstName?: string;
+  lastName?:  string;
 }
 
 export const LoginCredentials = {
   type: t.struct({
     email:    Email,
-    password: t.String
+    password: Password
   }),
   options: {
     auto: 'placeholders',
@@ -42,8 +43,8 @@ export const SignUpCredentials = {
     firstName:       t.String,
     lastName:        t.maybe(t.String),
     email:           Email,
-    password:        t.String,
-    confirmPassword: t.String,
+    password:        Password,
+    confirmPassword: Password,
   }),
   options: {
     auto: 'placeholders',

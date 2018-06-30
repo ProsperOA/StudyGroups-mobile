@@ -5,6 +5,7 @@ import rootReducer from '../src/store/reducers';
 import enhancer from '../src/store/middlewares';
 import { createStackNavigator } from 'react-navigation';
 import { Font } from 'expo';
+import { Root } from 'native-base';
 
 import Auth from './containers/auth.container';
 import Home from './components/home.component';
@@ -21,7 +22,7 @@ interface RootState {
   fontLoaded: boolean;
 }
 
-class Root extends React.Component<{}, RootState> {
+class Main extends React.Component<{}, RootState> {
   public state: Readonly<RootState> = { fontLoaded: false };
 
   public async componentDidMount() {
@@ -42,7 +43,9 @@ const store: Store = createStore(rootReducer, enhancer);
 
 const App = (): JSX.Element => (
   <Provider store={store}>
-    <Root />
+    <Root>
+      <Main />
+    </Root>
   </Provider>
 );
 
