@@ -7,9 +7,13 @@ import { createStackNavigator } from 'react-navigation';
 import { Font } from 'expo';
 
 import Auth from './containers/auth.container';
+import Home from './components/home.component';
 
 const RootStack = createStackNavigator(
-  { Auth },
+  {
+    Auth,
+    Home
+  },
   { initialRouteName: 'Auth' }
 );
 
