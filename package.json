@@ -29,7 +29,8 @@
   "dependencies": {
     "@expo/vector-icons": "^6.3.1",
     "@types/axios": "^0.14.0",
-    "@types/react-navigation": "^2.0.8",
+    "@types/lodash": "^4.14.110",
+    "@types/react-navigation": "^2.0.9",
     "@types/react-redux": "^6.0.3",
     "@types/redux-thunk": "^2.1.0",
     "axios": "^0.18.0",
