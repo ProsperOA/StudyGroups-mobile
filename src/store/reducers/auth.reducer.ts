@@ -22,6 +22,8 @@ const reducer: Reducer = (state: AuthState = initialState, action: AuthAction): 
   switch (action.type) {
     case types.AUTH_START:
       return {...state, loading: true};
+    case types.AUTH_STOP:
+      return {...state, loading: false};
     case types.LOGIN_SUCCESS || types.SIGNUP_SUCCESS:
       const { user, token } = action.payload;
       return {

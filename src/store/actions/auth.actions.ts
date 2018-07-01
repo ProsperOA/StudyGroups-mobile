@@ -1,12 +1,17 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
-import { AxiosResponse, AxiosError }                   from 'axios';
+import { AxiosResponse, AxiosError } from 'axios';
 
 import axios               from '../../shared/axios';
 import * as types          from './types';
 import { AuthCredentials } from '../../models/auth-credentials.model';
+import { storeAuthToken }  from '../../shared/auth-token';
 
 export interface IAuthStart extends Action {
   type: types.AUTH_START
+}
+
+export interface IAuthStop extends Action {
+  type: types.AUTH_STOP
 }
 
 export interface ILoginSuccess extends Action {
@@ -36,6 +41,7 @@ export interface ISignUpFailed extends Action {
 
 export type AuthAction =
   | IAuthStart
+  | IAuthStop
   | ILoginSuccess
   | ILoginFailed
   | ISignUpSuccess
@@ -62,6 +68,10 @@ const signUpFailed: ActionCreator<ISignUpFailed> = (): ISignUpFailed => ({
 
 export const authStart: ActionCreator<IAuthStart> = (): IAuthStart => ({
   type: types.AUTH_START
+});
+
+export const authStop: ActionCreator<IAuthStop> = (): IAuthStop => ({
+  type: types.AUTH_STOP
 });
 
 export const login = ({ email, password }: AuthCredentials): any =>

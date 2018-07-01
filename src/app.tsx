@@ -8,7 +8,7 @@ import { Font } from 'expo';
 import { Root } from 'native-base';
 
 import Auth from './containers/auth.container';
-import Home from './components/home.component';
+import Home from './containers/home.container';
 
 const RootStack = createStackNavigator(
   {

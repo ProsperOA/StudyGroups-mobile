@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { Keyboard, StyleSheet, View } from 'react-native';
+import {
+  Keyboard,
+  StyleSheet,
+  View,
+} from 'react-native';
 import {
   Body,
   Button,
@@ -17,20 +21,21 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { cloneDeep } from 'lodash';
 import * as t from 'tcomb-form-native';
+import axios from '../shared/axios';
+
 import * as actions from '../store/actions';
 import { AppState } from '../store/reducers';
 import { AuthState } from '../store/reducers/auth.reducer';
-import {
-  AuthCredentials,
-  LoginCredentials,
-  SignUpCredentials
-} from '../models/auth-credentials.model';
+import { AuthCredentials, LoginCredentials,  SignUpCredentials } from '../models/auth-credentials.model';
+import { getAuthToken } from '../shared/auth-token';
 
 interface AuthProps extends AuthState {
+  navigation: NavigationScreenProp<any, any>;
   authStart:  ()                             => Dispatch<actions.IAuthStart>
+  authStop:   ()                             => Dispatch<actions.IAuthStop>
   login:      (credentials: AuthCredentials) => Dispatch<actions.ILoginSuccess | actions.ILoginFailed>;
   signUp:     (credentials: AuthCredentials) => Dispatch<actions.ISignUpSuccess | actions.ISignUpFailed>;
-  navigation: NavigationScreenProp<any, any>;
+  getUser:    (userID: number)               => Dispatch<actions.IGetCurrentUserSuccess | actions.IGetCurrentUserSuccess>;
 }
 
 interface AuthStateLocal {
@@ -49,11 +54,26 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
   };
 
   public componentWillMount(): void {
-    if (this.props.isAuth) this.navigateHome();
+    this.props.authStart();
+  }
+
+  public componentDidMount(): void {
+    getAuthToken(authToken => {
+      if (authToken) {
+        const [userID, token] = authToken.split('-');
+        axios.defaults.headers = { 'Authorization': 'Bearer ' + token }
+
+        this.props.getUser(+userID);
+        this.navigateHome();
+        this.props.authStop();
+      }
+
+      this.props.authStop();
+    });
   }
 
   public componentDidUpdate(): void {
-    if (this.props.isAuth) {
+    if (this.props.isAuth && !this.props.loading) {
       this.navigateHome();
       return
     }
@@ -83,9 +103,6 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
     });
 
     this.props.navigation.dispatch(resetAction);
-  };
-
-  public checkAuthStatus = (): void => {
   };
 
   public handleLogin = (): void => {
@@ -178,6 +195,8 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
   );
 
   public render(): JSX.Element {
+    if (this.props.loading) return <Spinner />;
+
     return (
       <Container style={styles.container}>
         <Content>
@@ -222,8 +241,10 @@ const mapStateToProps = ({ auth }: AppState) => ({ ...auth });
 
 const mapDispatchToProps = (dispatch: Dispatch<actions.AuthAction>) => ({
   authStart: ()                             => dispatch(actions.authStart()),
+  authStop:  ()                             => dispatch(actions.authStop()),
   login:     (credentials: AuthCredentials) => dispatch(actions.login(credentials)),
-  signUp:    (credentials: AuthCredentials) => dispatch(actions.signUp(credentials))
+  signUp:    (credentials: AuthCredentials) => dispatch(actions.signUp(credentials)),
+  getUser:   (userID: number)               => dispatch(actions.getUser(userID))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Auth);
