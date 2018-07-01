@@ -3,17 +3,25 @@ import { createStore, Store } from 'redux';
 import { Provider } from 'react-redux';
 import rootReducer from '../src/store/reducers';
 import enhancer from '../src/store/middlewares';
-import { createStackNavigator } from 'react-navigation';
+import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 import { Font } from 'expo';
 import { Root } from 'native-base';
 
 import Auth from './containers/auth.container';
 import Home from './containers/home.container';
+import Account from './containers/account.container';
+import Messages from './containers/messages.container';
 
-const RootStack = createStackNavigator(
+const TabsNavigator = createBottomTabNavigator({
+  Home,
+  Messages,
+  Account
+});
+
+const AppNavigator = createStackNavigator(
   {
     Auth,
-    Home
+    Tabs: TabsNavigator
   },
   { initialRouteName: 'Auth' }
 );
@@ -35,7 +43,7 @@ class Main extends React.Component<{}, MainState> {
   }
 
   public render(): boolean | JSX.Element {
-    return this.state.fontLoaded && <RootStack />;
+    return this.state.fontLoaded && <AppNavigator />;
   }
 }
 

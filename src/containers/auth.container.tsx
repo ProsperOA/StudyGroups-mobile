@@ -69,7 +69,7 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
 
   public componentDidUpdate(): void {
     if (this.props.isAuth) {
-      this.navigateHome();
+      this.navigateToTabs();
       return;
     }
 
@@ -88,12 +88,12 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
       });
   }
 
-  public navigateHome = (): void => {
+  public navigateToTabs = (): void => {
     const resetAction = StackActions.reset({
       index: 0,
       key: null,
       actions: [
-        NavigationActions.navigate({ routeName: 'Home' })
+        NavigationActions.navigate({ routeName: 'Tabs' })
       ]
     });
 
