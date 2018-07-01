@@ -31,11 +31,10 @@ import { getAuthToken } from '../shared/auth-token';
 
 interface AuthProps extends AuthState {
   navigation: NavigationScreenProp<any, any>;
-  authStart:  ()                             => Dispatch<actions.IAuthStart>
-  authStop:   ()                             => Dispatch<actions.IAuthStop>
-  login:      (credentials: AuthCredentials) => Dispatch<actions.ILoginSuccess | actions.ILoginFailed>;
-  signUp:     (credentials: AuthCredentials) => Dispatch<actions.ISignUpSuccess | actions.ISignUpFailed>;
-  getUser:    (userID: number)               => Dispatch<actions.IGetCurrentUserSuccess | actions.IGetCurrentUserSuccess>;
+  authUserStart:  ()                                  => Dispatch<actions.IAuthUserStart>
+  authUser:       (userID: number, authToken: string) => Dispatch<actions.AuthAction>
+  login:          (credentials: AuthCredentials)      => Dispatch<actions.ILoginSuccess | actions.ILoginFailed>;
+  signUp:         (credentials: AuthCredentials)      => Dispatch<actions.ISignUpSuccess | actions.ISignUpFailed>;
 }
 
 interface AuthStateLocal {
@@ -54,7 +53,7 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
   };
 
   public componentWillMount(): void {
-    this.props.authStart();
+    this.props.authUserStart();
   }
 
   public componentDidMount(): void {
@@ -63,19 +62,15 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
         const [userID, token] = authToken.split('-');
         axios.defaults.headers = { 'Authorization': 'Bearer ' + token }
 
-        this.props.getUser(+userID);
-        this.navigateHome();
-        this.props.authStop();
+        this.props.authUser(+userID, token);
       }
-
-      this.props.authStop();
     });
   }
 
   public componentDidUpdate(): void {
-    if (this.props.isAuth && !this.props.loading) {
+    if (this.props.isAuth) {
       this.navigateHome();
-      return
+      return;
     }
 
     const { error } = this.props;
@@ -240,11 +235,10 @@ const styles = StyleSheet.create({
 const mapStateToProps = ({ auth }: AppState) => ({ ...auth });
 
 const mapDispatchToProps = (dispatch: Dispatch<actions.AuthAction>) => ({
-  authStart: ()                             => dispatch(actions.authStart()),
-  authStop:  ()                             => dispatch(actions.authStop()),
-  login:     (credentials: AuthCredentials) => dispatch(actions.login(credentials)),
-  signUp:    (credentials: AuthCredentials) => dispatch(actions.signUp(credentials)),
-  getUser:   (userID: number)               => dispatch(actions.getUser(userID))
+  authUserStart: ()                                  => dispatch(actions.authUserStart()),
+  authUser:      (userID: number, authToken: string) => dispatch(actions.authUser(userID, authToken)),
+  login:         (credentials: AuthCredentials)      => dispatch(actions.login(credentials)),
+  signUp:        (credentials: AuthCredentials)      => dispatch(actions.signUp(credentials))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Auth);

@@ -20,9 +20,11 @@ const initialState: Readonly<AuthState> = {
 
 const reducer: Reducer = (state: AuthState = initialState, action: AuthAction): AuthState => {
   switch (action.type) {
-    case types.AUTH_START:
+    case types.AUTH_USER_START:
       return {...state, loading: true};
-    case types.AUTH_STOP:
+    case types.AUTH_USER_SUCCESS:
+      return {...state, loading: false};
+    case types.AUTH_USER_FAILED:
       return {...state, loading: false};
     case types.LOGIN_SUCCESS || types.SIGNUP_SUCCESS:
       const { user, token } = action.payload;

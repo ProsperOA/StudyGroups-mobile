@@ -1,20 +1,14 @@
 export {
   AuthAction,
-  IAuthStart,
-  IAuthStop,
+  IAuthUserStart,
+  IAuthUserSuccess,
+  IAuthUserFailed,
   ILoginSuccess,
   ILoginFailed,
   ISignUpSuccess,
   ISignUpFailed,
-  authStart,
-  authStop,
+  authUserStart,
+  authUser,
   login,
   signUp
 } from './auth.actions';
-
-export {
-  UserAction,
-  IGetCurrentUserSuccess,
-  IGetCurrentUserFailed,
-  getUser
-} from './user.actions';

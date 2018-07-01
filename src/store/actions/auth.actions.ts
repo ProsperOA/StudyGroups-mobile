@@ -6,16 +6,20 @@ import * as types          from './types';
 import { AuthCredentials } from '../../models/auth-credentials.model';
 import { storeAuthToken }  from '../../shared/auth-token';
 
-export interface IAuthStart extends Action {
-  type: types.AUTH_START
+export interface IAuthUserSuccess extends Action {
+  type:    types.AUTH_USER_SUCCESS;
+  payload: any;
+}
+export interface IAuthUserFailed extends Action {
+  type: types.AUTH_USER_FAILED;
 }
 
-export interface IAuthStop extends Action {
-  type: types.AUTH_STOP
+export interface IAuthUserStart extends Action {
+  type: types.AUTH_USER_START
 }
 
 export interface ILoginSuccess extends Action {
-  type:    types.LOGIN_SUCCESS;
+  type: types.LOGIN_SUCCESS;
   payload: {
     user:  any;
     token: string;
@@ -23,14 +27,14 @@ export interface ILoginSuccess extends Action {
 }
 
 export interface ILoginFailed extends Action {
-  type: types.LOGIN_FAILED;
+  type:    types.LOGIN_FAILED;
   payload: string;
 }
 
 export interface ISignUpSuccess extends Action {
   type: types.SIGNUP_SUCCESS;
   payload: {
-    user: any;
+    user:  any;
     token: any;
   }
 }
@@ -40,8 +44,9 @@ export interface ISignUpFailed extends Action {
 }
 
 export type AuthAction =
-  | IAuthStart
-  | IAuthStop
+  | IAuthUserStart
+  | IAuthUserSuccess
+  | IAuthUserFailed
   | ILoginSuccess
   | ILoginFailed
   | ISignUpSuccess
@@ -66,13 +71,32 @@ const signUpFailed: ActionCreator<ISignUpFailed> = (): ISignUpFailed => ({
   type: types.SIGNUP_FAILED,
 });
 
-export const authStart: ActionCreator<IAuthStart> = (): IAuthStart => ({
-  type: types.AUTH_START
+const authUserSuccess: ActionCreator<IAuthUserSuccess> = (user: any): IAuthUserSuccess => ({
+  type:    types.AUTH_USER_SUCCESS,
+  payload: user
 });
 
-export const authStop: ActionCreator<IAuthStop> = (): IAuthStop => ({
-  type: types.AUTH_STOP
+const authUserFailed: ActionCreator<IAuthUserFailed> = (user: any): IAuthUserFailed => ({
+  type: types.AUTH_USER_FAILED
 });
+
+export const authUserStart: ActionCreator<IAuthUserStart> = (): IAuthUserStart => ({
+  type: types.AUTH_USER_START
+});
+
+  export const authUser = (userID: number, authToken: string): any => (dispatch: Dispatch<AuthAction>) => {
+    axios.get('/users/' + userID)
+      .then(({ data }: AxiosResponse) => {
+        const user = data.data;
+
+        dispatch(authUserSuccess(user));
+        dispatch(loginSuccess(user, authToken));
+      })
+      .catch(({ response }: AxiosError) => {
+        dispatch(authUserFailed(response ? response.data.message : 'unable to get current user'))
+        dispatch(loginFailed(''));
+      });
+  }
 
 export const login = ({ email, password }: AuthCredentials): any =>
   (dispatch: Dispatch<ILoginSuccess | ILoginFailed>): void => {

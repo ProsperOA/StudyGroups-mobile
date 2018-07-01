@@ -1,9 +1,5 @@
-import {
-  applyMiddleware,
-  compose,
-} from 'redux';
+import { applyMiddleware } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 
-const compostEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION__ || compose;
-
-export default compostEnhancers(applyMiddleware(thunk));
+export default composeWithDevTools(applyMiddleware(thunk));
