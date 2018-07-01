@@ -18,12 +18,12 @@ const RootStack = createStackNavigator(
   { initialRouteName: 'Auth' }
 );
 
-interface RootState {
+interface MainState {
   fontLoaded: boolean;
 }
 
-class Main extends React.Component<{}, RootState> {
-  public state: Readonly<RootState> = { fontLoaded: false };
+class Main extends React.Component<{}, MainState> {
+  public state: Readonly<MainState> = { fontLoaded: false };
 
   public async componentDidMount() {
     await Font.loadAsync({
