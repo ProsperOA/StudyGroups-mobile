@@ -1,5 +1,5 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
-import { AxiosResponse } from 'axios';
+import { AxiosResponse, AxiosError } from 'axios';
 import * as _ from 'lodash';
 import { AccountInfo } from '../../models/account-info.model';
 
@@ -16,7 +16,8 @@ export interface IUpdateAccountSuccess extends Action {
 }
 
 export interface IUpdateAccountFailed extends Action {
-  type: types.UPDATE_ACCOUNT_FAILED;
+  type:    types.UPDATE_ACCOUNT_FAILED;
+  payload: string;
 }
 
 export type UserAction =
@@ -35,8 +36,9 @@ const updateAccountSuccess: ActionCreator<IUpdateAccountSuccess> =
 });
 
 const updateAccountFailed: ActionCreator<IUpdateAccountFailed> =
-  (): IUpdateAccountFailed => ({
-    type: types.UPDATE_ACCOUNT_FAILED
+  (errMsg: string): IUpdateAccountFailed => ({
+    type:    types.UPDATE_ACCOUNT_FAILED,
+    payload: errMsg
 });
 
 export const updateAccount = (userID: string, accountInfo: AccountInfo): any =>
@@ -51,5 +53,7 @@ export const updateAccount = (userID: string, accountInfo: AccountInfo): any =>
 
     axios.patch(`users/${userID}/account`, data)
       .then(({ data }: AxiosResponse) => dispatch(updateAccountSuccess(data.data)))
-      .catch(() => dispatch(updateAccountFailed()));
+      .catch(({ response }: AxiosError) => {
+        dispatch(updateAccountFailed(response ? response.data.message : 'unable to update account'));
+      });
 }
