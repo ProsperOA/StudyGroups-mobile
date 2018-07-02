@@ -26,7 +26,8 @@ import axios from '../shared/axios';
 import * as actions from '../store/actions';
 import { AppState } from '../store/reducers';
 import { AuthState } from '../store/reducers/auth.reducer';
-import { AuthCredentials, LoginCredentials,  SignUpCredentials } from '../models/auth-credentials.model';
+import { AuthCredentials } from '../models/auth-credentials.model';
+import { LoginCredentialsForm,  SignUpCredentialsForm } from '../models/forms/auth-form.model';
 import { getAuthToken } from '../shared/auth-token';
 
 interface AuthProps extends AuthState {
@@ -49,7 +50,7 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
   public state: Readonly<AuthStateLocal> = {
     signingUp:         false,
     value:             '',
-    signUpCredentials: {...SignUpCredentials}
+    signUpCredentials: {...SignUpCredentialsForm}
   };
 
   public componentWillMount(): void {
@@ -140,9 +141,9 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
     <Body>
       <Form
         ref="loginForm"
-        type={LoginCredentials.type}
+        type={LoginCredentialsForm.type}
         value={this.state.value}
-        options={LoginCredentials.options}
+        options={LoginCredentialsForm.options}
         onChange={(value: string) => this.setState({ value })}>
       </Form>
       <View style={{flex: 1, flexDirection: 'row'}}>
