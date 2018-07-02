@@ -12,3 +12,12 @@ export {
   login,
   signUp
 } from './auth.actions';
+
+export {
+  UserAction,
+  IUpdateAccountStart,
+  IUpdateAccountSuccess,
+  IUpdateAccountFailed,
+  updateAccountStart,
+  updateAccount
+} from './user.actions';

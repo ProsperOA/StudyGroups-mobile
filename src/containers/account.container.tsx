@@ -8,17 +8,27 @@ import {
   Button,
   Container,
   Content,
-  Thumbnail
+  Spinner,
+  Thumbnail,
+  Toast
 } from 'native-base';
+import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import * as actions from '../store/actions';
 import * as t from 'tcomb-form-native';
+import * as _ from 'lodash';
+
 import { AppState } from '../store/reducers';
 import { AccountForm } from '../models/forms/account-form.model';
+import { AccountInfo } from '../models/account-info.model';
+import { UserState } from '../store/reducers/user.reducer';
 
 const Form = t.form.Form;
 
-interface AccountProps {
-  user: any;
+interface AccountProps extends UserState {
+  user:               any;
+  updateAccountStart: ()                                         => Dispatch<actions.IUpdateAccountStart>;
+  updateAccount:      (userID: string, accountInfo: AccountInfo) => Dispatch<actions.IUpdateAccountSuccess | actions.IUpdateAccountFailed>;
 }
 
 interface AccountState {
@@ -30,10 +40,51 @@ class Account extends React.Component<AccountProps, AccountState> {
     value: null
   };
 
+  public componentWillMount(): void {
+    const user = _.cloneDeep(this.props.user);
+    user.firstName = user.first_name;
+    user.lastName = user.last_name;
+
+    _.omit(user, ['first_name', 'last_name']);
+
+    this.setState({ value: { ...user }});
+  }
+
+  public componentDidUpdate(): void {
+    const { error } = this.props;
+
+    if (error)
+      Toast.show({
+        text: error,
+        textStyle: {
+          color:      '#fff',
+          fontWeight: 'bold',
+          textAlign:  'center'
+        },
+        position: 'bottom',
+        duration:  2500
+      });
+  }
+
   public handleSave = (): void => {
     const value = this.refs.accountForm.getValue();
-    console.log(value);
-    // TODO: save account info
+    if (!value) return;
+
+    this.props.updateAccountStart();
+
+    const { firstName, lastName, school, major1, major2, minor, bio } = value;
+
+    const accountInfo: AccountInfo = {
+      firstName,
+      lastName,
+      school,
+      major1,
+      major2,
+      minor,
+      bio
+    };
+
+    this.props.updateAccount(this.props.user.id, accountInfo);
   };
 
   public render(): JSX.Element {
@@ -44,7 +95,7 @@ class Account extends React.Component<AccountProps, AccountState> {
             <Thumbnail source={{uri: this.props.user.avatar}} large />
             <Button transparent style={{alignSelf: 'auto'}}>
               <Text style={{fontWeight: 'bold', color: '#1F61A0'}}>
-                Change Profile Photo
+                change profile photo
               </Text>
             </Button>
           </View>
@@ -54,10 +105,10 @@ class Account extends React.Component<AccountProps, AccountState> {
               type={AccountForm.type}
               options={AccountForm.options}
               value={this.state.value}
-              onChange={(value: any) => this.setState({ value })} />
+              onChange={(value: string) => this.setState({ value })} />
               <Button onPress={this.handleSave} success block>
                 <Text style={styles.btnSave}>
-                  Save
+                  {this.props.loading ? <Spinner color="#fff" /> : 'save'}
                 </Text>
               </Button>
           </View>
@@ -84,10 +135,19 @@ const styles = StyleSheet.create({
   btnSave: {
     color: '#fff',
     fontWeight: 'bold',
-    fontFamily: 'rubik-medium'
+    fontFamily: 'rubik-medium',
+    fontSize: 22
   }
 });
 
-const mapStateToProps = ({ auth: { user }}: AppState) => ({ user });
+const mapStateToProps = ({ auth, user }: AppState) => ({
+  ...user,
+  user: auth.user
+});
 
-export default connect(mapStateToProps)(Account);
+const mapDispatchToProps = (dispatch: Dispatch<actions.UserAction>) => ({
+  updateAccountStart: ()                                         => dispatch(actions.updateAccountStart()),
+  updateAccount:      (userID: string, accountInfo: AccountInfo) => dispatch(actions.updateAccount(userID, accountInfo))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Account);
