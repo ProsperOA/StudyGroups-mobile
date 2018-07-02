@@ -110,7 +110,7 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
     const { email, password } = value;
     const credentials: AuthCredentials = { email, password };
 
-    this.props.authStart();
+    this.props.authUserStart();
     this.props.login(credentials);
   };
 
