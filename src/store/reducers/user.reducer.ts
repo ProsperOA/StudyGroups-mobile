@@ -18,7 +18,7 @@ const reducer: Reducer = (state: UserState = initialState, action: UserAction): 
       return {...state, loading: true};
     case types.UPDATE_ACCOUNT_SUCCESS:
       return {...state, loading: false, error: ''};
-    case types.UPDATE_ACCOUNT_SUCCESS:
+    case types.UPDATE_ACCOUNT_FAILED:
       return {...state, loading: false, error: action.payload};
     default:
       return state;
