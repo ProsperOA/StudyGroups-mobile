@@ -42,7 +42,7 @@ export const AccountForm = {
         maxLength:  40
       },
       bio: {
-        label:    'share a little about yourself',
+        label:     'Bio',
         maxLength:  280,
         help:      '280 characters',
         multiline: true,
