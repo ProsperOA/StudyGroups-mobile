@@ -41,6 +41,7 @@ export interface ISignUpSuccess extends Action {
 
 export interface ISignUpFailed extends Action {
   type: types.SIGNUP_FAILED;
+  payload: string;
 }
 
 export type AuthAction =
@@ -67,8 +68,9 @@ const signUpSuccess: ActionCreator<ISignUpSuccess> = (user: any, token: string):
   payload: { user, token }
 });
 
-const signUpFailed: ActionCreator<ISignUpFailed> = (): ISignUpFailed => ({
+const signUpFailed: ActionCreator<ISignUpFailed> = (errMsg: string): ISignUpFailed => ({
   type: types.SIGNUP_FAILED,
+  payload: errMsg
 });
 
 const authUserSuccess: ActionCreator<IAuthUserSuccess> = (user: any): IAuthUserSuccess => ({
