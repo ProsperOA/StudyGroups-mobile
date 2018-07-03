@@ -12,11 +12,7 @@ import {
   Text
 } from 'native-base';
 
-class Account extends React.Component<any, any> {
-  public state = {
-    listItemWebsite: false
-  };
-
+class Account extends React.Component<{}, {}> {
   public list = [
     {
       divider: true,
