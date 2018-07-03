@@ -8,6 +8,7 @@ import {
 } from 'native-base';
 import Profile from './profile.container';
 import Courses from './courses.container';
+import Account from './account.container';
 
 export default (props: {}): JSX.Element => (
   <Container>
@@ -19,6 +20,7 @@ export default (props: {}): JSX.Element => (
         <Courses />
       </Tab>
       <Tab heading={<TabHeading><Text>Account</Text></TabHeading>}>
+        <Account />
       </Tab>
     </Tabs>
   </Container>
