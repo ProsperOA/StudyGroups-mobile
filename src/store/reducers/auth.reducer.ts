@@ -26,7 +26,7 @@ const reducer: Reducer = (state: AuthState = initialState, action: AuthAction | 
       return {...state, loading: false};
     case types.AUTH_USER_FAILED:
       return {...state, loading: false};
-    case types.LOGIN_SUCCESS || types.SIGNUP_SUCCESS:
+    case types.LOGIN_SUCCESS, types.SIGNUP_SUCCESS:
       const { user, token } = action.payload;
       return {
         ...state,
@@ -36,7 +36,7 @@ const reducer: Reducer = (state: AuthState = initialState, action: AuthAction | 
         loading: false,
         error:   ''
       };
-    case types.LOGIN_FAILED || types.SIGNUP_FAILED:
+    case types.LOGIN_FAILED, types.SIGNUP_FAILED:
       return {
         ...state,
         token:   '',
@@ -44,7 +44,7 @@ const reducer: Reducer = (state: AuthState = initialState, action: AuthAction | 
         loading: false,
         error:   action.payload
       };
-    case types.UPDATE_ACCOUNT_SUCCESS:
+    case types.UPDATE_ACCOUNT_SUCCESS, types.UPLOAD_AVATAR_SUCCESS:
       return {...state, user: action.payload};
     default:
       return state;
