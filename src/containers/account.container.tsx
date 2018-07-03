@@ -4,6 +4,7 @@ import {
   Text,
   View
 } from 'react-native';
+import { Camera, ImagePicker, Permissions } from 'expo';
 import {
   Button,
   Container,
@@ -29,15 +30,20 @@ interface AccountProps extends UserState {
   user:               any;
   updateAccountStart: ()                                         => Dispatch<actions.IUpdateAccountStart>;
   updateAccount:      (userID: string, accountInfo: AccountInfo) => Dispatch<actions.IUpdateAccountSuccess | actions.IUpdateAccountFailed>;
+  uploadAvatar:       (user: any, image: string)                 => Dispatch<actions.IUploadAvatarSuccess | actions.IUploadAvatarFailed>;
 }
 
 interface AccountState {
   value: any;
+  image: any;
+  hasCameraPermission: boolean;
 }
 
 class Account extends React.Component<AccountProps, AccountState> {
   public state: Readonly<AccountState> = {
-    value: null
+    value: null,
+    image: null,
+    hasCameraPermission: false
   };
 
   public componentWillMount(): void {
@@ -87,13 +93,33 @@ class Account extends React.Component<AccountProps, AccountState> {
     this.props.updateAccount(this.props.user.id, accountInfo);
   };
 
+  public handleUploadAvatar = async (): Promise<any> => {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    this.setState({ hasCameraPermission: status === 'granted' });
+
+    if (!this.state.hasCameraPermission) return;
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      base64: true
+    });
+
+    if (result.cancelled) return;
+
+    this.setState({ image: result.uri });
+    this.props.uploadAvatar(this.props.user, this.state.image);
+  };
+
   public render(): JSX.Element {
     return (
       <Container>
         <Content style={{flex: 1, flexDirection: 'column'}}>
           <View style={styles.avatarView}>
             <Thumbnail source={{uri: this.props.user.avatar}} large />
-            <Button transparent style={{alignSelf: 'auto'}}>
+            <Button
+              onPress={this.handleUploadAvatar}
+              transparent style={{alignSelf: 'auto'}}>
               <Text style={{fontWeight: 'bold', color: '#1F61A0'}}>
                 change profile photo
               </Text>
@@ -147,7 +173,8 @@ const mapStateToProps = ({ auth, user }: AppState) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch<actions.UserAction>) => ({
   updateAccountStart: ()                                         => dispatch(actions.updateAccountStart()),
-  updateAccount:      (userID: string, accountInfo: AccountInfo) => dispatch(actions.updateAccount(userID, accountInfo))
+  updateAccount:      (userID: string, accountInfo: AccountInfo) => dispatch(actions.updateAccount(userID, accountInfo)),
+  uploadAvatar:       (user: any, image: string)                 => dispatch(actions.uploadAvatar(user, image))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Account);

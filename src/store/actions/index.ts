@@ -18,6 +18,9 @@ export {
   IUpdateAccountStart,
   IUpdateAccountSuccess,
   IUpdateAccountFailed,
+  IUploadAvatarSuccess,
+  IUploadAvatarFailed,
   updateAccountStart,
-  updateAccount
+  updateAccount,
+  uploadAvatar
 } from './user.actions';

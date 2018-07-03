@@ -20,14 +20,22 @@ export interface IUpdateAccountFailed extends Action {
   payload: string;
 }
 
+export interface IUploadAvatarSuccess extends Action {
+  type:    types.UPLOAD_AVATAR_SUCCESS;
+  payload: any;
+}
+
+export interface IUploadAvatarFailed extends Action {
+  type:    types.UPLOAD_AVATAR_FAILED;
+  payload: string;
+}
+
 export type UserAction =
   | IUpdateAccountStart
   | IUpdateAccountSuccess
-  | IUpdateAccountFailed;
-
-export const updateAccountStart: ActionCreator<IUpdateAccountStart> = (): IUpdateAccountStart => ({
-  type: types.UPDATE_ACCOUNT_START
-});
+  | IUpdateAccountFailed
+  | IUploadAvatarSuccess
+  | IUploadAvatarFailed;
 
 const updateAccountSuccess: ActionCreator<IUpdateAccountSuccess> =
   (user: any): IUpdateAccountSuccess => ({
@@ -39,6 +47,22 @@ const updateAccountFailed: ActionCreator<IUpdateAccountFailed> =
   (errMsg: string): IUpdateAccountFailed => ({
     type:    types.UPDATE_ACCOUNT_FAILED,
     payload: errMsg
+});
+
+const uploadAvatarSuccess: ActionCreator<IUploadAvatarSuccess> =
+  (user: any): IUploadAvatarSuccess => ({
+    type:    types.UPLOAD_AVATAR_SUCCESS,
+    payload: user
+});
+
+const uploadAvatarFailed: ActionCreator<IUploadAvatarFailed> =
+  (errMsg: string): IUploadAvatarFailed => ({
+    type:    types.UPLOAD_AVATAR_FAILED,
+    payload: errMsg
+});
+
+export const updateAccountStart: ActionCreator<IUpdateAccountStart> = (): IUpdateAccountStart => ({
+  type: types.UPDATE_ACCOUNT_START
 });
 
 export const updateAccount = (userID: string, accountInfo: AccountInfo): any =>
@@ -57,3 +81,24 @@ export const updateAccount = (userID: string, accountInfo: AccountInfo): any =>
         dispatch(updateAccountFailed(response ? response.data.message : 'unable to update account'));
       });
 }
+
+export const uploadAvatar = (user: any, uri: string): any =>
+  (dispatch: Dispatch<UserAction>) => {
+    const uriParts = uri.split('/');
+    const fileName = uriParts[uriParts.length - 1]
+
+    const formData = new FormData();
+    formData.append('image', {
+      uri,
+      name: fileName,
+      type: `image/${fileName.split('.')[1]}`
+    });
+
+    axios.post(`/users/${user.id}/avatar`, formData)
+      .then(({ data }: AxiosResponse) => {
+        dispatch(uploadAvatarSuccess({ ...user, avatar: data.data }))
+      })
+      .catch(({ response }: AxiosError) => {
+        dispatch(uploadAvatarFailed(response ? response.data.message : 'unable to upload avatar'));
+      });
+  }
