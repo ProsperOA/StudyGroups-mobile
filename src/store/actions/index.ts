@@ -15,12 +15,12 @@ export {
 
 export {
   UserAction,
-  IUpdateAccountStart,
-  IUpdateAccountSuccess,
-  IUpdateAccountFailed,
+  IUpdateProfileStart,
+  IUpdateProfileSuccess,
+  IUpdateProfileFailed,
   IUploadAvatarSuccess,
   IUploadAvatarFailed,
-  updateAccountStart,
-  updateAccount,
+  updateProfileStart,
+  updateProfile,
   uploadAvatar
 } from './user.actions';

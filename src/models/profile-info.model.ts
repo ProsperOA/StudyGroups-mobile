@@ -1,4 +1,4 @@
-export interface AccountInfo {
+export interface ProfileInfo {
   firstName: string;
   lastName:  string;
   school:    string;

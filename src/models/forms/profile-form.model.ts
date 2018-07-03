@@ -2,7 +2,7 @@ import * as t from 'tcomb-form-native';
 
 const stylesheet = t.form.Form.stylesheet;
 
-export const AccountForm = {
+export const ProfileForm = {
   type: t.struct({
     firstName: t.refinement(t.String, (val: string) => val.length >= 1),
     lastName:  t.maybe(t.String),

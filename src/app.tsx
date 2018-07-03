@@ -9,13 +9,13 @@ import { Root } from 'native-base';
 
 import Auth from './containers/auth.container';
 import Home from './containers/home.container';
-import Account from './containers/account.container';
+import User from './containers/user/user.component';
 import Messages from './containers/messages.container';
 
 const TabsNavigator = createBottomTabNavigator({
   Home,
   Messages,
-  Account
+  User
 });
 
 const AppNavigator = createStackNavigator(
