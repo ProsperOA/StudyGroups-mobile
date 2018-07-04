@@ -7,6 +7,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { Font } from 'expo';
 import { Root } from 'native-base';
 
+import navService from './shared/navigation-service';
 import Auth from './containers/auth.container';
 import Home from './containers/home.container';
 import User from './containers/user/user.component';
@@ -43,7 +44,11 @@ class Main extends React.Component<{}, MainState> {
   }
 
   public render(): boolean | JSX.Element {
-    return this.state.fontLoaded && <AppNavigator />;
+    return (
+      this.state.fontLoaded &&
+        <AppNavigator
+          ref={(navRef: any) => navService.setTopLevelNavigator(navRef)} />
+    );
   }
 }
 
