@@ -20,7 +20,10 @@ export {
   IUpdateProfileFailed,
   IUploadAvatarSuccess,
   IUploadAvatarFailed,
+  IChangePasswordSuccess,
+  IChangePasswordFailed,
   updateProfileStart,
   updateProfile,
-  uploadAvatar
+  uploadAvatar,
+  changePassword
 } from './user.actions';

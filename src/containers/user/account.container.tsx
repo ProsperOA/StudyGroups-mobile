@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { connect } from 'react-redux';
 import {
   Container,
   Content,
@@ -11,8 +10,17 @@ import {
   Right,
   Text
 } from 'native-base';
+import PasswordModal from '../modals/change-password-modal.container';
 
-class Account extends React.Component<{}, {}> {
+interface AccountState {
+  passwordModalVisible: boolean;
+}
+
+export default class extends React.Component<{}, AccountState> {
+  public state: Readonly<AccountState> = {
+    passwordModalVisible: false
+  };
+
   public list = [
     {
       divider: true,
@@ -20,7 +28,8 @@ class Account extends React.Component<{}, {}> {
       textStyles: styles.divider
     },
     {
-      text: 'change password'
+      text: 'change password',
+      onPress: () => this.togglePasswordModal(true)
     },
     {
       text: 'logout'
@@ -62,12 +71,20 @@ class Account extends React.Component<{}, {}> {
     },
   ];
 
+  public togglePasswordModal = (visible: boolean): void => {
+    this.setState({ passwordModalVisible: visible });
+  };
+
   public render(): JSX.Element {
     return (
       <Container>
         <Content>
           <List dataArray={this.list} renderRow={item =>
-            <ListItem itemDivider={item.divider} noIndent>
+            <ListItem
+              style={{height: 50}}
+              itemDivider={item.divider}
+              onPress={item.onPress}
+              noIndent>
               <Left>
                 <Text style={item.textStyles}>{item.text}</Text>
               </Left>
@@ -77,6 +94,9 @@ class Account extends React.Component<{}, {}> {
                 </Right>}
             </ListItem>}>
           </List>
+          <PasswordModal
+            visible={this.state.passwordModalVisible}
+            toggle={this.togglePasswordModal} />
         </Content>
       </Container>
     );
@@ -89,5 +109,3 @@ const styles = StyleSheet.create({
     fontSize: 18
   }
 });
-
-export default connect()(Account);

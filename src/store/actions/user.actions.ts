@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { ProfileInfo } from '../../models/profile-info.model';
 import axios      from '../../shared/axios';
 import * as types from './types';
+import { ChangePassword } from '../../models/change-password.model';
 
 export interface IUpdateProfileStart extends Action {
   type: types.UPDATE_PROFILE_START
@@ -29,12 +30,24 @@ export interface IUploadAvatarFailed extends Action {
   payload: string;
 }
 
+export interface IChangePasswordSuccess extends Action {
+  type:    types.CHANGE_PASSWORD_SUCCESS;
+  payload: string;
+}
+
+export interface IChangePasswordFailed extends Action {
+  type:    types.CHANGE_PASSWORD_FAILED;
+  payload: string;
+}
+
 export type UserAction =
   | IUpdateProfileStart
   | IUpdateProfileSuccess
   | IUpdateProfileFailed
   | IUploadAvatarSuccess
-  | IUploadAvatarFailed;
+  | IUploadAvatarFailed
+  | IChangePasswordSuccess
+  | IChangePasswordFailed;
 
 const updateProfileSuccess: ActionCreator<IUpdateProfileSuccess> =
   (user: any): IUpdateProfileSuccess => ({
@@ -60,6 +73,18 @@ const uploadAvatarFailed: ActionCreator<IUploadAvatarFailed> =
     payload: errMsg
 });
 
+const changePasswordSuccess: ActionCreator<IChangePasswordSuccess> =
+ (message: string): IChangePasswordSuccess => ({
+   type:    types.CHANGE_PASSWORD_SUCCESS,
+   payload: message
+  });
+
+const changePasswordFailed: ActionCreator<IChangePasswordFailed> =
+ (errMsg: string): IChangePasswordFailed => ({
+   type:    types.CHANGE_PASSWORD_FAILED,
+   payload: errMsg
+});
+
 export const updateProfileStart: ActionCreator<IUpdateProfileStart> = (): IUpdateProfileStart => ({
   type: types.UPDATE_PROFILE_START
 });
@@ -79,7 +104,7 @@ export const updateProfile = (userID: string, profileInfo: ProfileInfo): any =>
       .catch(({ response }: AxiosError) => {
         dispatch(updateProfileFailed(response ? response.data.message : 'unable to update profile'));
       });
-}
+};
 
 export const uploadAvatar = (user: any, uri: string): any =>
   (dispatch: Dispatch<UserAction>) => {
@@ -100,4 +125,17 @@ export const uploadAvatar = (user: any, uri: string): any =>
       .catch(({ response }: AxiosError) => {
         dispatch(uploadAvatarFailed(response ? response.data.message : 'unable to upload avatar'));
       });
-  }
+};
+
+export const changePassword = (userID: string, passwords: ChangePassword): any =>
+  (dispatch: Dispatch<UserAction>) => {
+    const {
+      currentPassword: current_password,
+      newPassword:     new_password,
+      confirmPassword: confirm_password
+    } = passwords;
+
+    axios.patch(`users/${userID}/password`, { current_password, new_password, confirm_password})
+      .then(() => dispatch(changePasswordSuccess('pasword updated')))
+      .catch(({ response }: AxiosError) => dispatch(changePasswordFailed(response ? response.data.message : 'unable to change password')));
+}
