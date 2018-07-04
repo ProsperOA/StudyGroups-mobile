@@ -88,9 +88,9 @@ export default class extends React.Component<{}, AccountState> {
               <Left>
                 <Text style={item.textStyles}>{item.text}</Text>
               </Left>
-              {item.icon &&
+              {!item.divider &&
                 <Right>
-                  <Icon name={item.divider ? 'arrow-forward' : ''} />
+                  <Icon name="arrow-forward" />
                 </Right>}
             </ListItem>}>
           </List>
