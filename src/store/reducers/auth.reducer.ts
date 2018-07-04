@@ -46,7 +46,7 @@ const reducer: Reducer = (state: AuthState = initialState, action: AuthAction | 
         loading: false,
         error:   action.payload
       };
-    case types.UPDATE_ACCOUNT_SUCCESS:
+    case types.UPDATE_PROFILE_SUCCESS:
     case types.UPLOAD_AVATAR_SUCCESS:
       return {...state, user: action.payload};
     default:
