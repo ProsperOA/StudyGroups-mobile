@@ -65,6 +65,10 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
 
         this.props.authUser(+userID, token);
       }
+
+      setTimeout(() => {
+        if (this.props.loading) this.props.authUserStop();
+      }, 2000);
     });
   }
 
