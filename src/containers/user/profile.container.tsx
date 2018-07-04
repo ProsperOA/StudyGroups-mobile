@@ -29,7 +29,7 @@ const Form = t.form.Form;
 interface ProfileProps extends UserState {
   user:               any;
   updateProfileStart: ()                                         => Dispatch<actions.IUpdateProfileStart>;
-  updateProfile:      (userID: string, accountInfo: ProfileInfo) => Dispatch<actions.IUpdateProfileSuccess | actions.IUpdateProfileFailed>;
+  updateProfile:      (userID: string, profileInfo: ProfileInfo) => Dispatch<actions.IUpdateProfileSuccess | actions.IUpdateProfileFailed>;
   uploadAvatar:       (user: any, image: string)                 => Dispatch<actions.IUploadAvatarSuccess | actions.IUploadAvatarFailed>;
 }
 
@@ -73,14 +73,14 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
   }
 
   public handleSave = (): void => {
-    const value = this.refs.accountForm.getValue();
+    const value = this.refs.profileForm.getValue();
     if (!value) return;
 
     this.props.updateProfileStart();
 
     const { firstName, lastName, school, major1, major2, minor, bio } = value;
 
-    const accountInfo: ProfileInfo = {
+    const profileInfo: ProfileInfo = {
       firstName,
       lastName,
       school,
@@ -90,7 +90,7 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
       bio
     };
 
-    this.props.updateProfile(this.props.user.id, accountInfo);
+    this.props.updateProfile(this.props.user.id, profileInfo);
   };
 
   public handleUploadAvatar = async (): Promise<any> => {
@@ -125,9 +125,9 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
               </Text>
             </Button>
           </View>
-          <View style={styles.accountInfo}>
+          <View style={styles.profileInfo}>
             <Form
-              ref="accountForm"
+              ref="profileForm"
               type={ProfileForm.type}
               options={ProfileForm.options}
               value={this.state.value}
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 15
   },
-  accountInfo: {
+  profileInfo: {
     flex: 0.75,
     flexDirection: 'column',
     backgroundColor: '#fff',
@@ -174,7 +174,7 @@ const mapStateToProps = ({ auth, user }: AppState) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch<actions.UserAction>) => ({
   updateProfileStart: ()                                         => dispatch(actions.updateProfileStart()),
-  updateProfile:      (userID: string, accountInfo: ProfileInfo) => dispatch(actions.updateProfile(userID, accountInfo)),
+  updateProfile:      (userID: string, profileInfo: ProfileInfo) => dispatch(actions.updateProfile(userID, profileInfo)),
   uploadAvatar:       (user: any, image: string)                 => dispatch(actions.uploadAvatar(user, image))
 });
 
