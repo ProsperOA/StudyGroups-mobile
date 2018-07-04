@@ -2,6 +2,9 @@
 export const AUTH_USER_START = 'AUTH_USER_START';
 export type  AUTH_USER_START =  typeof AUTH_USER_START;
 
+export const AUTH_USER_STOP = 'AUTH_USER_STOP';
+export type  AUTH_USER_STOP =  typeof AUTH_USER_STOP;
+
 export const AUTH_USER_SUCCESS = 'AUTH_USER_SUCCESS';
 export type  AUTH_USER_SUCCESS =  typeof AUTH_USER_SUCCESS;
 
@@ -19,6 +22,9 @@ export type  SIGNUP_SUCCESS =  typeof SIGNUP_SUCCESS;
 
 export const SIGNUP_FAILED = 'SIGNUP_FAILED';
 export type  SIGNUP_FAILED =  typeof SIGNUP_FAILED;
+
+export const LOGOUT = 'LOGOUT';
+export type  LOGOUT =  typeof LOGOUT;
 
 
 // User

@@ -10,6 +10,7 @@ import {
   Right,
   Text
 } from 'native-base';
+import navService from '../../shared/navigation-service';
 import PasswordModal from '../modals/change-password-modal.container';
 
 interface AccountState {
@@ -32,7 +33,8 @@ export default class extends React.Component<{}, AccountState> {
       onPress: () => this.togglePasswordModal(true)
     },
     {
-      text: 'logout'
+      text: 'logout',
+      onPress: () => this.onLogout()
     },
     {
       text: 'delete account',
@@ -70,6 +72,10 @@ export default class extends React.Component<{}, AccountState> {
       text: 'terms of use'
     },
   ];
+
+  public onLogout = (): void => {
+    navService.navigate('Auth', { loggedOutAction: true}, true);
+  };
 
   public togglePasswordModal = (visible: boolean): void => {
     this.setState({ passwordModalVisible: visible });

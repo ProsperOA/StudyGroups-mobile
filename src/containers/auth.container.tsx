@@ -33,9 +33,11 @@ import { getAuthToken } from '../shared/auth-token';
 interface AuthProps extends AuthState {
   navigation: NavigationScreenProp<any, any>;
   authUserStart:  ()                                  => Dispatch<actions.IAuthUserStart>
+  authUserStop:   ()                                  => Dispatch<actions.IAuthUserStop>
   authUser:       (userID: number, authToken: string) => Dispatch<actions.AuthAction>
   login:          (credentials: AuthCredentials)      => Dispatch<actions.ILoginSuccess | actions.ILoginFailed>;
   signUp:         (credentials: AuthCredentials)      => Dispatch<actions.ISignUpSuccess | actions.ISignUpFailed>;
+  logout:         ()                                  => Dispatch<actions.ILogout>;
 }
 
 interface AuthStateLocal {
@@ -54,6 +56,11 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
   };
 
   public componentWillMount(): void {
+    if (this.props.navigation.getParam('loggedOutAction')) {
+      this.props.logout();
+      return;
+    }
+
     this.props.authUserStart();
   }
 
@@ -241,9 +248,11 @@ const mapStateToProps = ({ auth }: AppState) => ({ ...auth });
 
 const mapDispatchToProps = (dispatch: Dispatch<actions.AuthAction>) => ({
   authUserStart: ()                                  => dispatch(actions.authUserStart()),
+  authUserStop:  ()                                  => dispatch(actions.authUserStop()),
   authUser:      (userID: number, authToken: string) => dispatch(actions.authUser(userID, authToken)),
   login:         (credentials: AuthCredentials)      => dispatch(actions.login(credentials)),
-  signUp:        (credentials: AuthCredentials)      => dispatch(actions.signUp(credentials))
+  signUp:        (credentials: AuthCredentials)      => dispatch(actions.signUp(credentials)),
+  logout:        ()                                  => dispatch(actions.logout())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Auth);

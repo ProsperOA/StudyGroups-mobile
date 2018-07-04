@@ -4,7 +4,7 @@ import { AxiosResponse, AxiosError } from 'axios';
 import axios               from '../../shared/axios';
 import * as types          from './types';
 import { AuthCredentials } from '../../models/auth-credentials.model';
-import { storeAuthToken }  from '../../shared/auth-token';
+import { storeAuthToken, removeAuthToken }  from '../../shared/auth-token';
 
 export interface IAuthUserSuccess extends Action {
   type:    types.AUTH_USER_SUCCESS;
@@ -16,6 +16,10 @@ export interface IAuthUserFailed extends Action {
 
 export interface IAuthUserStart extends Action {
   type: types.AUTH_USER_START
+}
+
+export interface IAuthUserStop extends Action {
+  type: types.AUTH_USER_STOP
 }
 
 export interface ILoginSuccess extends Action {
@@ -44,14 +48,20 @@ export interface ISignUpFailed extends Action {
   payload: string;
 }
 
+export interface ILogout extends Action {
+  type: types.LOGOUT
+}
+
 export type AuthAction =
   | IAuthUserStart
+  | IAuthUserStop
   | IAuthUserSuccess
   | IAuthUserFailed
   | ILoginSuccess
   | ILoginFailed
   | ISignUpSuccess
-  | ISignUpFailed;
+  | ISignUpFailed
+  | ILogout;
 
 const loginSuccess: ActionCreator<ILoginSuccess> = (user: any, token: string): ILoginSuccess => ({
   type: types.LOGIN_SUCCESS,
@@ -86,19 +96,23 @@ export const authUserStart: ActionCreator<IAuthUserStart> = (): IAuthUserStart =
   type: types.AUTH_USER_START
 });
 
-  export const authUser = (userID: number, authToken: string): any => (dispatch: Dispatch<AuthAction>) => {
-    axios.get('/users/' + userID)
-      .then(({ data }: AxiosResponse) => {
-        const user = data.data;
+export const authUserStop: ActionCreator<IAuthUserStop> = (): IAuthUserStop => ({
+  type: types.AUTH_USER_STOP
+});
 
-        dispatch(authUserSuccess(user));
-        dispatch(loginSuccess(user, authToken));
-      })
-      .catch(({ response }: AxiosError) => {
-        dispatch(authUserFailed(response ? response.data.message : 'unable to get current user'))
-        dispatch(loginFailed(''));
-      });
-  }
+export const authUser = (userID: number, authToken: string): any => (dispatch: Dispatch<AuthAction>) => {
+  axios.get('/users/' + userID)
+    .then(({ data }: AxiosResponse) => {
+      const user = data.data;
+
+      dispatch(authUserSuccess(user));
+      dispatch(loginSuccess(user, authToken));
+    })
+    .catch(({ response }: AxiosError) => {
+      dispatch(authUserFailed(response ? response.data.message : 'unable to get current user'))
+      dispatch(loginFailed(''));
+    });
+}
 
 export const login = ({ email, password }: AuthCredentials): any =>
   (dispatch: Dispatch<ILoginSuccess | ILoginFailed>): void => {
@@ -134,3 +148,8 @@ export const signUp = (credentials: AuthCredentials): any =>
         dispatch(signUpFailed(response ? response.data.message : 'unable to sign up'))
       });
   }
+
+export const logout: ActionCreator<ILogout> = (): ILogout => {
+  removeAuthToken();
+  return { type: types.LOGOUT };
+};

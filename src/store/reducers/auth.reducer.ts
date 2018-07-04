@@ -23,8 +23,8 @@ const reducer: Reducer = (state: AuthState = initialState, action: AuthAction | 
     case types.AUTH_USER_START:
       return {...state, loading: true};
     case types.AUTH_USER_SUCCESS:
-      return {...state, loading: false};
     case types.AUTH_USER_FAILED:
+    case types.AUTH_USER_STOP:
       return {...state, loading: false};
     case types.LOGIN_SUCCESS:
     case types.SIGNUP_SUCCESS:
@@ -49,6 +49,8 @@ const reducer: Reducer = (state: AuthState = initialState, action: AuthAction | 
     case types.UPDATE_PROFILE_SUCCESS:
     case types.UPLOAD_AVATAR_SUCCESS:
       return {...state, user: action.payload};
+    case types.LOGOUT:
+      return initialState;
     default:
       return state;
   }

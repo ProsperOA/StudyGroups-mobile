@@ -1,16 +1,20 @@
 export {
   AuthAction,
   IAuthUserStart,
+  IAuthUserStop,
   IAuthUserSuccess,
   IAuthUserFailed,
   ILoginSuccess,
   ILoginFailed,
   ISignUpSuccess,
   ISignUpFailed,
+  ILogout,
   authUserStart,
+  authUserStop,
   authUser,
   login,
-  signUp
+  signUp,
+  logout
 } from './auth.actions';
 
 export {
