@@ -18,10 +18,11 @@ import { ChangePassword } from '../../models/change-password.model';
 const Form = t.form.Form;
 
 interface PasswordModalProps {
+  name:    string;
   userID:  string;
   message: string;
   visible: boolean;
-  toggle: any;
+  toggle:  (name: string, visible: boolean) => void;
   changePassword: (userID: string, passwords: ChangePassword) => (
     Dispatch<actions.IChangePasswordSuccess | actions.IChangePasswordFailed>
   );
@@ -29,19 +30,14 @@ interface PasswordModalProps {
 
 interface PasswordModalState {
   value: string;
-  modalVisible: boolean;
   changePasswordForm: any;
 }
 
-class PasswordModal extends React.Component<PasswordModalProps, PasswordModalState> {
+class ChangePasswordModal extends React.Component<PasswordModalProps, PasswordModalState> {
   public state: Readonly<PasswordModalState> = {
     value: '',
-    modalVisible: false,
     changePasswordForm: _.cloneDeep(ChangePasswordForm)
   };
-
-  public componentDidUpdate(): void {
-  }
 
   public handleChangePassword = (): void => {
     const passwords: ChangePassword = this.refs.changePasswordForm.getValue();
@@ -61,7 +57,7 @@ class PasswordModal extends React.Component<PasswordModalProps, PasswordModalSta
   };
 
   public onClose = (): void => {
-    this.props.toggle(false);
+    this.props.toggle(this.props.name, false);
     this.setState({ value: '' });
   };
 
@@ -116,4 +112,4 @@ const mapDispatchToProps =
     }
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PasswordModal);
+export default connect(mapStateToProps, mapDispatchToProps)(ChangePasswordModal);

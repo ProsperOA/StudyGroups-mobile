@@ -9,6 +9,7 @@ export {
   ISignUpSuccess,
   ISignUpFailed,
   ILogout,
+
   authUserStart,
   authUserStop,
   authUser,
@@ -26,8 +27,12 @@ export {
   IUploadAvatarFailed,
   IChangePasswordSuccess,
   IChangePasswordFailed,
+  IDeleteAccountSuccess,
+  IDeleteAccountFailed,
+
   updateProfileStart,
   updateProfile,
   uploadAvatar,
-  changePassword
+  changePassword,
+  deleteAccount
 } from './user.actions';

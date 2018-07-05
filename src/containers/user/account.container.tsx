@@ -10,16 +10,27 @@ import {
   Right,
   Text
 } from 'native-base';
+import { Dispatch } from 'redux';
+import * as _ from 'lodash';
+import * as actions from '../../store/actions';
 import navService from '../../shared/navigation-service';
-import PasswordModal from '../modals/change-password-modal.container';
+import ChangePasswordModal from '../modals/change-password-modal.container';
+import DeleteAccountModal from '../modals/delete-account.modal';
 
-interface AccountState {
-  passwordModalVisible: boolean;
+interface AccountProps {
+  deleteAcconut: (userID: string, password: string) => Dispatch<actions.IDeleteAccountSuccess | actions.IDeleteAccountFailed>;
 }
 
-export default class extends React.Component<{}, AccountState> {
+interface AccountState {
+  modals: {[modalName: string]: boolean};
+}
+
+export default class extends React.Component<AccountProps, AccountState> {
   public state: Readonly<AccountState> = {
-    passwordModalVisible: false
+    modals: {
+      changePassword: false,
+      deleteAccount:  false
+    }
   };
 
   public list = [
@@ -30,7 +41,7 @@ export default class extends React.Component<{}, AccountState> {
     },
     {
       text: 'change password',
-      onPress: () => this.togglePasswordModal(true)
+      onPress: () => this.toggleModal('changePassword', true)
     },
     {
       text: 'logout',
@@ -38,7 +49,8 @@ export default class extends React.Component<{}, AccountState> {
     },
     {
       text: 'delete account',
-      textStyles: {color: '#B11A04', fontWeight: '600'}
+      textStyles: {color: '#B11A04', fontWeight: '600'},
+      onPress: () => this.toggleModal('deleteAccount', true)
     },
     {
       divider: true,
@@ -77,8 +89,13 @@ export default class extends React.Component<{}, AccountState> {
     navService.navigate('Auth', { loggedOutAction: true}, true);
   };
 
-  public togglePasswordModal = (visible: boolean): void => {
-    this.setState({ passwordModalVisible: visible });
+  public toggleModal = (name: string, visible: boolean): void => {
+    if (Object.keys(this.state.modals).indexOf(name) === -1) return;
+
+    const modals = _.cloneDeep(this.state.modals);
+    modals[name] = visible;
+
+    this.setState({ modals });
   };
 
   public render(): JSX.Element {
@@ -100,9 +117,16 @@ export default class extends React.Component<{}, AccountState> {
                 </Right>}
             </ListItem>}>
           </List>
-          <PasswordModal
-            visible={this.state.passwordModalVisible}
-            toggle={this.togglePasswordModal} />
+
+          <ChangePasswordModal
+            name="changePassword"
+            visible={this.state.modals.changePassword}
+            toggle={this.toggleModal} />
+          <DeleteAccountModal
+            name="deleteAccount"
+            visible={this.state.modals.deleteAccount}
+            toggle={this.toggleModal} />
+
         </Content>
       </Container>
     );

@@ -1,6 +1,8 @@
 import { Action, ActionCreator, Dispatch } from 'redux';
 import { AxiosResponse, AxiosError } from 'axios';
 import * as _ from 'lodash';
+
+import navService from '../../shared/navigation-service';
 import { ProfileInfo } from '../../models/profile-info.model';
 import axios      from '../../shared/axios';
 import * as types from './types';
@@ -40,6 +42,15 @@ export interface IChangePasswordFailed extends Action {
   payload: string;
 }
 
+export interface IDeleteAccountSuccess extends Action {
+  type: types.DELETE_ACCOUNT_SUCCESS
+}
+
+export interface IDeleteAccountFailed extends Action {
+  type:    types.DELETE_ACCOUNT_FAILED;
+  payload: string
+}
+
 export type UserAction =
   | IUpdateProfileStart
   | IUpdateProfileSuccess
@@ -47,7 +58,9 @@ export type UserAction =
   | IUploadAvatarSuccess
   | IUploadAvatarFailed
   | IChangePasswordSuccess
-  | IChangePasswordFailed;
+  | IChangePasswordFailed
+  | IDeleteAccountSuccess
+  | IDeleteAccountFailed;
 
 const updateProfileSuccess: ActionCreator<IUpdateProfileSuccess> =
   (user: any): IUpdateProfileSuccess => ({
@@ -83,6 +96,15 @@ const changePasswordFailed: ActionCreator<IChangePasswordFailed> =
  (errMsg: string): IChangePasswordFailed => ({
    type:    types.CHANGE_PASSWORD_FAILED,
    payload: errMsg
+});
+
+const deleteAccountSuccess: ActionCreator<IDeleteAccountSuccess> = (): IDeleteAccountSuccess => ({
+  type: types.DELETE_ACCOUNT_SUCCESS
+});
+
+const deleteAccountFailed: ActionCreator<IDeleteAccountFailed> = (errMsg: string): IDeleteAccountFailed => ({
+  type:    types.DELETE_ACCOUNT_FAILED,
+  payload: errMsg
 });
 
 export const updateProfileStart: ActionCreator<IUpdateProfileStart> = (): IUpdateProfileStart => ({
@@ -138,4 +160,16 @@ export const changePassword = (userID: string, passwords: ChangePassword): any =
     axios.patch(`users/${userID}/password`, { current_password, new_password, confirm_password})
       .then(() => dispatch(changePasswordSuccess('pasword updated')))
       .catch(({ response }: AxiosError) => dispatch(changePasswordFailed(response ? response.data.message : 'unable to change password')));
-}
+};
+
+export const deleteAccount = (userID: string, password: string): any =>
+  (dispatch: Dispatch<IDeleteAccountSuccess | IDeleteAccountFailed>) => {
+    axios.post(`users/${userID}/delete`, { password })
+      .then(() => {
+        navService.navigate('Auth', { loggedOutAction: true}, true);
+        dispatch(deleteAccountSuccess());
+      })
+      .catch(({ response }: AxiosError) => {
+        dispatch(deleteAccountFailed(response ? response.data.message : 'unable to delete account'));
+      });
+};

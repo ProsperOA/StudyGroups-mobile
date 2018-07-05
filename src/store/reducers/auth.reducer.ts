@@ -50,6 +50,7 @@ const reducer: Reducer = (state: AuthState = initialState, action: AuthAction | 
     case types.UPLOAD_AVATAR_SUCCESS:
       return {...state, user: action.payload};
     case types.LOGOUT:
+    case types.DELETE_ACCOUNT_SUCCESS:
       return initialState;
     default:
       return state;

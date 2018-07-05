@@ -20,6 +20,10 @@ const reducer: Reducer = (state: UserState = initialState, action: UserAction): 
       return {...state, loading: false, error: ''};
     case types.UPDATE_PROFILE_FAILED:
       return {...state, loading: false, error: action.payload};
+    case types.DELETE_ACCOUNT_SUCCESS:
+      return initialState;
+    case types.DELETE_ACCOUNT_FAILED:
+      return {...state, error: action.payload};
     default:
       return state;
   }
