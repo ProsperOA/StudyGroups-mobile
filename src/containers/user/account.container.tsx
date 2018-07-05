@@ -14,7 +14,7 @@ import { Dispatch } from 'redux';
 import * as _ from 'lodash';
 import * as actions from '../../store/actions';
 import navService from '../../shared/navigation-service';
-import ChangePasswordModal from '../modals/change-password-modal.container';
+import ChangePasswordModal from '../modals/change-password.modal'
 import DeleteAccountModal from '../modals/delete-account.modal';
 
 interface AccountProps {
