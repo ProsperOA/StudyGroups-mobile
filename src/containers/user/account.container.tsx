@@ -115,12 +115,13 @@ class Account extends React.Component<AccountProps, AccountState> {
       subject:      'StudyGroups Feedback',
       body:         'Please tell us how to make StudyGroups better!'
     })
-    .then(() => setTimeout(() => {
-      showToast('success', 'thanks for the feedback!');
-    }, 280))
-    .catch(() => setTimeout(() => {
-      showToast('danger', 'unable to send feedback');
-    }, 280));
+    .then(res => {
+      if (res.status == 'sent')
+        setTimeout(() => showToast('success', 'thanks for the feedback!'), 280);
+    })
+    .catch(err => {
+      setTimeout(() => showToast('danger', 'unable to send feedback'), 280);
+    });
   };
 
   public onLogout = (): void => {
