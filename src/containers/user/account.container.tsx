@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
+import { MailComposer } from 'expo'
 import {
   Container,
   Content,
@@ -8,16 +9,21 @@ import {
   List,
   ListItem,
   Right,
-  Text
+  Text,
+  Toast
 } from 'native-base';
 import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 import * as _ from 'lodash';
+
+import { AppState } from '../../store/reducers';
 import * as actions from '../../store/actions';
 import navService from '../../shared/navigation-service';
 import ChangePasswordModal from '../modals/change-password.modal'
 import DeleteAccountModal from '../modals/delete-account.modal';
 
 interface AccountProps {
+  user: any;
   deleteAcconut: (userID: string, password: string) => Dispatch<actions.IDeleteAccountSuccess | actions.IDeleteAccountFailed>;
 }
 
@@ -25,7 +31,7 @@ interface AccountState {
   modals: {[modalName: string]: boolean};
 }
 
-export default class extends React.Component<AccountProps, AccountState> {
+class Account extends React.Component<AccountProps, AccountState> {
   public state: Readonly<AccountState> = {
     modals: {
       changePassword: false,
@@ -75,7 +81,8 @@ export default class extends React.Component<AccountProps, AccountState> {
       text: 'website'
     },
     {
-      text: 'feedback'
+      text: 'feedback',
+      onPress: () => this.onSendFeedback()
     },
     {
       text: 'privacy policy'
@@ -84,6 +91,37 @@ export default class extends React.Component<AccountProps, AccountState> {
       text: 'terms of use'
     },
   ];
+
+  public onSendFeedback = (): void => {
+    const showToast = (
+      type: 'success' | 'warning' | 'danger',
+      text: string
+    ): void => {
+      Toast.show({
+        type,
+        text,
+        textStyle: {
+          color:      '#fff',
+          fontWeight: 'bold',
+          textAlign:  'center'
+        },
+        position: 'bottom',
+        duration:  1000
+      });
+    };
+
+    MailComposer.composeAsync({
+      recipients:   ['studygroups.io@gmail.com'],
+      subject:      'StudyGroups Feedback',
+      body:         'Please tell us how to make StudyGroups better!'
+    })
+    .then(() => setTimeout(() => {
+      showToast('success', 'thanks for the feedback!');
+    }, 280))
+    .catch(() => setTimeout(() => {
+      showToast('danger', 'unable to send feedback');
+    }, 280));
+  };
 
   public onLogout = (): void => {
     navService.navigate('Auth', { loggedOutAction: true}, true);
@@ -139,3 +177,7 @@ const styles = StyleSheet.create({
     fontSize: 18
   }
 });
+
+const mapStateToProps = ({ auth: { user }}: AppState) => ({ user });
+
+export default connect(mapStateToProps)(Account);
