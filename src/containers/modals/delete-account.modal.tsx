@@ -13,7 +13,6 @@ import * as _ from 'lodash';
 import { AppState } from '../../store/reducers';
 import * as actions from '../../store/actions';
 import { DeleteAccountForm } from '../../models/forms/delete-account-form.model';
-import navService from '../../shared/navigation-service';
 
 const Form = t.form.Form;
 
