@@ -42,7 +42,7 @@ export default class extends React.Component<AddCourseModalProps, AddCourseModal
     return (
       <View style={{padding: 15}}>
         <Modal
-          animationType="fade"
+          animationType="slide"
           transparent={false}>
           <Container>
             <Header>
