@@ -23,8 +23,8 @@ import ChangePasswordModal from '../modals/change-password.modal'
 import DeleteAccountModal from '../modals/delete-account.modal';
 
 interface AccountProps {
-  user: any;
-  deleteAcconut: (userID: string, password: string) => Dispatch<actions.IDeleteAccountSuccess | actions.IDeleteAccountFailed>;
+  user?: any;
+  deleteAcconut?: (userID: string, password: string) => Dispatch<actions.IDeleteAccountSuccess | actions.IDeleteAccountFailed>;
 }
 
 interface AccountState {
