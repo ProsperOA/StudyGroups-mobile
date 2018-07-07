@@ -29,10 +29,13 @@ export {
   IChangePasswordFailed,
   IDeleteAccountSuccess,
   IDeleteAccountFailed,
+  IUpdateCoursesSuccess,
+  IUpdateCoursesFailed,
 
   updateProfileStart,
   updateProfile,
   uploadAvatar,
   changePassword,
-  deleteAccount
+  deleteAccount,
+  updateCourses
 } from './user.actions';
