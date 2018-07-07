@@ -181,4 +181,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = ({ auth: { user }}: AppState) => ({ user });
 
-export default connect(mapStateToProps)(Account);
+const mapDispatchToProps =
+  (dispatch: Dispatch<actions.IDeleteAccountSuccess | actions.IDeleteAccountFailed>) => ({
+    deleteAccount: (userID: string, password: string) => dispatch(actions.deleteAccount(userID, password))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Account);
