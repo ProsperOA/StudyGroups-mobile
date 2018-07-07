@@ -1,8 +1,27 @@
 import * as React from 'react';
-import { Text } from 'react-native';
+import {
+  Body,
+  Container,
+  Content,
+  Header,
+  Text,
+  Title
+} from 'native-base';
 
 export default class Messages extends React.Component<{}, {}> {
   public render(): JSX.Element {
-    return <Text>Messages</Text>;
+    return (
+      <Container>
+        <Header>
+          <Body>
+            <Title>StudyGroups</Title>
+          </Body>
+        </Header>
+        <Content>
+          <Text>Messages</Text>
+        </Content>
+      </Container>
+
+    );
   }
 }

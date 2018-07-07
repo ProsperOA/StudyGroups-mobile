@@ -24,7 +24,10 @@ const AppNavigator = createStackNavigator(
     Auth,
     Tabs: TabsNavigator
   },
-  { initialRouteName: 'Auth' }
+  {
+    initialRouteName: 'Auth',
+    headerMode: 'none'
+  }
 );
 
 interface MainState {

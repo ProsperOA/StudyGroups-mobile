@@ -11,8 +11,10 @@ import {
   CardItem,
   Container,
   Content,
+  Header,
   Spinner,
   Text,
+  Title,
   Toast
 } from 'native-base';
 import { NavigationScreenProp, NavigationActions, StackActions } from 'react-navigation';
@@ -206,6 +208,11 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
 
     return (
       <Container style={styles.container}>
+        <Header>
+          <Body>
+            <Title>StudyGroups</Title>
+          </Body>
+        </Header>
         <Content>
           <Grid>
             <Row size={25} style={{justifyContent: 'center'}}>
