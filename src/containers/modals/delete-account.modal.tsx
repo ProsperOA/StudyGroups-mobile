@@ -53,15 +53,14 @@ class DeleteAccountModal extends React.Component<DeleteAccountModalProps, Delete
 
   public render(): JSX.Element {
     return (
-      <Container>
-        <Content>
-          <View>
-            <Modal
-              animationType="slide"
-              transparent={false}
-              visible={this.props.visible}>
+      <View>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.props.visible}>
+          <Container>
+            <Content>
               <View flex={1} alignItems="center" justifyContent="center">
-                {this.props.error && <Text>{this.props.error}</Text>}
                 <Form
                   ref="deleteAccountForm"
                   type={this.state.deleteAccountForm.type}
@@ -82,10 +81,10 @@ class DeleteAccountModal extends React.Component<DeleteAccountModalProps, Delete
                   <Text>cancel</Text>
                 </Button>
               </View>
-            </Modal>
-          </View>
-        </Content>
-      </Container>
+            </Content>
+          </Container>
+        </Modal>
+      </View>
     );
   }
 }

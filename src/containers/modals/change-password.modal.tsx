@@ -63,13 +63,13 @@ class ChangePasswordModal extends React.Component<PasswordModalProps, PasswordMo
 
   public render(): JSX.Element {
     return (
-      <Container>
-        <Content>
-          <View>
-            <Modal
-              animationType="slide"
-              transparent={false}
-              visible={this.props.visible}>
+      <View>
+        <Modal
+          animationType="slide"
+          transparent={false}
+          visible={this.props.visible}>
+          <Container>
+            <Content>
               <View flex={1} alignItems="center" justifyContent="center">
                 {this.props.message && <Text>{this.props.message}</Text>}
                 <Form
@@ -92,10 +92,10 @@ class ChangePasswordModal extends React.Component<PasswordModalProps, PasswordMo
                   <Text>cancel</Text>
                 </Button>
               </View>
-            </Modal>
-          </View>
-        </Content>
-      </Container>
+            </Content>
+          </Container>
+        </Modal>
+      </View>
     );
   }
 }
