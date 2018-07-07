@@ -184,26 +184,6 @@ export const changePassword = (userID: string, passwords: ChangePassword): any =
 
 export const deleteAccount = (userID: string, password: string): any =>
   (dispatch: Dispatch<IDeleteAccountSuccess | IDeleteAccountFailed>) => {
-    axios.post(`users/${userID}/delete`, { password })
-      .then(() => {
-        navService.navigate('Auth', { loggedOutAction: true}, true);
-        dispatch(deleteAccountSuccess());
-      })
-      .catch(({ response }: AxiosError) => {
-        dispatch(deleteAccountFailed(response ? response.data.message : 'unable to delete account'));
-      });
-};    currentPassword: current_password,
-      newPassword:     new_password,
-      confirmPassword: confirm_password
-    } = passwords;
-
-    axios.patch(`users/${userID}/password`, { current_password, new_password, confirm_password})
-      .then(() => dispatch(changePasswordSuccess('pasword updated')))
-      .catch(({ response }: AxiosError) => dispatch(changePasswordFailed(response ? response.data.message : 'unable to change password')));
-};
-
-export const deleteAccount = (userID: string, password: string): any =>
-  (dispatch: Dispatch<IDeleteAccountSuccess | IDeleteAccountFailed>) => {
     axios.post(`/users/${userID}/delete`, { password })
       .then(() => {
         navService.navigate('Auth', { loggedOutAction: true}, true);
