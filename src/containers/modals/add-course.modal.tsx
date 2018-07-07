@@ -47,7 +47,9 @@ export default class extends React.Component<AddCourseModalProps, AddCourseModal
           <Container>
             <Header>
               <Body>
-                <Title>Add Course</Title>
+                <Title>
+                  {_.isEmpty(this.props.course) ? 'Add' : 'Edit'} Course
+                </Title>
               </Body>
             </Header>
             <Content style={{padding: 15}}>
