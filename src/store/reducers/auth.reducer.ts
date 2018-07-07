@@ -53,6 +53,7 @@ const reducer: Reducer = (state: AuthState = initialState, action: AuthAction | 
     case types.DELETE_ACCOUNT_SUCCESS:
       return initialState;
     case types.UPDATE_COURSES_SUCCESS:
+      return {...state, user: action.payload};
     default:
       return state;
   }
