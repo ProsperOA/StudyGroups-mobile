@@ -4,3 +4,5 @@ export interface Course {
   instructor: string;
   term:       string;
 }
+
+export type CourseAction = 'create' | 'update' | 'delete' | null;
