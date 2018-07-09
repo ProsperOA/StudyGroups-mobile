@@ -13,14 +13,15 @@ import {
 import * as t from 'tcomb-form-native';
 import * as _ from 'lodash';
 import { AddCourseForm } from '../../models/forms/add-course-form.model';
-import { Course } from '../../models/course.model';
+import { Course, CourseAction } from '../../models/course.model';
 
 const Form = t.form.Form;
 
 interface AddCourseModalProps {
-  save:   any;
-  toggle: any;
-  course: Course;
+  course:        Course;
+  courseAction:  CourseAction;
+  toggle:        (visible: boolean) => void;
+  updateCourses: (form: any, action: CourseAction) => void;
 }
 
 interface AddCourseModalState {
@@ -31,7 +32,7 @@ interface AddCourseModalState {
 export default class extends React.Component<AddCourseModalProps, AddCourseModalState> {
   public state: Readonly<AddCourseModalState> = {
     value:         null,
-    addCourseForm: _.cloneDeep(AddCourseForm)
+    addCourseForm: _.cloneDeep(AddCourseForm),
   };
 
   public componentWillMount(): void {
@@ -67,11 +68,15 @@ export default class extends React.Component<AddCourseModalProps, AddCourseModal
                 options={this.state.addCourseForm.options}
                 value={this.state.value}
                 onChange={(value: string) => this.setState({ value })} />
-              <Button onPress={() => this.props.save(this.refs.addCourseForm)} block>
+              <Button
+                onPress={() => this.props.updateCourses(this.refs.addCourseForm, this.props.courseAction)}
+                block>
                 <Text>save</Text>
               </Button>
-              <Button onPress={this.onCloseModal} light block>
-                <Text>cancel</Text>
+              <Button onPress={() => this.props.updateCourses(this.refs.addCourseForm, 'delete')}
+                danger
+                block>
+                <Text>delete</Text>
               </Button>
             </Content>
           </Container>

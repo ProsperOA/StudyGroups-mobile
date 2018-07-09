@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 import * as _ from 'lodash';
 import { AppState } from '../../store/reducers';
 import * as actions from '../../store/actions';
-import { Course } from '../../models/course.model';
+import { Course, CourseAction } from '../../models/course.model';
 import AddCourseModal from '../modals/add-course.modal';
 
 interface CoursesProps {
@@ -24,38 +24,63 @@ interface CoursesProps {
 }
 
 interface CourseState {
-  selectedCourse: Course;
   addCourseModalVisible: boolean;
+  selectedCourse:        Course;
+  selectedCourseAction:  CourseAction;
 }
 
 class Courses extends React.Component<CoursesProps, CourseState> {
   public state: Readonly<CourseState> = {
     selectedCourse: {} as Course,
-    addCourseModalVisible: false
+    addCourseModalVisible: false,
+    selectedCourseAction: null
   };
 
   public toggleAddCourseModal = (visible: boolean): void => {
-    if (!visible) this.setState({ selectedCourse: {} as Course });
+    if (!visible) {
+      this.setState({
+        selectedCourse: {} as Course,
+        selectedCourseAction: null
+      });
+    }
+
     this.setState({ addCourseModalVisible: visible });
   };
 
-  public onSaveCourse = (form: any): void => {
+  public onAddCoursePress = (): void => {
+    this.setState({ selectedCourseAction: 'create' });
+    this.toggleAddCourseModal(true);
+  };
+
+  public onUpdateCourses = (form: any, action: CourseAction): void => {
     const newCourse = form.getValue();
     if (!newCourse) return;
 
     const { courses } = this.props.user;
-
-    const index = courses.indexOf(this.state.selectedCourse);
     const newCourses = _.cloneDeep(courses);
+    const index = courses.indexOf(this.state.selectedCourse);
 
-    index === -1 ? newCourses.push(newCourse) : newCourses[index] = newCourse;
+    switch (action) {
+      case 'create':
+        newCourses.push(newCourse);
+        break;
+      case 'update':
+        newCourses[index] = newCourse;
+        break;
+      case 'delete':
+        newCourses.splice(index, 1);
+        break;
+    }
 
     this.toggleAddCourseModal(false);
     this.props.updateCourses(this.props.user, newCourses);
   };
 
   public onEditCourse = (selectedCourse: Course): void => {
-    this.setState({ selectedCourse });
+    this.setState({
+      selectedCourse,
+      selectedCourseAction: 'update'
+    });
     this.toggleAddCourseModal(true);
   };
 
@@ -79,7 +104,7 @@ class Courses extends React.Component<CoursesProps, CourseState> {
           </View>
             <View flex={0.15}>
               <Button
-                onPress={() => this.toggleAddCourseModal(true)}
+                onPress={() => this.onAddCoursePress()}
                 block>
                 <Text>add course</Text>
               </Button>
@@ -87,9 +112,10 @@ class Courses extends React.Component<CoursesProps, CourseState> {
           </View>
           {this.state.addCourseModalVisible &&
             <AddCourseModal
-              save={this.onSaveCourse}
+              updateCourses={this.onUpdateCourses}
               toggle={this.toggleAddCourseModal}
-              course={this.state.selectedCourse} />}
+              course={this.state.selectedCourse}
+              courseAction={this.state.selectedCourseAction} />}
         </Content>
       </Container>
     );
