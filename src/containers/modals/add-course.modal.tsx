@@ -6,6 +6,8 @@ import {
   Content,
   Container,
   Header,
+  Left,
+  Right,
   Title
 } from 'native-base';
 import * as t from 'tcomb-form-native';
@@ -46,11 +48,17 @@ export default class extends React.Component<AddCourseModalProps, AddCourseModal
           transparent={false}>
           <Container>
             <Header>
+              <Left style={{paddingLeft: 10}}>
+                <Button onPress={this.onCloseModal} transparent>
+                  <Text style={{fontSize: 16, color: '#1F61A0'}}>cancel</Text>
+                </Button>
+              </Left>
               <Body>
                 <Title>
                   {_.isEmpty(this.props.course) ? 'Add' : 'Edit'} Course
                 </Title>
               </Body>
+              <Right />
             </Header>
             <Content style={{padding: 15}}>
               <Form
