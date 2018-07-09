@@ -97,7 +97,7 @@ class Courses extends React.Component<CoursesProps, CourseState> {
                   style={{height: 50}}
                   onPress={() => this.onEditCourse(course)}
                   noIndent>
-                  <Text>{course.code} - {course.name}</Text>
+                  <Text>{course.code ? `${course.code} -` : null} {course.name}</Text>
                 </ListItem>
               ))}
             </List>
