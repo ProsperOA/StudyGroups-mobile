@@ -26,12 +26,14 @@ interface AddCourseModalProps {
 
 interface AddCourseModalState {
   value:         any;
+  newCourse:     boolean;
   addCourseForm: any;
 }
 
 export default class extends React.Component<AddCourseModalProps, AddCourseModalState> {
   public state: Readonly<AddCourseModalState> = {
     value:         null,
+    newCourse:     _.isEmpty(this.props.course),
     addCourseForm: _.cloneDeep(AddCourseForm),
   };
 
@@ -56,7 +58,7 @@ export default class extends React.Component<AddCourseModalProps, AddCourseModal
               </Left>
               <Body>
                 <Title>
-                  {_.isEmpty(this.props.course) ? 'Add' : 'Edit'} Course
+                  {this.state.newCourse ? 'Add' : 'Edit'} Course
                 </Title>
               </Body>
               <Right />
@@ -73,11 +75,12 @@ export default class extends React.Component<AddCourseModalProps, AddCourseModal
                 block>
                 <Text>save</Text>
               </Button>
-              <Button onPress={() => this.props.updateCourses(this.refs.addCourseForm, 'delete')}
-                danger
-                block>
-                <Text>delete</Text>
-              </Button>
+              {!this.state.newCourse &&
+                <Button onPress={() => this.props.updateCourses(this.refs.addCourseForm, 'delete')}
+                  danger
+                  block>
+                  <Text>delete</Text>
+                </Button>}
             </Content>
           </Container>
         </Modal>
