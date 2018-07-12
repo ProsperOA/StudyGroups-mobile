@@ -6,6 +6,7 @@ import { Dispatch } from 'redux';
 import {
   Dimensions,
   Modal,
+  StyleSheet,
   Text,
   View
 } from "react-native";
@@ -19,11 +20,11 @@ import {
   Root,
 } from 'native-base';
 
-import * as actions          from '../../store/actions';
-import * as UI               from '../../shared/ui';
-import globalStyles          from '../../shared/styles';
-import { DeleteAccountForm } from '../../models/forms/delete-account.form';
-import { AppState }          from '../../store/reducers';
+import * as actions                  from '../../store/actions';
+import * as UI                       from '../../shared/ui';
+import globalStyles, { DANGER_DARK } from '../../shared/styles';
+import { DeleteAccountForm }         from '../../models/forms/delete-account.form';
+import { AppState }                  from '../../store/reducers';
 
 const Form = t.form.Form;
 
@@ -77,6 +78,11 @@ class DeleteAccountModal extends React.Component<DeleteAccountModalProps, Delete
               <Right />
             </Header>
             <Content style={{ paddingLeft: 15, paddingRight: 15 }}>
+              <View style={{flex: 1, alignItems: 'center', marginTop: 25}}>
+                <Text style={styles.warningMessage}>
+                  Deleting your account cannot be undone
+                </Text>
+              </View>
               <View style={{ marginTop: Dimensions.get('window').height / 5 }}>
                 <Form
                   ref="deleteAccountForm"
@@ -100,6 +106,15 @@ class DeleteAccountModal extends React.Component<DeleteAccountModalProps, Delete
     );
   }
 }
+
+const styles = StyleSheet.create({
+  warningMessage: {
+    color: DANGER_DARK,
+    fontFamily: 'rubik-medium',
+    fontSize: 25,
+    textAlign: 'center'
+  }
+});
 
 const mapStateToProps = ({ auth: { user }}: AppState) => ({ userID: user.id });
 
