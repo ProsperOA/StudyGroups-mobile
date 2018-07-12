@@ -56,8 +56,8 @@ export default class extends React.Component<AddCourseModalProps, AddCourseModal
           animationType="slide"
           transparent={false}>
           <Container>
-            <Header>
-              <Left style={{paddingLeft: 10}}>
+            <Header style={globalStyles.primaryBG}>
+              <Left>
                 <HeaderCancelButton cancel={this.onCloseModal} />
               </Left>
               <UI.HeaderTitle title={`${this.state.newCourse ? 'Add' : 'Edit'} Course`} />

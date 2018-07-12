@@ -80,11 +80,11 @@ class ChangePasswordModal extends React.Component<PasswordModalProps, PasswordMo
           visible={this.props.visible}>
           <Root>
             <Container>
-              <Header>
-                <Left style={{paddingLeft: 10}}>
+              <Header style={globalStyles.primaryBG}>
+                <Left>
                   <UI.HeaderCancelButton cancel={this.onClose} />
                 </Left>
-                <UI.HeaderTitle title="Password" />
+                <UI.HeaderTitle title="Change Password" style={{flex: 3}} />
                 <Right />
               </Header>
               <Content style={{paddingLeft: 15, paddingRight: 15}}>

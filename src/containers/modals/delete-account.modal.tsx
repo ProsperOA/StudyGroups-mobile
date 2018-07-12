@@ -69,11 +69,11 @@ class DeleteAccountModal extends React.Component<DeleteAccountModalProps, Delete
           visible={this.props.visible}>
           <Root>
           <Container>
-            <Header>
-              <Left style={{paddingLeft: 10}}>
+            <Header style={globalStyles.primaryBG}>
+              <Left>
                 <UI.HeaderCancelButton cancel={this.onClose} />
               </Left>
-                <UI.HeaderTitle title="Delete Account" />
+              <UI.HeaderTitle title="Delete Account" style={{flex: 3}} />
               <Right />
             </Header>
             <Content style={{ paddingLeft: 15, paddingRight: 15 }}>

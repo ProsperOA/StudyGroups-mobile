@@ -2,14 +2,13 @@ import * as React      from 'react';
 import { StyleSheet }  from 'react-native';
 import { Body, Title } from 'native-base';
 
-import { DARK_GRAY } from '../styles';
-
 interface HeaderTitleProps {
   title?: string;
+  style?: any;
 }
 
-export const HeaderTitle = ({ title = 'StudyGroups' }: HeaderTitleProps): JSX.Element => (
-  <Body>
+export const HeaderTitle = ({ title = 'StudyGroups', style = {}}: HeaderTitleProps): JSX.Element => (
+  <Body style={style}>
     <Title style={styles.heading}>{title}</Title>
   </Body>
 );
@@ -17,6 +16,7 @@ export const HeaderTitle = ({ title = 'StudyGroups' }: HeaderTitleProps): JSX.El
 const styles = StyleSheet.create({
   heading: {
     fontFamily: 'rubik-medium',
-    color: DARK_GRAY
+    fontSize: 22,
+    color: '#fff'
   }
 });

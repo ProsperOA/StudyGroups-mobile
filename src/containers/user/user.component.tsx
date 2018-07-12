@@ -18,7 +18,7 @@ import globalStyles, {
 
 export default (): JSX.Element => (
   <Container>
-    <Header hasTabs>
+    <Header style={globalStyles.primaryBG} hasTabs>
       <HeaderTitle />
     </Header>
     <Tabs tabBarUnderlineStyle={globalStyles.primaryBG}>
