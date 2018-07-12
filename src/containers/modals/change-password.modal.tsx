@@ -1,9 +1,13 @@
 import * as React from 'react';
-import { Modal, Text, View } from 'react-native';
+import { Modal, Text, View, Dimensions } from 'react-native';
 import {
   Button,
   Content,
-  Container
+  Container,
+  Header,
+  Left,
+  Right,
+  Root
 } from 'native-base';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
@@ -14,15 +18,17 @@ import { AppState } from '../../store/reducers';
 import * as actions from '../../store/actions';
 import { ChangePasswordForm } from '../../models/forms/change-password-form.model';
 import { ChangePassword } from '../../models/change-password.model';
+import globalStyles from '../../shared/styles';
+import HeaderCancelButton from '../../shared/ui/header-cancel-button';
+import HeaderTitle from '../../shared/ui/header-title';
 
 const Form = t.form.Form;
 
 interface PasswordModalProps {
-  name:    string;
-  userID:  string;
-  message: string;
+  name: string;
+  userID: string;
   visible: boolean;
-  toggle:  (name: string, visible: boolean) => void;
+  toggle: (name: string, visible: boolean) => void;
   changePassword: (userID: string, passwords: ChangePassword) => (
     Dispatch<actions.IChangePasswordSuccess | actions.IChangePasswordFailed>
   );
@@ -68,48 +74,46 @@ class ChangePasswordModal extends React.Component<PasswordModalProps, PasswordMo
           animationType="slide"
           transparent={false}
           visible={this.props.visible}>
-          <Container>
-            <Content>
-              <View flex={1} alignItems="center" justifyContent="center">
-                {this.props.message && <Text>{this.props.message}</Text>}
-                <Form
-                  ref="changePasswordForm"
-                  type={this.state.changePasswordForm.type}
-                  options={this.state.changePasswordForm.options}
-                  value={this.state.value}
-                  style={{ width: 'auto' }}
-                  onChange={(value: string) => this.setState({ value })} />
-                <Button
-                  onPress={this.handleChangePassword}
-                  warning
-                  block>
-                  <Text>update</Text>
-                </Button>
-                <Button
-                  onPress={this.onClose}
-                  block
-                  info>
-                  <Text>cancel</Text>
-                </Button>
-              </View>
-            </Content>
-          </Container>
+          <Root>
+            <Container>
+              <Header>
+                <Left style={{paddingLeft: 10}}>
+                  <HeaderCancelButton cancel={this.onClose} />
+                </Left>
+                <HeaderTitle title="Password" />
+                <Right />
+              </Header>
+              <Content style={{paddingLeft: 15, paddingRight: 15}}>
+                <View style={{marginTop: Dimensions.get('window').height / 5}}>
+                  <Form
+                    ref="changePasswordForm"
+                    type={this.state.changePasswordForm.type}
+                    options={this.state.changePasswordForm.options}
+                    value={this.state.value}
+                    onChange={(value: string) => this.setState({ value })} />
+                  <Button
+                    style={[globalStyles.btn, globalStyles.btnWarning]}
+                    onPress={this.handleChangePassword}
+                    block>
+                    <Text style={globalStyles.btnWarningText}>update</Text>
+                  </Button>
+                </View>
+              </Content>
+            </Container>
+          </Root>
         </Modal>
       </View>
     );
   }
 }
 
-const mapStateToProps = ({ auth, passwordModal }: AppState) => ({
-  userID: auth.user.id,
-  message: passwordModal.message
-});
+const mapStateToProps = ({ auth: { user }}: AppState) => ({ userID: user.id });
 
 const mapDispatchToProps =
   (dispatch: Dispatch<actions.IChangePasswordSuccess | actions.IChangePasswordFailed>) => ({
     changePassword: (userID: string, passwords: ChangePassword) => {
       dispatch(actions.changePassword(userID, passwords));
     }
-});
+  });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChangePasswordModal);

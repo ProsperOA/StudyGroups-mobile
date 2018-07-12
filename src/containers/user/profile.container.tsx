@@ -19,6 +19,7 @@ import * as actions from '../../store/actions';
 import * as t from 'tcomb-form-native';
 import * as _ from 'lodash';
 
+import globalStyles, { PRIMARY } from '../../shared/styles';
 import { AppState } from '../../store/reducers';
 import { ProfileForm } from '../../models/forms/profile-form.model';
 import { ProfileInfo } from '../../models/profile-info.model';
@@ -119,8 +120,9 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
             <Thumbnail source={{uri: this.props.user.avatar}} large />
             <Button
               onPress={this.handleUploadAvatar}
-              transparent style={{alignSelf: 'auto'}}>
-              <Text style={{fontWeight: 'bold', color: '#1F61A0'}}>
+              style={{alignSelf: 'auto'}}
+              transparent>
+              <Text style={{fontWeight: 'bold', color: PRIMARY}}>
                 change profile photo
               </Text>
             </Button>
@@ -132,11 +134,14 @@ class Profile extends React.Component<ProfileProps, ProfileState> {
               options={ProfileForm.options}
               value={this.state.value}
               onChange={(value: string) => this.setState({ value })} />
-              <Button onPress={this.handleSave} success block>
-                <Text style={styles.btnSave}>
-                  {this.props.loading ? <Spinner color="#fff" /> : 'save'}
-                </Text>
-              </Button>
+            <Button
+              style={[globalStyles.btn, globalStyles.btnSuccess]}
+              onPress={this.handleSave}
+              block>
+              <Text style={globalStyles.btnText}>
+                {this.props.loading ? <Spinner color="#fff" /> : 'save'}
+              </Text>
+            </Button>
           </View>
         </Content>
       </Container>
@@ -158,12 +163,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: '#fff',
     padding: 15
-  },
-  btnSave: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontFamily: 'rubik-medium',
-    fontSize: 22
   }
 });
 

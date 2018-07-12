@@ -5,6 +5,7 @@ import axios               from '../../shared/axios';
 import * as types          from './types';
 import { AuthCredentials } from '../../models/auth-credentials.model';
 import { storeAuthToken, removeAuthToken }  from '../../shared/auth-token';
+import { toast } from '../../shared/notification.service';
 
 export interface IAuthUserSuccess extends Action {
   type:    types.AUTH_USER_SUCCESS;
@@ -124,7 +125,20 @@ export const login = ({ email, password }: AuthCredentials): any =>
         dispatch(loginSuccess(user, auth_token))
       })
       .catch(({ response }: AxiosError) => {
-        dispatch(loginFailed(response ? response.data.message : 'unable to login'))
+        const error = response ? response.data.message : 'unable to login';
+        const toastConfig = {
+          type: 'danger',
+          text: error,
+          textStyle: {
+            color:      '#fff',
+            fontWeight: 'bold',
+            textAlign:  'center'
+          },
+          position: 'bottom',
+        };
+
+        toast(toastConfig);
+        dispatch(loginFailed(error));
       });
 };
 

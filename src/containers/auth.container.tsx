@@ -3,28 +3,25 @@ import {
   Keyboard,
   StyleSheet,
   View,
+  Dimensions,
 } from 'react-native';
 import {
-  Body,
   Button,
-  Card,
-  CardItem,
   Container,
   Content,
   Header,
-  Spinner,
-  Text,
-  Title,
-  Toast
+  Text
 } from 'native-base';
 import { NavigationScreenProp, NavigationActions, StackActions } from 'react-navigation';
-import { Grid, Row } from 'react-native-easy-grid';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { cloneDeep } from 'lodash';
 import * as t from 'tcomb-form-native';
-import axios from '../shared/axios';
+import * as Animatable from 'react-native-animatable';
 
+import Spinner from '../shared/ui/spinner';
+import globalStyles from '../shared/styles';
+import axios from '../shared/axios';
 import * as actions from '../store/actions';
 import { AppState } from '../store/reducers';
 import { AuthState } from '../store/reducers/auth.reducer';
@@ -51,11 +48,16 @@ interface AuthStateLocal {
 const Form = t.form.Form;
 
 class Auth extends React.Component<AuthProps, AuthStateLocal> {
+  public loginViewRef: any;
+  public signUpViewRef: any;
   public state: Readonly<AuthStateLocal> = {
     signingUp:         false,
     value:             '',
     signUpCredentials: {...SignUpCredentialsForm}
   };
+
+  public handleLoginViewRef = (ref: any) => this.loginViewRef = ref;
+  public handleSignUpViewRef = (ref: any) => this.signUpViewRef = ref;
 
   public componentWillMount(): void {
     if (this.props.navigation.getParam('loggedOutAction')) {
@@ -86,20 +88,6 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
       this.navigateToTabs();
       return;
     }
-
-    const { error } = this.props;
-
-    if (error)
-      Toast.show({
-        text: error,
-        textStyle: {
-          color:      '#fff',
-          fontWeight: 'bold',
-          textAlign:  'center'
-        },
-        position: 'bottom',
-        duration:  2500
-      });
   }
 
   public navigateToTabs = (): void => {
@@ -112,6 +100,11 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
     });
 
     this.props.navigation.dispatch(resetAction);
+  };
+
+  public handleChangeAuthForm = (ref: any, signingUp: boolean): void => {
+    ref.fadeIn(500);
+    this.setState({ signingUp });
   };
 
   public handleLogin = (): void => {
@@ -151,7 +144,7 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
   }
 
   public renderLogin = (): JSX.Element => (
-    <Body>
+    <Animatable.View ref={this.handleLoginViewRef}>
       <Form
         ref="loginForm"
         type={LoginCredentialsForm.type}
@@ -159,27 +152,27 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
         options={LoginCredentialsForm.options}
         onChange={(value: string) => this.setState({ value })}>
       </Form>
-      <View style={{flex: 1, flexDirection: 'row'}}>
-        <Button
-          onPress={this.handleLogin}
-          style={styles.btnLeft}
-          disabled={this.props.loading}>
-          <Text>
-            {this.props.loading ? <Spinner color="#fff" /> : 'Login'}
-          </Text>
-        </Button>
-        <Button
-          onPress={() => this.setState({ signingUp: true })}
-          style={styles.btnRight}
-          light>
-          <Text>Create Account</Text>
-        </Button>
-      </View>
-    </Body>
+      <Button
+        onPress={this.handleLogin}
+        style={[styles.btn, globalStyles.btn, globalStyles.btnSuccess]}
+        disabled={this.props.loading}
+        block>
+        <Text style={globalStyles.btnText}>
+          login
+        </Text>
+      </Button>
+      <Button
+        onPress={() => this.handleChangeAuthForm(this.loginViewRef, true)}
+        style={[styles.btn, globalStyles.btn, globalStyles.btnSecondaryOutline]}
+        block
+        light>
+        <Text style={globalStyles.btnText}>create account</Text>
+      </Button>
+    </Animatable.View>
   );
 
   public renderSignUp = (): JSX.Element => (
-    <Body>
+    <Animatable.View ref={this.handleSignUpViewRef}>
       <Form
         ref="signUpForm"
         type={this.state.signUpCredentials.type}
@@ -187,45 +180,42 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
         value={this.state.value}
         onChange={(value: string) => this.setState({ value })}>
       </Form>
-      <View style={{flex: 1, flexDirection: 'row'}}>
-        <Button
-          onPress={this.handleSignUp}
-          style={styles.btnLeft}>
-          <Text>Sign Up</Text>
-        </Button>
-        <Button
-          onPress={() => this.setState({ signingUp: false })}
-          style={styles.btnRight}
-          light>
-          <Text>Back to Login</Text>
-        </Button>
-      </View>
-    </Body>
+      <Button
+        style={[styles.btn, globalStyles.btn, globalStyles.btnSuccess]}
+        onPress={this.handleSignUp}
+        block>
+        <Text style={globalStyles.btnText}>sign up</Text>
+      </Button>
+      <Button
+        style={[styles.btn, globalStyles.btn, globalStyles.btnSecondaryOutline]}
+        onPress={() => this.handleChangeAuthForm(this.signUpViewRef, false)}
+        block
+        light>
+        <Text style={globalStyles.btnText}>back to login</Text>
+      </Button>
+    </Animatable.View>
   );
 
   public render(): JSX.Element {
     if (this.props.loading) return <Spinner />;
 
     return (
-      <Container style={styles.container}>
-        <Header>
-          <Body>
-            <Title>StudyGroups</Title>
-          </Body>
-        </Header>
-        <Content>
-          <Grid>
-            <Row size={25} style={{justifyContent: 'center'}}>
-              <Text style={styles.header}>StudyGroups</Text>
-            </Row>
-            <Row size={75}>
-              <Card>
-                <CardItem>
-                  {this.state.signingUp ? this.renderSignUp() : this.renderLogin()}
-                </CardItem>
-              </Card>
-            </Row>
-          </Grid>
+      <Container style={globalStyles.primaryBG}>
+        <Header style={globalStyles.primaryBG} />
+        <Content style={{paddingLeft: 15, paddingRight: 15}}>
+          <View style={{alignItems: 'center', marginBottom: Dimensions.get('window').height / 6.5}}>
+            <Animatable.Text
+              animation="bounceIn"
+              duration={2000}
+              style={styles.header}>
+              StudyGroups
+            </Animatable.Text>
+          </View>
+          <Animatable.View
+            animation="fadeIn"
+            duration={500}>
+            {this.state.signingUp ? this.renderSignUp() : this.renderLogin()}
+          </Animatable.View>
         </Content>
       </Container>
     );
@@ -233,21 +223,15 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginRight: 15,
-    marginLeft: 15,
-  },
   header: {
+    color: '#fff',
     fontFamily: 'rubik-medium',
     fontSize: 60
   },
-  btnRight: {
-    flex: 0.5,
-    marginLeft: 10
-  },
-  btnLeft: {
-    flex: 0.5,
-    marginRight: 10
+  btn: {
+    flex: 1,
+    marginTop: 10,
+    marginBottom: 10
   }
 });
 

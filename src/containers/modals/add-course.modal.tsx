@@ -1,19 +1,20 @@
 import * as React from 'react';
 import { Modal, Text, View } from 'react-native';
 import {
-  Body,
   Button,
   Content,
   Container,
   Header,
   Left,
-  Right,
-  Title
+  Right
 } from 'native-base';
 import * as t from 'tcomb-form-native';
 import * as _ from 'lodash';
 import { AddCourseForm } from '../../models/forms/add-course-form.model';
 import { Course, CourseAction } from '../../models/course.model';
+import globalStyles from '../../shared/styles';
+import HeaderCancelButton from '../../shared/ui/header-cancel-button';
+import HeaderTitle from '../../shared/ui/header-title';
 
 const Form = t.form.Form;
 
@@ -52,15 +53,9 @@ export default class extends React.Component<AddCourseModalProps, AddCourseModal
           <Container>
             <Header>
               <Left style={{paddingLeft: 10}}>
-                <Button onPress={this.onCloseModal} transparent>
-                  <Text style={{fontSize: 16, color: '#1F61A0'}}>cancel</Text>
-                </Button>
+                <HeaderCancelButton cancel={this.onCloseModal} />
               </Left>
-              <Body>
-                <Title>
-                  {this.state.newCourse ? 'Add' : 'Edit'} Course
-                </Title>
-              </Body>
+              <HeaderTitle title={`${this.state.newCourse ? 'Add' : 'Edit'} Course`} />
               <Right />
             </Header>
             <Content style={{padding: 15}}>
@@ -71,15 +66,18 @@ export default class extends React.Component<AddCourseModalProps, AddCourseModal
                 value={this.state.value}
                 onChange={(value: string) => this.setState({ value })} />
               <Button
+                style={[{marginBottom: 10}, globalStyles.btn, globalStyles.btnSuccess]}
                 onPress={() => this.props.updateCourses(this.refs.addCourseForm, this.props.courseAction)}
                 block>
-                <Text>save</Text>
+                <Text style={globalStyles.btnText}>save</Text>
               </Button>
               {!this.state.newCourse &&
-                <Button onPress={() => this.props.updateCourses(this.refs.addCourseForm, 'delete')}
+                <Button
+                  style={[{marginTop: 10}, globalStyles.btn, globalStyles.btnDanger]}
+                  onPress={() => this.props.updateCourses(this.refs.addCourseForm, 'delete')}
                   danger
                   block>
-                  <Text>delete</Text>
+                  <Text style={globalStyles.btnDangerText}>delete</Text>
                 </Button>}
             </Content>
           </Container>

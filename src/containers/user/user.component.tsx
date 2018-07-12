@@ -1,35 +1,43 @@
 import * as React from 'react';
+import { StyleSheet } from 'react-native';
 import {
-  Body,
   Container,
   Header,
   Tab,
-  Tabs,
-  TabHeading,
-  Text,
-  Title
+  Tabs
 } from 'native-base';
 import Profile from './profile.container';
 import Courses from './courses.container';
 import Account from './account.container';
+import globalStyles, { DARK_GRAY, PRIMARY } from '../../shared/styles';
+import HeaderTitle from '../../shared/ui/header-title';
 
 export default (props: {}): JSX.Element => (
   <Container>
     <Header hasTabs>
-      <Body>
-        <Title>StudyGroups</Title>
-      </Body>
+      <HeaderTitle />
     </Header>
-    <Tabs>
-      <Tab heading={<TabHeading><Text>Profile</Text></TabHeading>}>
+    <Tabs tabBarUnderlineStyle={globalStyles.primaryBG}>
+      <Tab heading="Profile" textStyle={styles.tabHeading} activeTextStyle={styles.tabHeadingActive}>
         <Profile />
       </Tab>
-      <Tab heading={<TabHeading><Text>Courses</Text></TabHeading>}>
+      <Tab heading="Courses" textStyle={styles.tabHeading} activeTextStyle={styles.tabHeadingActive}>
         <Courses />
       </Tab>
-      <Tab heading={<TabHeading><Text>Account</Text></TabHeading>}>
+      <Tab heading="Account" textStyle={styles.tabHeading} activeTextStyle={styles.tabHeadingActive}>
         <Account />
       </Tab>
     </Tabs>
   </Container>
 );
+
+const styles = StyleSheet.create({
+  tabHeading: {
+    fontFamily: 'rubik-medium',
+    color: DARK_GRAY
+  },
+  tabHeadingActive: {
+    fontFamily: 'rubik-medium',
+    color: PRIMARY
+  }
+});

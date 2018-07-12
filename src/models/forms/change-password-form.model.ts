@@ -1,4 +1,5 @@
 import * as t from 'tcomb-form-native';
+import { flatInputStyleSheet } from '../../shared/styles';
 
 const PasswordOptions = {
   textContentType: 'password',
@@ -12,6 +13,7 @@ export const ChangePasswordForm = {
     confirmPassword: t.String
   }),
   options: {
+    stylesheet: flatInputStyleSheet,
     auto: 'labels',
     fields: {
       currentPassword: {
@@ -21,7 +23,7 @@ export const ChangePasswordForm = {
       newPassword: {
         ...PasswordOptions,
         label: 'new password',
-        error: 'pasword must contain 6 to 50 characters'
+        help: 'must contain 6 to 50 characters'
       },
       confirmPassword: {
         ...PasswordOptions,

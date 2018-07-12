@@ -1,4 +1,5 @@
 import * as t from 'tcomb-form-native';
+import { flatInputStyleSheet } from '../../shared/styles';
 
 export const AddCourseForm = {
   type: t.struct({
@@ -8,6 +9,7 @@ export const AddCourseForm = {
     term:       t.maybe(t.String),
   }),
   options: {
+    stylesheet: flatInputStyleSheet,
     auto: 'labels',
     fields: {
       name: {

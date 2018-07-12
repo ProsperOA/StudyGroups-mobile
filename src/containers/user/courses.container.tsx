@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import {
   Button,
   Container,
@@ -15,6 +15,7 @@ import { AppState } from '../../store/reducers';
 import * as actions from '../../store/actions';
 import { Course, CourseAction } from '../../models/course.model';
 import AddCourseModal from '../modals/add-course.modal';
+import globalStyles, { DARK_GRAY } from '../../shared/styles';
 
 interface CoursesProps {
   user: any;
@@ -25,8 +26,8 @@ interface CoursesProps {
 
 interface CourseState {
   addCourseModalVisible: boolean;
-  selectedCourse:        Course;
-  selectedCourseAction:  CourseAction;
+  selectedCourse: Course;
+  selectedCourseAction: CourseAction;
 }
 
 class Courses extends React.Component<CoursesProps, CourseState> {
@@ -87,48 +88,49 @@ class Courses extends React.Component<CoursesProps, CourseState> {
   public render(): JSX.Element {
     return (
       <Container>
-        <Content>
-          <View flex={1} flexDirection="column">
-          <View flex={0.85}>
+        <Content scrollEnabled={false}>
+          <ScrollView>
             <List>
               {this.props.user.courses.map((course: Course, index: number) => (
                 <ListItem
                   key={index}
-                  style={{height: 50}}
+                  style={{ height: 50 }}
                   onPress={() => this.onEditCourse(course)}
                   noIndent>
-                  <Text>{course.code ? `${course.code} -` : null} {course.name}</Text>
+                  <Text style={{ color: DARK_GRAY, fontFamily: 'rubik-medium' }}>
+                    {course.code ? `${course.code} -` : null} {course.name}
+                  </Text>
                 </ListItem>
               ))}
             </List>
-          </View>
-            <View flex={0.15}>
-              <Button
-                onPress={() => this.onAddCoursePress()}
-                block>
-                <Text>add course</Text>
-              </Button>
-            </View>
-          </View>
-          {this.state.addCourseModalVisible &&
-            <AddCourseModal
-              updateCourses={this.onUpdateCourses}
-              toggle={this.toggleAddCourseModal}
-              course={this.state.selectedCourse}
-              courseAction={this.state.selectedCourseAction} />}
+          </ScrollView>
         </Content>
+        <View style={{marginBottom: 10}}>
+          <Button
+            style={[{ marginLeft: 15, marginRight: 15 }, globalStyles.btn, globalStyles.btnPrimary]}
+            onPress={() => this.onAddCoursePress()}
+            block>
+            <Text style={globalStyles.btnText}>add course</Text>
+          </Button>
+        </View>
+        {this.state.addCourseModalVisible &&
+          <AddCourseModal
+            updateCourses={this.onUpdateCourses}
+            toggle={this.toggleAddCourseModal}
+            course={this.state.selectedCourse}
+            courseAction={this.state.selectedCourseAction} />}
       </Container>
     );
   }
 }
 
-const mapStateToProps = ({ auth: { user }}: AppState) => ({ user });
+const mapStateToProps = ({ auth: { user } }: AppState) => ({ user });
 
 const mapDispatchToProps =
   (dispatch: Dispatch<actions.IUpdateCoursesSuccess | actions.IUpdateCoursesFailed>) => ({
     updateCourses: (userID: string, courses: any) => (
       dispatch(actions.updateCourses(userID, courses))
     )
-});
+  });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Courses);

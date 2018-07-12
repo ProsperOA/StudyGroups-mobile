@@ -1,21 +1,18 @@
 import * as React from 'react';
 import {
-  Body,
   Container,
   Content,
   Header,
-  Text,
-  Title
+  Text
 } from 'native-base';
+import HeaderTitle from '../shared/ui/header-title';
 
 export default class Messages extends React.Component<{}, {}> {
   public render(): JSX.Element {
     return (
       <Container>
         <Header>
-          <Body>
-            <Title>StudyGroups</Title>
-          </Body>
+          <HeaderTitle title="Messages" />
         </Header>
         <Content>
           <Text>Messages</Text>

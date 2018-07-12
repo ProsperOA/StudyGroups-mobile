@@ -1,6 +1,6 @@
+import * as _ from 'lodash';
 import * as t from 'tcomb-form-native';
-
-const stylesheet = t.form.Form.stylesheet;
+import { flatInputStyleSheet } from '../../shared/styles';
 
 export const ProfileForm = {
   type: t.struct({
@@ -13,6 +13,7 @@ export const ProfileForm = {
     bio:       t.maybe(t.String)
   }),
   options: {
+    stylesheet: flatInputStyleSheet,
     fields: {
       firstName: {
         textContentType: 'name',
@@ -47,15 +48,15 @@ export const ProfileForm = {
         help:      '280 characters',
         multiline: true,
         stylesheet: {
-          ...stylesheet,
+          ...flatInputStyleSheet,
           textbox: {
-            ...stylesheet.textbox,
+            ...flatInputStyleSheet.textbox,
             normal: {
-              ...stylesheet.textbox.normal,
+              ...flatInputStyleSheet.textbox.normal,
               height: 120
             },
             error: {
-              ...stylesheet.textbox.error,
+              ...flatInputStyleSheet.textbox.error,
               height: 120
             }
           }

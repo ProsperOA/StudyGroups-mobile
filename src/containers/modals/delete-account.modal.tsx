@@ -1,9 +1,13 @@
 import * as React from 'react';
-import { Modal, Text, View } from 'react-native';
+import { Dimensions, Modal, Text, View } from 'react-native';
 import {
   Button,
   Content,
-  Container
+  Container,
+  Header,
+  Left,
+  Right,
+  Root,
 } from 'native-base';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
@@ -13,16 +17,18 @@ import * as _ from 'lodash';
 import { AppState } from '../../store/reducers';
 import * as actions from '../../store/actions';
 import { DeleteAccountForm } from '../../models/forms/delete-account-form.model';
+import globalStyles from '../../shared/styles';
+import HeaderCancelButton from '../../shared/ui/header-cancel-button';
+import HeaderTitle from '../../shared/ui/header-title';
 
 const Form = t.form.Form;
 
 interface DeleteAccountModalProps {
-  name:    string;
-  userID:  string;
+  name: string;
+  userID: string;
   visible: boolean;
-  error:   string;
-  toggle:  (name: string, visible: boolean) => void;
-  deleteAccount: (userID: string, password: string ) => (
+  toggle: (name: string, visible: boolean) => void;
+  deleteAccount: (userID: string, password: string) => (
     Dispatch<actions.IDeleteAccountSuccess | actions.IDeleteAccountFailed>
   );
 }
@@ -58,9 +64,17 @@ class DeleteAccountModal extends React.Component<DeleteAccountModalProps, Delete
           animationType="slide"
           transparent={false}
           visible={this.props.visible}>
+          <Root>
           <Container>
-            <Content>
-              <View flex={1} alignItems="center" justifyContent="center">
+            <Header>
+              <Left style={{paddingLeft: 10}}>
+                <HeaderCancelButton cancel={this.onClose} />
+              </Left>
+                <HeaderTitle title="Delete Account" />
+              <Right />
+            </Header>
+            <Content style={{ paddingLeft: 15, paddingRight: 15 }}>
+              <View style={{ marginTop: Dimensions.get('window').height / 5 }}>
                 <Form
                   ref="deleteAccountForm"
                   type={this.state.deleteAccountForm.type}
@@ -69,31 +83,22 @@ class DeleteAccountModal extends React.Component<DeleteAccountModalProps, Delete
                   style={{ width: 'auto' }}
                   onChange={(value: string) => this.setState({ value })} />
                 <Button
+                  style={[globalStyles.btn, globalStyles.btnDanger]}
                   onPress={this.handleDeleteAccount}
-                  warning
                   block>
-                  <Text>confirm</Text>
-                </Button>
-                <Button
-                  onPress={this.onClose}
-                  block
-                  info>
-                  <Text>cancel</Text>
+                  <Text style={globalStyles.btnDangerText}>confirm</Text>
                 </Button>
               </View>
             </Content>
           </Container>
+          </Root>
         </Modal>
       </View>
     );
   }
 }
 
-const mapStateToProps = ({ auth, user, passwordModal }: AppState) => ({
-  userID:  auth.user.id,
-  error:   user.error,
-  message: passwordModal.message
-});
+const mapStateToProps = ({ auth: { user }}: AppState) => ({ userID: user.id });
 
 const mapDispatchToProps =
   (dispatch: Dispatch<actions.IDeleteAccountSuccess | actions.IDeleteAccountFailed>) => ({

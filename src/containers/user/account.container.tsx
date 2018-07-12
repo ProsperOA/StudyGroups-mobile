@@ -21,6 +21,7 @@ import * as actions from '../../store/actions';
 import navService from '../../shared/navigation-service';
 import ChangePasswordModal from '../modals/change-password.modal'
 import DeleteAccountModal from '../modals/delete-account.modal';
+import { DARK_GRAY, DANGER_DARK } from '../../shared/styles';
 
 interface AccountProps {
   user?: any;
@@ -55,7 +56,7 @@ class Account extends React.Component<AccountProps, AccountState> {
     },
     {
       text: 'delete account',
-      textStyles: {color: '#B11A04', fontWeight: '600'},
+      textStyles: {color: DANGER_DARK},
       onPress: () => this.toggleModal('deleteAccount', true)
     },
     {
@@ -148,7 +149,9 @@ class Account extends React.Component<AccountProps, AccountState> {
               onPress={item.onPress}
               noIndent>
               <Left>
-                <Text style={item.textStyles}>{item.text}</Text>
+                <Text style={[item.textStyles || {color: DARK_GRAY}, {fontFamily: 'rubik-medium'}]}>
+                  {item.text}
+                </Text>
               </Left>
               {!item.divider &&
                 <Right>
@@ -175,7 +178,8 @@ class Account extends React.Component<AccountProps, AccountState> {
 const styles = StyleSheet.create({
   divider: {
     fontFamily: 'rubik-medium',
-    fontSize: 18
+    fontSize: 20,
+    color: DARK_GRAY
   }
 });
 

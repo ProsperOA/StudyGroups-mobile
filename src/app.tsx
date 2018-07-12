@@ -12,12 +12,38 @@ import Auth from './containers/auth.container';
 import Home from './containers/home.container';
 import User from './containers/user/user.component';
 import Messages from './containers/messages.container';
+import { PRIMARY, LIGHT_GRAY } from './shared/styles';
+import TabIcon from './shared/ui/tab-icon';
 
-const TabsNavigator = createBottomTabNavigator({
-  Home,
-  Messages,
-  User
-});
+const TabsNavigator = createBottomTabNavigator(
+  {
+    Home: {
+      screen: Home,
+      navigationOptions: {
+        tabBarIcon: (color: any) => <TabIcon name="users" color={color} />
+      }
+    },
+    Messages: {
+      screen: Messages,
+      navigationOptions: {
+        tabBarIcon: (color: any) => <TabIcon name="envelope" color={color} />
+      }
+    },
+    User: {
+      screen: User,
+      navigationOptions: {
+        tabBarIcon: (color: any) => <TabIcon name="user" color={color} />
+      }
+    }
+  },
+  {
+    tabBarOptions: {
+      showLabel: false,
+      activeTintColor: PRIMARY,
+      inactiveTintColor: LIGHT_GRAY
+    }
+  }
+);
 
 const AppNavigator = createStackNavigator(
   {

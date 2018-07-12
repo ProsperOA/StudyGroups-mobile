@@ -7,6 +7,8 @@ import { ProfileInfo } from '../../models/profile-info.model';
 import axios      from '../../shared/axios';
 import * as types from './types';
 import { ChangePassword } from '../../models/change-password.model';
+import * as notificationService from '../../shared/notification.service';
+import { Toast } from 'native-base';
 
 export interface IUpdateProfileStart extends Action {
   type: types.UPDATE_PROFILE_START
@@ -34,12 +36,10 @@ export interface IUploadAvatarFailed extends Action {
 
 export interface IChangePasswordSuccess extends Action {
   type:    types.CHANGE_PASSWORD_SUCCESS;
-  payload: string;
 }
 
 export interface IChangePasswordFailed extends Action {
   type:    types.CHANGE_PASSWORD_FAILED;
-  payload: string;
 }
 
 export interface IDeleteAccountSuccess extends Action {
@@ -48,7 +48,6 @@ export interface IDeleteAccountSuccess extends Action {
 
 export interface IDeleteAccountFailed extends Action {
   type:    types.DELETE_ACCOUNT_FAILED;
-  payload: string
 }
 
 export interface IUpdateCoursesSuccess extends Action {
@@ -97,25 +96,20 @@ const uploadAvatarFailed: ActionCreator<IUploadAvatarFailed> =
     payload: errMsg
 });
 
-const changePasswordSuccess: ActionCreator<IChangePasswordSuccess> =
- (message: string): IChangePasswordSuccess => ({
-   type:    types.CHANGE_PASSWORD_SUCCESS,
-   payload: message
-  });
+const changePasswordSuccess: ActionCreator<IChangePasswordSuccess> = (): IChangePasswordSuccess => ({
+  type:    types.CHANGE_PASSWORD_SUCCESS
+});
 
-const changePasswordFailed: ActionCreator<IChangePasswordFailed> =
- (errMsg: string): IChangePasswordFailed => ({
-   type:    types.CHANGE_PASSWORD_FAILED,
-   payload: errMsg
+const changePasswordFailed: ActionCreator<IChangePasswordFailed> = (): IChangePasswordFailed => ({
+  type:    types.CHANGE_PASSWORD_FAILED
 });
 
 const deleteAccountSuccess: ActionCreator<IDeleteAccountSuccess> = (): IDeleteAccountSuccess => ({
   type: types.DELETE_ACCOUNT_SUCCESS
 });
 
-const deleteAccountFailed: ActionCreator<IDeleteAccountFailed> = (errMsg: string): IDeleteAccountFailed => ({
-  type:    types.DELETE_ACCOUNT_FAILED,
-  payload: errMsg
+const deleteAccountFailed: ActionCreator<IDeleteAccountFailed> = (): IDeleteAccountFailed => ({
+  type:    types.DELETE_ACCOUNT_FAILED
 });
 
 const updateCoursesSuccess: ActionCreator<IUpdateCoursesSuccess> = (user: any): IUpdateCoursesSuccess => ({
@@ -178,8 +172,26 @@ export const changePassword = (userID: string, passwords: ChangePassword): any =
     } = passwords;
 
     axios.patch(`users/${userID}/password`, { current_password, new_password, confirm_password})
-      .then(() => dispatch(changePasswordSuccess('pasword updated')))
-      .catch(({ response }: AxiosError) => dispatch(changePasswordFailed(response ? response.data.message : 'unable to change password')));
+      .then(() => {
+        const toastConfig = {
+          ...notificationService.defaultToastConfig,
+          type: 'success',
+          text: 'password updated',
+        };
+
+        Toast.show(toastConfig);
+        dispatch(changePasswordSuccess());
+      })
+      .catch(({ response }: AxiosError) => {
+        const toastConfig = {
+          ...notificationService.defaultToastConfig,
+          type: 'danger',
+          text: response ? response.data.message : 'unable to update password'
+        };
+
+        Toast.show(toastConfig);
+        dispatch(changePasswordFailed());
+      });
 };
 
 export const deleteAccount = (userID: string, password: string): any =>
@@ -190,13 +202,20 @@ export const deleteAccount = (userID: string, password: string): any =>
         dispatch(deleteAccountSuccess());
       })
       .catch(({ response }: AxiosError) => {
-        dispatch(deleteAccountFailed(response ? response.data.message : 'unable to delete account'));
+        const toastConfig = {
+          ...notificationService.defaultToastConfig,
+          type: 'danger',
+          text: response ? response.data.message : 'unable to update password'
+        };
+
+        Toast.show(toastConfig);
+        dispatch(deleteAccountFailed());
       });
 };
 
 export const updateCourses = (user: any, courses: any): any =>
   (dispatch: Dispatch<IUpdateCoursesSuccess | IUpdateCoursesFailed>) => {
     axios.put(`/users/${user.id}/courses`, courses)
-      .then(res => dispatch(updateCoursesSuccess({ ...user, courses })))
-      .catch(err => dispatch(updateCoursesFailed()));
+      .then(() => dispatch(updateCoursesSuccess({ ...user, courses })))
+      .catch(() => dispatch(updateCoursesFailed()));
 };
