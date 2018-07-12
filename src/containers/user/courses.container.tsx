@@ -1,4 +1,7 @@
-import * as React from 'react';
+import * as React           from 'react';
+import * as _               from 'lodash';
+import { connect }          from 'react-redux';
+import { Dispatch }         from 'redux';
 import { ScrollView, View } from 'react-native';
 import {
   Button,
@@ -8,14 +11,12 @@ import {
   ListItem,
   Text
 } from 'native-base';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import * as _ from 'lodash';
-import { AppState } from '../../store/reducers';
-import * as actions from '../../store/actions';
-import { Course, CourseAction } from '../../models/course.model';
-import AddCourseModal from '../modals/add-course.modal';
+
+import * as actions                from '../../store/actions';
+import AddCourseModal              from '../modals/add-course.modal';
 import globalStyles, { DARK_GRAY } from '../../shared/styles';
+import { AppState }                from '../../store/reducers';
+import { Course, CourseAction }    from '../../models/course.model';
 
 interface CoursesProps {
   user: any;
@@ -26,14 +27,14 @@ interface CoursesProps {
 
 interface CourseState {
   addCourseModalVisible: boolean;
-  selectedCourse: Course;
-  selectedCourseAction: CourseAction;
+  selectedCourse:        Course;
+  selectedCourseAction:  CourseAction;
 }
 
 class Courses extends React.Component<CoursesProps, CourseState> {
   public state: Readonly<CourseState> = {
-    selectedCourse: {} as Course,
     addCourseModalVisible: false,
+    selectedCourse: {} as Course,
     selectedCourseAction: null
   };
 

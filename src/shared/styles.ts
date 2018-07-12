@@ -1,15 +1,15 @@
+import * as _         from 'lodash';
+import * as t         from 'tcomb-form-native';
 import { StyleSheet } from 'react-native';
-import * as _ from 'lodash';
-import * as t from 'tcomb-form-native';
 
-export const PRIMARY   = '#7BABED';
-export const SECONDARY = '#CED6E3';
-export const INFO      = '#D1E2F9';
-export const SUCCESS   = '#8BE28B';
-export const WARNING   = '#FDE8A9';
+export const PRIMARY      = '#7BABED';
+export const SECONDARY    = '#CED6E3';
+export const INFO         = '#D1E2F9';
+export const SUCCESS      = '#8BE28B';
+export const WARNING      = '#FDE8A9';
 export const WARNING_DARK = '#EFB949';
-export const DANGER    = '#F5C3D8';
-export const DANGER_DARK = '#EE7D92';
+export const DANGER       = '#F5C3D8';
+export const DANGER_DARK  = '#EE7D92';
 
 export const GRAY       = '#BBBBBB';
 export const DARK_GRAY  = '#747C85';
@@ -26,6 +26,7 @@ const btnOutline = {
   borderWidth: 2
 };
 
+// global stylesheet
 export default StyleSheet.create({
 
   // colors
@@ -138,6 +139,7 @@ export default StyleSheet.create({
 
 });
 
+// default from with flat inputs
 export const flatInputStyleSheet = _.cloneDeep(t.form.Form.stylesheet);
 const {
   controlLabel,
@@ -151,32 +153,32 @@ const {
 formGroup.normal.marginBottom = 20;
 
 controlLabel.normal.fontFamily = 'rubik-medium';
-controlLabel.error.fontFamily = 'rubik-medium';
-controlLabel.normal.color = LIGHT_GRAY;
-controlLabel.error.color = LIGHT_GRAY;
-
-helpBlock.normal.fontFamily = 'rubik-regular';
-helpBlock.error.fontFamily = 'rubik-regular';
-helpBlock.normal.color = LIGHT_GRAY;
-helpBlock.error.color = LIGHT_GRAY;
+controlLabel.error.fontFamily  = 'rubik-medium';
+controlLabel.normal.color      =  LIGHT_GRAY;
+controlLabel.error.color       =  LIGHT_GRAY;
 
 errorBlock.fontFamily = 'rubik-regular';
-errorBlock.color = DANGER_DARK;
+errorBlock.color      =  DANGER_DARK;
 
-textbox.normal.fontFamily = 'rubik-medium';
-textbox.error.fontFamily = 'rubik-medium';
-textbox.normal.color = DARK_GRAY;
-textbox.error.color = DARK_GRAY;
-textbox.normal.borderWidth = 0;
-textbox.error.borderWidth = 0;
-textbox.normal.marginBottom = 0;
-textbox.error.marginBottom = 0;
+helpBlock.normal.fontFamily = 'rubik-regular';
+helpBlock.error.fontFamily  = 'rubik-regular';
+helpBlock.normal.color      =  LIGHT_GRAY;
+helpBlock.error.color       =  LIGHT_GRAY;
 
-textboxView.normal.borderColor = GRAY;
-textboxView.error.borderColor = DANGER;
-textboxView.normal.borderWidth = 0;
-textboxView.error.borderWidth = 0;
-textboxView.normal.borderRadius = 0;
-textboxView.error.borderRadius = 0;
+textbox.normal.fontFamily   = 'rubik-medium';
+textbox.error.fontFamily    = 'rubik-medium';
+textbox.normal.color        =  DARK_GRAY;
+textbox.error.color         =  DARK_GRAY;
+textbox.normal.borderWidth  =  0;
+textbox.error.borderWidth   =  0;
+textbox.normal.marginBottom =  0;
+textbox.error.marginBottom  =  0;
+
+textboxView.normal.borderColor       = GRAY;
+textboxView.error.borderColor        = DANGER;
+textboxView.normal.borderWidth       = 0;
+textboxView.error.borderWidth        = 0;
+textboxView.normal.borderRadius      = 0;
+textboxView.error.borderRadius       = 0;
 textboxView.normal.borderBottomWidth = 1;
-textboxView.error.borderBottomWidth = 1;
+textboxView.error.borderBottomWidth  = 1;

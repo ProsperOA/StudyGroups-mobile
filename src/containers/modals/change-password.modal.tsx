@@ -1,5 +1,14 @@
-import * as React from 'react';
-import { Modal, Text, View, Dimensions } from 'react-native';
+import * as React   from 'react';
+import * as _       from 'lodash';
+import * as t       from 'tcomb-form-native';
+import { Dispatch } from 'redux';
+import { connect }  from 'react-redux';
+import {
+  Modal,
+  Text,
+  View,
+  Dimensions
+} from 'react-native';
 import {
   Button,
   Content,
@@ -9,40 +18,35 @@ import {
   Right,
   Root
 } from 'native-base';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import * as t from 'tcomb-form-native';
-import * as _ from 'lodash';
 
-import { AppState } from '../../store/reducers';
-import * as actions from '../../store/actions';
-import { ChangePasswordForm } from '../../models/forms/change-password-form.model';
-import { ChangePassword } from '../../models/change-password.model';
-import globalStyles from '../../shared/styles';
-import HeaderCancelButton from '../../shared/ui/header-cancel-button';
-import HeaderTitle from '../../shared/ui/header-title';
+import * as actions           from '../../store/actions';
+import * as UI                from '../../shared/ui';
+import globalStyles           from '../../shared/styles';
+import { AppState }           from '../../store/reducers';
+import { ChangePassword }     from '../../models/change-password.model';
+import { ChangePasswordForm } from '../../models/forms/change-password.form';
 
 const Form = t.form.Form;
 
 interface PasswordModalProps {
-  name: string;
-  userID: string;
+  name:    string;
+  userID:  string;
   visible: boolean;
-  toggle: (name: string, visible: boolean) => void;
+  toggle:  (name: string, visible: boolean) => void;
   changePassword: (userID: string, passwords: ChangePassword) => (
     Dispatch<actions.IChangePasswordSuccess | actions.IChangePasswordFailed>
   );
 }
 
 interface PasswordModalState {
-  value: string;
   changePasswordForm: any;
+  value:              string;
 }
 
 class ChangePasswordModal extends React.Component<PasswordModalProps, PasswordModalState> {
   public state: Readonly<PasswordModalState> = {
-    value: '',
-    changePasswordForm: _.cloneDeep(ChangePasswordForm)
+    changePasswordForm: _.cloneDeep(ChangePasswordForm),
+    value:              ''
   };
 
   public handleChangePassword = (): void => {
@@ -78,9 +82,9 @@ class ChangePasswordModal extends React.Component<PasswordModalProps, PasswordMo
             <Container>
               <Header>
                 <Left style={{paddingLeft: 10}}>
-                  <HeaderCancelButton cancel={this.onClose} />
+                  <UI.HeaderCancelButton cancel={this.onClose} />
                 </Left>
-                <HeaderTitle title="Password" />
+                <UI.HeaderTitle title="Password" />
                 <Right />
               </Header>
               <Content style={{paddingLeft: 15, paddingRight: 15}}>
@@ -114,6 +118,6 @@ const mapDispatchToProps =
     changePassword: (userID: string, passwords: ChangePassword) => {
       dispatch(actions.changePassword(userID, passwords));
     }
-  });
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChangePasswordModal);

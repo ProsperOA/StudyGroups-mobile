@@ -1,5 +1,14 @@
-import * as React from 'react';
-import { Dimensions, Modal, Text, View } from 'react-native';
+import * as React   from 'react';
+import * as _       from 'lodash';
+import * as t       from 'tcomb-form-native';
+import { connect }  from 'react-redux';
+import { Dispatch } from 'redux';
+import {
+  Dimensions,
+  Modal,
+  Text,
+  View
+} from "react-native";
 import {
   Button,
   Content,
@@ -9,44 +18,38 @@ import {
   Right,
   Root,
 } from 'native-base';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import * as t from 'tcomb-form-native';
-import * as _ from 'lodash';
 
-import { AppState } from '../../store/reducers';
-import * as actions from '../../store/actions';
-import { DeleteAccountForm } from '../../models/forms/delete-account-form.model';
-import globalStyles from '../../shared/styles';
-import HeaderCancelButton from '../../shared/ui/header-cancel-button';
-import HeaderTitle from '../../shared/ui/header-title';
+import * as actions          from '../../store/actions';
+import * as UI               from '../../shared/ui';
+import globalStyles          from '../../shared/styles';
+import { DeleteAccountForm } from '../../models/forms/delete-account.form';
+import { AppState }          from '../../store/reducers';
 
 const Form = t.form.Form;
 
 interface DeleteAccountModalProps {
-  name: string;
-  userID: string;
+  name:    string;
+  userID:  string;
   visible: boolean;
-  toggle: (name: string, visible: boolean) => void;
+  toggle:  (name: string, visible: boolean) => void;
   deleteAccount: (userID: string, password: string) => (
     Dispatch<actions.IDeleteAccountSuccess | actions.IDeleteAccountFailed>
   );
 }
 
 interface DeleteAccountModalState {
-  value: string;
   deleteAccountForm: any;
+  value:             string;
 }
 
 class DeleteAccountModal extends React.Component<DeleteAccountModalProps, DeleteAccountModalState> {
   public state: Readonly<DeleteAccountModalState> = {
-    value: '',
-    deleteAccountForm: _.cloneDeep(DeleteAccountForm)
+    deleteAccountForm: _.cloneDeep(DeleteAccountForm),
+    value:             ''
   };
 
   public handleDeleteAccount = (): void => {
     const value = this.refs.deleteAccountForm.getValue();
-
     if (!value) return;
 
     this.props.deleteAccount(this.props.userID, value.password);
@@ -68,9 +71,9 @@ class DeleteAccountModal extends React.Component<DeleteAccountModalProps, Delete
           <Container>
             <Header>
               <Left style={{paddingLeft: 10}}>
-                <HeaderCancelButton cancel={this.onClose} />
+                <UI.HeaderCancelButton cancel={this.onClose} />
               </Left>
-                <HeaderTitle title="Delete Account" />
+                <UI.HeaderTitle title="Delete Account" />
               <Right />
             </Header>
             <Content style={{ paddingLeft: 15, paddingRight: 15 }}>

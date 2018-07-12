@@ -1,4 +1,3 @@
-import { Reducer }    from 'redux';
 import * as types     from '../actions/types';
 import { UserAction } from '../actions';
 
@@ -12,7 +11,7 @@ const initialState: Readonly<UserState> = {
   error: ''
 };
 
-const reducer: Reducer = (state: UserState = initialState, action: UserAction): UserState => {
+export default (state: UserState = initialState, action: UserAction): UserState => {
   switch (action.type) {
     case types.UPDATE_PROFILE_START:
       return {...state, loading: true};
@@ -26,5 +25,3 @@ const reducer: Reducer = (state: UserState = initialState, action: UserAction): 
       return state;
   }
 }
-
-export default reducer;

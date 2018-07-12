@@ -5,7 +5,8 @@ import {
   Header,
   Text
 } from 'native-base';
-import HeaderTitle from '../shared/ui/header-title';
+
+import { HeaderTitle } from '../shared/ui';
 
 export default class Messages extends React.Component<{}, {}> {
   public render(): JSX.Element {
@@ -18,7 +19,6 @@ export default class Messages extends React.Component<{}, {}> {
           <Text>Messages</Text>
         </Content>
       </Container>
-
     );
   }
 }

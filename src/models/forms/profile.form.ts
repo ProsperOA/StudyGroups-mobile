@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import * as t from 'tcomb-form-native';
+
 import { flatInputStyleSheet } from '../../shared/styles';
 
 export const ProfileForm = {

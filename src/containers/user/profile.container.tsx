@@ -1,10 +1,14 @@
-import * as React from 'react';
+import * as React                   from 'react';
+import * as _                       from 'lodash';
+import * as t                       from 'tcomb-form-native';
+import { connect }                  from 'react-redux';
+import { Dispatch }                 from 'redux';
+import { ImagePicker, Permissions } from 'expo';
 import {
   StyleSheet,
   Text,
   View
 } from 'react-native';
-import { ImagePicker, Permissions } from 'expo';
 import {
   Button,
   Container,
@@ -13,44 +17,44 @@ import {
   Thumbnail,
   Toast
 } from 'native-base';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import * as actions from '../../store/actions';
-import * as t from 'tcomb-form-native';
-import * as _ from 'lodash';
 
+import * as actions              from '../../store/actions';
 import globalStyles, { PRIMARY } from '../../shared/styles';
-import { AppState } from '../../store/reducers';
-import { ProfileForm } from '../../models/forms/profile-form.model';
-import { ProfileInfo } from '../../models/profile-info.model';
-import { UserState } from '../../store/reducers/user.reducer';
+import { AppState }              from '../../store/reducers';
+import { ProfileForm }           from '../../models/forms/profile.form';
+import { ProfileInfo }           from '../../models/profile-info.model';
+import { UserState }             from '../../store/reducers/user.reducer';
 
 const Form = t.form.Form;
 
 interface ProfileProps extends UserState {
   user:               any;
-  updateProfileStart: ()                                         => Dispatch<actions.IUpdateProfileStart>;
-  updateProfile:      (userID: string, profileInfo: ProfileInfo) => Dispatch<actions.IUpdateProfileSuccess | actions.IUpdateProfileFailed>;
-  uploadAvatar:       (user: any, image: string)                 => Dispatch<actions.IUploadAvatarSuccess | actions.IUploadAvatarFailed>;
+  uploadAvatar: (user: any, image: string) => (
+    Dispatch<actions.IUploadAvatarSuccess | actions.IUploadAvatarFailed>
+  );
+  updateProfile: (userID: string, profileInfo: ProfileInfo) => (
+    Dispatch<actions.IUpdateProfileSuccess | actions.IUpdateProfileFailed>
+  );
+  updateProfileStart: () => Dispatch<actions.IUpdateProfileStart>;
 }
 
 interface ProfileState {
-  value: any;
-  image: any;
   hasCameraPermission: boolean;
+  image:               any;
+  value:               any;
 }
 
 class Profile extends React.Component<ProfileProps, ProfileState> {
   public state: Readonly<ProfileState> = {
-    value: null,
-    image: null,
-    hasCameraPermission: false
+    hasCameraPermission: false,
+    image:               null,
+    value:               null
   };
 
   public componentWillMount(): void {
     const user = _.cloneDeep(this.props.user);
     user.firstName = user.first_name;
-    user.lastName = user.last_name;
+    user.lastName  = user.last_name;
 
     _.omit(user, ['first_name', 'last_name']);
 
@@ -172,9 +176,11 @@ const mapStateToProps = ({ auth, user }: AppState) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<actions.UserAction>) => ({
-  updateProfileStart: ()                                         => dispatch(actions.updateProfileStart()),
-  updateProfile:      (userID: string, profileInfo: ProfileInfo) => dispatch(actions.updateProfile(userID, profileInfo)),
-  uploadAvatar:       (user: any, image: string)                 => dispatch(actions.uploadAvatar(user, image))
+  uploadAvatar: (user: any, image: string) => dispatch(actions.uploadAvatar(user, image)),
+  updateProfile: (
+    (userID: string, profileInfo: ProfileInfo) => dispatch(actions.updateProfile(userID, profileInfo))
+  ),
+  updateProfileStart: () => dispatch(actions.updateProfileStart()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

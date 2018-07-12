@@ -1,29 +1,29 @@
-import { Action, ActionCreator, Dispatch } from 'redux';
-import { AxiosResponse, AxiosError } from 'axios';
+import { ActionCreator, Dispatch } from 'redux';
+import { AxiosResponse, AxiosError }       from 'axios';
 
-import axios               from '../../shared/axios';
-import * as types          from './types';
-import { AuthCredentials } from '../../models/auth-credentials.model';
+import * as types                           from './types';
+import axios                                from '../../shared/axios';
+import { AuthCredentials }                  from '../../models/auth-credentials.model';
 import { storeAuthToken, removeAuthToken }  from '../../shared/auth-token';
-import { toast } from '../../shared/notification.service';
+import { toast }                            from '../../shared/services/notification.service';
 
-export interface IAuthUserSuccess extends Action {
+export interface IAuthUserSuccess {
   type:    types.AUTH_USER_SUCCESS;
   payload: any;
 }
-export interface IAuthUserFailed extends Action {
+export interface IAuthUserFailed {
   type: types.AUTH_USER_FAILED;
 }
 
-export interface IAuthUserStart extends Action {
+export interface IAuthUserStart {
   type: types.AUTH_USER_START
 }
 
-export interface IAuthUserStop extends Action {
+export interface IAuthUserStop {
   type: types.AUTH_USER_STOP
 }
 
-export interface ILoginSuccess extends Action {
+export interface ILoginSuccess {
   type: types.LOGIN_SUCCESS;
   payload: {
     user:  any;
@@ -31,25 +31,25 @@ export interface ILoginSuccess extends Action {
   };
 }
 
-export interface ILoginFailed extends Action {
+export interface ILoginFailed {
   type:    types.LOGIN_FAILED;
   payload: string;
 }
 
-export interface ISignUpSuccess extends Action {
+export interface ISignUpSuccess {
   type: types.SIGNUP_SUCCESS;
   payload: {
     user:  any;
     token: any;
-  }
+  };
 }
 
-export interface ISignUpFailed extends Action {
-  type: types.SIGNUP_FAILED;
+export interface ISignUpFailed {
+  type:    types.SIGNUP_FAILED;
   payload: string;
 }
 
-export interface ILogout extends Action {
+export interface ILogout {
   type: types.LOGOUT
 }
 
@@ -64,56 +64,71 @@ export type AuthAction =
   | ISignUpFailed
   | ILogout;
 
-const loginSuccess: ActionCreator<ILoginSuccess> = (user: any, token: string): ILoginSuccess => ({
-  type: types.LOGIN_SUCCESS,
-  payload: { user, token }
+const loginSuccess: ActionCreator<ILoginSuccess> =
+  (user: any, token: string): ILoginSuccess => ({
+    type:    types.LOGIN_SUCCESS,
+    payload: { user, token }
 });
 
-const loginFailed: ActionCreator<ILoginFailed> = (errMsg: any): ILoginFailed => ({
-  type: types.LOGIN_FAILED,
-  payload: errMsg
+const loginFailed: ActionCreator<ILoginFailed> =
+  (errMsg: any): ILoginFailed => ({
+    type:    types.LOGIN_FAILED,
+    payload: errMsg
 });
 
-const signUpSuccess: ActionCreator<ISignUpSuccess> = (user: any, token: string): ISignUpSuccess => ({
-  type: types.SIGNUP_SUCCESS,
-  payload: { user, token }
+const signUpSuccess: ActionCreator<ISignUpSuccess> =
+  (user: any, token: string): ISignUpSuccess => ({
+    type:    types.SIGNUP_SUCCESS,
+    payload: { user, token }
 });
 
-const signUpFailed: ActionCreator<ISignUpFailed> = (errMsg: string): ISignUpFailed => ({
-  type: types.SIGNUP_FAILED,
-  payload: errMsg
+const signUpFailed: ActionCreator<ISignUpFailed> =
+  (errMsg: string): ISignUpFailed => ({
+    type:    types.SIGNUP_FAILED,
+    payload: errMsg
 });
 
-const authUserSuccess: ActionCreator<IAuthUserSuccess> = (user: any): IAuthUserSuccess => ({
-  type:    types.AUTH_USER_SUCCESS,
-  payload: user
+const authUserSuccess: ActionCreator<IAuthUserSuccess> =
+  (user: any): IAuthUserSuccess => ({
+    type:    types.AUTH_USER_SUCCESS,
+    payload: user
 });
 
-const authUserFailed: ActionCreator<IAuthUserFailed> = (user: any): IAuthUserFailed => ({
-  type: types.AUTH_USER_FAILED
+const authUserFailed: ActionCreator<IAuthUserFailed> =
+  (user: any): IAuthUserFailed => ({
+    type: types.AUTH_USER_FAILED
 });
 
-export const authUserStart: ActionCreator<IAuthUserStart> = (): IAuthUserStart => ({
-  type: types.AUTH_USER_START
+export const authUserStart: ActionCreator<IAuthUserStart> =
+  (): IAuthUserStart => ({
+    type: types.AUTH_USER_START
 });
 
-export const authUserStop: ActionCreator<IAuthUserStop> = (): IAuthUserStop => ({
-  type: types.AUTH_USER_STOP
+export const authUserStop: ActionCreator<IAuthUserStop> =
+  (): IAuthUserStop => ({
+    type: types.AUTH_USER_STOP
 });
 
-export const authUser = (userID: number, authToken: string): any => (dispatch: Dispatch<AuthAction>) => {
-  axios.get('/users/' + userID)
-    .then(({ data }: AxiosResponse) => {
-      const user = data.data;
+export const logout: ActionCreator<ILogout> =
+  (): ILogout => {
+    removeAuthToken();
+    return { type: types.LOGOUT };
+};
 
-      dispatch(authUserSuccess(user));
-      dispatch(loginSuccess(user, authToken));
-    })
-    .catch(({ response }: AxiosError) => {
-      dispatch(authUserFailed(response ? response.data.message : 'unable to get current user'))
-      dispatch(loginFailed(''));
-    });
-}
+export const authUser = (userID: number, authToken: string): any =>
+  (dispatch: Dispatch<AuthAction>) => {
+    axios.get('/users/' + userID)
+      .then(({ data }: AxiosResponse) => {
+        const user = data.data;
+
+        dispatch(authUserSuccess(user));
+        dispatch(loginSuccess(user, authToken));
+      })
+      .catch(({ response }: AxiosError) => {
+        dispatch(authUserFailed(response ? response.data.message : 'unable to get current user'));
+        dispatch(loginFailed(''));
+      });
+};
 
 export const login = ({ email, password }: AuthCredentials): any =>
   (dispatch: Dispatch<ILoginSuccess | ILoginFailed>): void => {
@@ -159,11 +174,6 @@ export const signUp = (credentials: AuthCredentials): any =>
         dispatch(signUpSuccess(user, auth_token));
       })
       .catch(({ response }: AxiosError) => {
-        dispatch(signUpFailed(response ? response.data.message : 'unable to sign up'))
+        dispatch(signUpFailed(response ? response.data.message : 'unable to sign up'));
       });
-  }
-
-export const logout: ActionCreator<ILogout> = (): ILogout => {
-  removeAuthToken();
-  return { type: types.LOGOUT };
 };

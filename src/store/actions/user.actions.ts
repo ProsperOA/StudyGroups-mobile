@@ -1,61 +1,61 @@
-import { Action, ActionCreator, Dispatch } from 'redux';
+import * as _                        from 'lodash';
+import { ActionCreator, Dispatch }   from 'redux';
 import { AxiosResponse, AxiosError } from 'axios';
-import * as _ from 'lodash';
+import { Toast }                     from 'native-base';
 
-import navService from '../../shared/navigation-service';
-import { ProfileInfo } from '../../models/profile-info.model';
-import axios      from '../../shared/axios';
-import * as types from './types';
-import { ChangePassword } from '../../models/change-password.model';
-import * as notificationService from '../../shared/notification.service';
-import { Toast } from 'native-base';
+import * as notificationService from '../../shared/services/notification.service';
+import * as types               from './types';
+import axios                    from '../../shared/axios';
+import navService               from '../../shared/services/navigation.service';
+import { ChangePassword }       from '../../models/change-password.model';
+import { ProfileInfo }          from '../../models/profile-info.model';
 
-export interface IUpdateProfileStart extends Action {
+export interface IUpdateProfileStart {
   type: types.UPDATE_PROFILE_START
 }
 
-export interface IUpdateProfileSuccess extends Action {
+export interface IUpdateProfileSuccess {
   type:    types.UPDATE_PROFILE_SUCCESS;
   payload: any;
 }
 
-export interface IUpdateProfileFailed extends Action {
+export interface IUpdateProfileFailed {
   type:    types.UPDATE_PROFILE_FAILED;
   payload: string;
 }
 
-export interface IUploadAvatarSuccess extends Action {
+export interface IUploadAvatarSuccess {
   type:    types.UPLOAD_AVATAR_SUCCESS;
   payload: any;
 }
 
-export interface IUploadAvatarFailed extends Action {
+export interface IUploadAvatarFailed {
   type:    types.UPLOAD_AVATAR_FAILED;
   payload: string;
 }
 
-export interface IChangePasswordSuccess extends Action {
-  type:    types.CHANGE_PASSWORD_SUCCESS;
+export interface IChangePasswordSuccess {
+  type: types.CHANGE_PASSWORD_SUCCESS;
 }
 
-export interface IChangePasswordFailed extends Action {
-  type:    types.CHANGE_PASSWORD_FAILED;
+export interface IChangePasswordFailed {
+  type: types.CHANGE_PASSWORD_FAILED;
 }
 
-export interface IDeleteAccountSuccess extends Action {
+export interface IDeleteAccountSuccess {
   type: types.DELETE_ACCOUNT_SUCCESS
 }
 
-export interface IDeleteAccountFailed extends Action {
-  type:    types.DELETE_ACCOUNT_FAILED;
+export interface IDeleteAccountFailed {
+  type: types.DELETE_ACCOUNT_FAILED;
 }
 
-export interface IUpdateCoursesSuccess extends Action {
+export interface IUpdateCoursesSuccess {
   type:    types.UPDATE_COURSES_SUCCESS;
   payload: any;
 }
 
-export interface IUpdateCoursesFailed extends Action {
+export interface IUpdateCoursesFailed {
   type: types.UPDATE_COURSES_FAILED
 }
 
@@ -73,7 +73,7 @@ export type UserAction =
   | IUpdateCoursesFailed;
 
 const updateProfileSuccess: ActionCreator<IUpdateProfileSuccess> =
-  (user: any): IUpdateProfileSuccess => ({
+ (user: any): IUpdateProfileSuccess => ({
     type:    types.UPDATE_PROFILE_SUCCESS,
     payload: user
 });
@@ -96,41 +96,48 @@ const uploadAvatarFailed: ActionCreator<IUploadAvatarFailed> =
     payload: errMsg
 });
 
-const changePasswordSuccess: ActionCreator<IChangePasswordSuccess> = (): IChangePasswordSuccess => ({
-  type:    types.CHANGE_PASSWORD_SUCCESS
+const changePasswordSuccess: ActionCreator<IChangePasswordSuccess> =
+  (): IChangePasswordSuccess => ({
+    type:    types.CHANGE_PASSWORD_SUCCESS
 });
 
-const changePasswordFailed: ActionCreator<IChangePasswordFailed> = (): IChangePasswordFailed => ({
-  type:    types.CHANGE_PASSWORD_FAILED
+const changePasswordFailed: ActionCreator<IChangePasswordFailed> =
+  (): IChangePasswordFailed => ({
+    type:    types.CHANGE_PASSWORD_FAILED
 });
 
-const deleteAccountSuccess: ActionCreator<IDeleteAccountSuccess> = (): IDeleteAccountSuccess => ({
-  type: types.DELETE_ACCOUNT_SUCCESS
+const deleteAccountSuccess: ActionCreator<IDeleteAccountSuccess> =
+  (): IDeleteAccountSuccess => ({
+    type: types.DELETE_ACCOUNT_SUCCESS
 });
 
-const deleteAccountFailed: ActionCreator<IDeleteAccountFailed> = (): IDeleteAccountFailed => ({
-  type:    types.DELETE_ACCOUNT_FAILED
+const deleteAccountFailed: ActionCreator<IDeleteAccountFailed> =
+  (): IDeleteAccountFailed => ({
+    type: types.DELETE_ACCOUNT_FAILED
 });
 
-const updateCoursesSuccess: ActionCreator<IUpdateCoursesSuccess> = (user: any): IUpdateCoursesSuccess => ({
-  type:    types.UPDATE_COURSES_SUCCESS,
-  payload: user
+const updateCoursesSuccess: ActionCreator<IUpdateCoursesSuccess> =
+  (user: any): IUpdateCoursesSuccess => ({
+    type:    types.UPDATE_COURSES_SUCCESS,
+    payload: user
 });
 
-const updateCoursesFailed: ActionCreator<IUpdateCoursesFailed> = (): IUpdateCoursesFailed => ({
-  type: types.UPDATE_COURSES_FAILED
+const updateCoursesFailed: ActionCreator<IUpdateCoursesFailed> =
+  (): IUpdateCoursesFailed => ({
+    type: types.UPDATE_COURSES_FAILED
 });
 
-export const updateProfileStart: ActionCreator<IUpdateProfileStart> = (): IUpdateProfileStart => ({
-  type: types.UPDATE_PROFILE_START
+export const updateProfileStart: ActionCreator<IUpdateProfileStart> =
+  (): IUpdateProfileStart => ({
+    type: types.UPDATE_PROFILE_START
 });
 
 export const updateProfile = (userID: string, profileInfo: ProfileInfo): any =>
   (dispatch: Dispatch<UserAction>) => {
     const data = {
+      ...profileInfo,
       first_name: profileInfo.firstName,
-      last_name:  profileInfo.lastName,
-      ...profileInfo
+      last_name:  profileInfo.lastName
     };
 
     _.omit(data, ['firstName', 'lastName']);

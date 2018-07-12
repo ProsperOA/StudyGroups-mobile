@@ -3,7 +3,7 @@ import { flatInputStyleSheet } from '../../shared/styles';
 
 const PasswordOptions = {
   textContentType: 'password',
-  secureTextEntry: true,
+  secureTextEntry:  true,
 }
 
 export const ChangePasswordForm = {
@@ -14,7 +14,7 @@ export const ChangePasswordForm = {
   }),
   options: {
     stylesheet: flatInputStyleSheet,
-    auto: 'labels',
+    auto:      'labels',
     fields: {
       currentPassword: {
         ...PasswordOptions,
@@ -23,13 +23,13 @@ export const ChangePasswordForm = {
       newPassword: {
         ...PasswordOptions,
         label: 'new password',
-        help: 'must contain 6 to 50 characters'
+        help:  'must contain 6 to 50 characters'
       },
       confirmPassword: {
         ...PasswordOptions,
-        label: 'confirm password',
-        hasError: false,
-        error: 'passwords must match'
+        label:    'confirm password',
+        hasError:  false,
+        error:    'passwords must match'
       }
     }
   }

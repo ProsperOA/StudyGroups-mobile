@@ -1,4 +1,9 @@
-import * as React from 'react';
+import * as React      from 'react';
+import * as Animatable from 'react-native-animatable';
+import * as t          from 'tcomb-form-native';
+import { Dispatch }    from 'redux';
+import { connect }     from 'react-redux';
+import { cloneDeep }   from 'lodash';
 import {
   Keyboard,
   StyleSheet,
@@ -12,48 +17,50 @@ import {
   Header,
   Text
 } from 'native-base';
-import { NavigationScreenProp, NavigationActions, StackActions } from 'react-navigation';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import { cloneDeep } from 'lodash';
-import * as t from 'tcomb-form-native';
-import * as Animatable from 'react-native-animatable';
+import {
+  NavigationScreenProp,
+  NavigationActions,
+  StackActions
+} from 'react-navigation';
 
-import Spinner from '../shared/ui/spinner';
-import globalStyles from '../shared/styles';
-import axios from '../shared/axios';
-import * as actions from '../store/actions';
-import { AppState } from '../store/reducers';
-import { AuthState } from '../store/reducers/auth.reducer';
+import globalStyles        from '../shared/styles';
+import axios               from '../shared/axios';
+import * as actions        from '../store/actions';
+import { AppState }        from '../store/reducers';
 import { AuthCredentials } from '../models/auth-credentials.model';
-import { LoginCredentialsForm,  SignUpCredentialsForm } from '../models/forms/auth-form.model';
-import { getAuthToken } from '../shared/auth-token';
+import { AuthState }       from '../store/reducers/auth.reducer';
+import { getAuthToken }    from '../shared/auth-token';
+import { Spinner }         from '../shared/ui';
+import {
+  LoginCredentialsForm,
+  SignUpCredentialsForm
+} from '../models/forms/auth.form';
 
 interface AuthProps extends AuthState {
   navigation: NavigationScreenProp<any, any>;
+  authUser:       (userID: number, authToken: string) => Dispatch<actions.AuthAction>
   authUserStart:  ()                                  => Dispatch<actions.IAuthUserStart>
   authUserStop:   ()                                  => Dispatch<actions.IAuthUserStop>
-  authUser:       (userID: number, authToken: string) => Dispatch<actions.AuthAction>
   login:          (credentials: AuthCredentials)      => Dispatch<actions.ILoginSuccess | actions.ILoginFailed>;
-  signUp:         (credentials: AuthCredentials)      => Dispatch<actions.ISignUpSuccess | actions.ISignUpFailed>;
   logout:         ()                                  => Dispatch<actions.ILogout>;
+  signUp:         (credentials: AuthCredentials)      => Dispatch<actions.ISignUpSuccess | actions.ISignUpFailed>;
 }
 
 interface AuthStateLocal {
-  signingUp:         boolean;
-  value:             string;
   signUpCredentials: any;
+  signingUp:             boolean;
+  value:                 string;
 }
 
 const Form = t.form.Form;
 
 class Auth extends React.Component<AuthProps, AuthStateLocal> {
-  public loginViewRef: any;
+  public loginViewRef:  any;
   public signUpViewRef: any;
   public state: Readonly<AuthStateLocal> = {
-    signingUp:         false,
-    value:             '',
-    signUpCredentials: {...SignUpCredentialsForm}
+    signUpCredentials: {...SignUpCredentialsForm},
+    signingUp:             false,
+    value:                 ''
   };
 
   public handleLoginViewRef = (ref: any) => this.loginViewRef = ref;
@@ -141,7 +148,7 @@ class Auth extends React.Component<AuthProps, AuthStateLocal> {
     };
 
     this.props.signUp(credentials);
-  }
+  };
 
   public renderLogin = (): JSX.Element => (
     <Animatable.View ref={this.handleLoginViewRef}>
@@ -238,12 +245,12 @@ const styles = StyleSheet.create({
 const mapStateToProps = ({ auth }: AppState) => ({ ...auth });
 
 const mapDispatchToProps = (dispatch: Dispatch<actions.AuthAction>) => ({
+  authUser:      (userID: number, authToken: string) => dispatch(actions.authUser(userID, authToken)),
   authUserStart: ()                                  => dispatch(actions.authUserStart()),
   authUserStop:  ()                                  => dispatch(actions.authUserStop()),
-  authUser:      (userID: number, authToken: string) => dispatch(actions.authUser(userID, authToken)),
   login:         (credentials: AuthCredentials)      => dispatch(actions.login(credentials)),
-  signUp:        (credentials: AuthCredentials)      => dispatch(actions.signUp(credentials)),
-  logout:        ()                                  => dispatch(actions.logout())
+  logout:        ()                                  => dispatch(actions.logout()),
+  signUp:        (credentials: AuthCredentials)      => dispatch(actions.signUp(credentials))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Auth);

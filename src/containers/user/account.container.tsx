@@ -1,6 +1,9 @@
-import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import * as React       from 'react';
+import * as _           from 'lodash';
+import { connect }      from 'react-redux';
+import { Dispatch }     from 'redux';
 import { MailComposer } from 'expo'
+import { StyleSheet }   from 'react-native';
 import {
   Container,
   Content,
@@ -12,15 +15,12 @@ import {
   Text,
   Toast
 } from 'native-base';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import * as _ from 'lodash';
 
-import { AppState } from '../../store/reducers';
-import * as actions from '../../store/actions';
-import navService from '../../shared/navigation-service';
-import ChangePasswordModal from '../modals/change-password.modal'
-import DeleteAccountModal from '../modals/delete-account.modal';
+import * as actions               from '../../store/actions';
+import ChangePasswordModal        from '../modals/change-password.modal'
+import DeleteAccountModal         from '../modals/delete-account.modal';
+import navService                 from '../../shared/services/navigation.service';
+import { AppState }               from '../../store/reducers';
 import { DARK_GRAY, DANGER_DARK } from '../../shared/styles';
 
 interface AccountProps {

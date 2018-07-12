@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'native-base';
+import { Icon }   from 'native-base';
 
 interface TabIconProps {
   name:  string;
@@ -9,7 +9,7 @@ interface TabIconProps {
   };
 }
 
-export default ({name, color: { tintColor }}: TabIconProps): JSX.Element => (
+export const TabIcon = ({name, color: { tintColor }}: TabIconProps): JSX.Element => (
   <Icon
     type="FontAwesome"
     name={name}

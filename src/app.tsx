@@ -1,19 +1,22 @@
-import * as React from 'react';
-import { createStore, Store } from 'redux';
-import { Provider } from 'react-redux';
-import rootReducer from '../src/store/reducers';
-import enhancer from '../src/store/middlewares';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
-import { Font } from 'expo';
-import { Root } from 'native-base';
+import * as React      from 'react';
+import { createStore } from 'redux';
+import { Font }        from 'expo';
+import { Provider }    from 'react-redux';
+import { Root }        from 'native-base';
+import {
+  createStackNavigator,
+  createBottomTabNavigator
+} from 'react-navigation';
 
-import navService from './shared/navigation-service';
-import Auth from './containers/auth.container';
-import Home from './containers/home.container';
-import User from './containers/user/user.component';
-import Messages from './containers/messages.container';
+import Auth                    from './containers/auth.container';
+import enhancer                from './store/middlewares';
+import Home                    from './containers/home.container';
+import Messages                from './containers/messages.container';
+import navService              from './shared/services/navigation.service';
+import rootReducer             from './store/reducers';
+import User                    from './containers/user/user.component';
 import { PRIMARY, LIGHT_GRAY } from './shared/styles';
-import TabIcon from './shared/ui/tab-icon';
+import { TabIcon             } from './shared/ui/tab-icon';
 
 const TabsNavigator = createBottomTabNavigator(
   {
@@ -81,7 +84,7 @@ class Main extends React.Component<{}, MainState> {
   }
 }
 
-const store: Store = createStore(rootReducer, enhancer);
+const store = createStore(rootReducer, enhancer);
 
 const App = (): JSX.Element => (
   <Provider store={store}>

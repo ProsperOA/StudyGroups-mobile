@@ -1,4 +1,5 @@
 import * as t from 'tcomb-form-native';
+
 import { flatInputStyleSheet } from '../../shared/styles';
 
 export const DeleteAccountForm = {
@@ -7,7 +8,7 @@ export const DeleteAccountForm = {
   }),
   options: {
     stylesheet: flatInputStyleSheet,
-    auto: 'labels',
+    auto:      'labels',
     fields: {
       password: {
         textContentType: 'password',

@@ -1,5 +1,4 @@
-import { Reducer }    from 'redux';
-import * as types     from '../actions/types';
+import * as types                 from '../actions/types';
 import { AuthAction, UserAction } from '../actions';
 
 export interface AuthState {
@@ -18,7 +17,7 @@ const initialState: Readonly<AuthState> = {
   error:   ''
 }
 
-const reducer: Reducer = (state: AuthState = initialState, action: AuthAction | UserAction): AuthState => {
+export default (state: AuthState = initialState, action: AuthAction | UserAction): AuthState => {
   switch (action.type) {
     case types.AUTH_USER_START:
       return {...state, loading: true};
@@ -58,5 +57,3 @@ const reducer: Reducer = (state: AuthState = initialState, action: AuthAction | 
       return state;
   }
 };
-
-export default reducer;

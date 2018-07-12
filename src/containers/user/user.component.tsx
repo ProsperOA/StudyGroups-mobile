@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React     from 'react';
 import { StyleSheet } from 'react-native';
 import {
   Container,
@@ -6,25 +6,38 @@ import {
   Tab,
   Tabs
 } from 'native-base';
-import Profile from './profile.container';
-import Courses from './courses.container';
-import Account from './account.container';
-import globalStyles, { DARK_GRAY, PRIMARY } from '../../shared/styles';
-import HeaderTitle from '../../shared/ui/header-title';
 
-export default (props: {}): JSX.Element => (
+import Account         from './account.container';
+import Courses         from './courses.container';
+import Profile         from './profile.container';
+import { HeaderTitle } from '../../shared/ui';
+import globalStyles, {
+  DARK_GRAY,
+  PRIMARY
+} from '../../shared/styles';
+
+export default (): JSX.Element => (
   <Container>
     <Header hasTabs>
       <HeaderTitle />
     </Header>
     <Tabs tabBarUnderlineStyle={globalStyles.primaryBG}>
-      <Tab heading="Profile" textStyle={styles.tabHeading} activeTextStyle={styles.tabHeadingActive}>
+      <Tab
+        heading="Profile"
+        textStyle={styles.tabHeading}
+        activeTextStyle={styles.tabHeadingActive}>
         <Profile />
       </Tab>
-      <Tab heading="Courses" textStyle={styles.tabHeading} activeTextStyle={styles.tabHeadingActive}>
+      <Tab
+        heading="Courses"
+        textStyle={styles.tabHeading}
+        activeTextStyle={styles.tabHeadingActive}>
         <Courses />
       </Tab>
-      <Tab heading="Account" textStyle={styles.tabHeading} activeTextStyle={styles.tabHeadingActive}>
+      <Tab
+        heading="Account"
+        textStyle={styles.tabHeading}
+        activeTextStyle={styles.tabHeadingActive}>
         <Account />
       </Tab>
     </Tabs>

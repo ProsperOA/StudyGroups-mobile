@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React  from 'react';
 import { connect } from 'react-redux';
 import {
   Container,
@@ -6,8 +6,9 @@ import {
   Header,
   Text
 } from 'native-base';
-import { AppState } from '../store/reducers';
-import HeaderTitle from '../shared/ui/header-title';
+
+import { AppState }    from '../store/reducers';
+import { HeaderTitle } from '../shared/ui';
 
 interface HomeProps {
   user: any;
@@ -24,7 +25,6 @@ class Home extends React.Component<HomeProps, {}> {
           <Text>Hello {this.props.user.first_name}</Text>
         </Content>
       </Container>
-
     );
   }
 }
