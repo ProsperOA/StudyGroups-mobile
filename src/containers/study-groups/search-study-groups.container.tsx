@@ -1,7 +1,7 @@
 import * as React      from 'react';
 import * as Animatable from 'react-native-animatable';
-import {NavigationNavigatorProps} from 'react-navigation';
 import { connect }     from 'react-redux';
+import { Dispatch }    from 'redux';
 import { StyleSheet }  from 'react-native';
 import {
   Button,
@@ -14,24 +14,31 @@ import {
   Text
 } from 'native-base';
 
-import globalStyles, { INFO, DARK_GRAY }    from '../../shared/styles';
-import navService from '../../shared/services/navigation.service';
-import { AppState }    from '../../store/reducers';
-import { DropdownMenu } from '../../shared/ui';
-import { DropdownMenuItem } from '../../shared/ui/dropdown-menu';
+import * as actions                      from '../../store/actions';
+import navService                        from '../../shared/services/navigation.service';
+import StudyGroupsCard                   from './study-groups-card.component';
+import globalStyles, { INFO, DARK_GRAY } from '../../shared/styles';
+import { AppState }                      from '../../store/reducers';
+import { DropdownMenu, Spinner }         from '../../shared/ui';
+import { DropdownMenuItem }              from '../../shared/ui/dropdown-menu';
 
-interface SearchStudyGroupsProps extends NavigationNavigatorProps{
-  user: any;
+interface SearchStudyGroupsProps {
+  studyGroups:    any;
+  loading:        boolean;
+  getStudyGroups: () => (
+    Dispatch<actions.IGetStudyGroupsSuccess | actions.IGetStudyGroupsFailed>
+  );
+  getStudyGroupsStart: () => Dispatch<actions.IGetStudyGroupsStart>;
 }
 
 interface SearchStudyGroupsState  {
-  searchValue: string;
+  searchValue:      string;
   dropdownMenuOpen: boolean;
 }
 
 class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchStudyGroupsState> {
   public state: Readonly<SearchStudyGroupsState> = {
-    searchValue: '',
+    searchValue:      '',
     dropdownMenuOpen: false
   };
   public searchInputRef: any;
@@ -46,6 +53,11 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
     }
   ];
 
+  public componentDidMount(): void {
+    this.props.getStudyGroupsStart();
+    this.props.getStudyGroups();
+  }
+
   public onSearchStudyGroups = (event: any): void => {
     this.setState({ searchValue: event.nativeEvent.text });
   };
@@ -53,9 +65,11 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
   public onDropdownMenuItemPress = (route: string): void => {
     this.setState({ dropdownMenuOpen: false });
     navService.navigate(route);
-  }
+  };
 
   public render(): JSX.Element {
+    if (this.props.loading) return <Spinner />;
+
     return (
       <Container>
         <Header style={globalStyles.primaryBG} searchBar>
@@ -98,9 +112,14 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
           open={this.state.dropdownMenuOpen}
           items={this.dropdownMenuItems}
           viewAnimation="fadeIn"
-          cardAnimation="slideInLeft" />
-        <Content>
-          <Text>Hello {this.props.user.first_name}</Text>
+          cardAnimation="slideInLeft"
+          closed={() => this.setState({ dropdownMenuOpen: false })} />
+        <Content style={{padding: 15}}>
+          {this.props.studyGroups
+            ? <Animatable.View animation="slideInUp" duration={500}>
+                <StudyGroupsCard studyGroups={this.props.studyGroups} />
+              </Animatable.View>
+            : <Text>no study groups found</Text>}
         </Content>
       </Container>
     );
@@ -121,6 +140,14 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = ({ auth: { user }}: AppState) => ({ user });
+const mapStateToProps = ({ studyGroups }: AppState) => ({
+  studyGroups: studyGroups.groups,
+  loading:     studyGroups.loading
+});
 
-export default connect(mapStateToProps)(SearchStudyGroups);
+const mapDispatchToProps = (dispatch: Dispatch<actions.StudyGroupsAction>) => ({
+  getStudyGroupsStart: () => dispatch(actions.getStudyGroupsStart()),
+  getStudyGroups:      () => dispatch(actions.getStudyGroups())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(SearchStudyGroups);
