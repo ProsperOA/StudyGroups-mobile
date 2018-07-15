@@ -39,3 +39,13 @@ export {
   deleteAccount,
   updateCourses
 } from './user.actions';
+
+export {
+  StudyGroupsAction,
+  IGetStudyGroupsStart,
+  IGetStudyGroupsSuccess,
+  IGetStudyGroupsFailed,
+
+  getStudyGroups,
+  getStudyGroupsStart
+} from './study-groups.actions';
