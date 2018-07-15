@@ -10,7 +10,7 @@ import {
 
 import Auth                    from './containers/auth.container';
 import enhancer                from './store/middlewares';
-import Home                    from './containers/home.container';
+import SearchStudyGroups       from './containers/study-groups/search-study-groups.container';
 import Messages                from './containers/messages.container';
 import navService              from './shared/services/navigation.service';
 import rootReducer             from './store/reducers';
@@ -20,8 +20,8 @@ import { TabIcon             } from './shared/ui/tab-icon';
 
 const TabsNavigator = createBottomTabNavigator(
   {
-    Home: {
-      screen: Home,
+    SearchStudyGroups: {
+      screen: SearchStudyGroups,
       navigationOptions: {
         tabBarIcon: (color: any) => <TabIcon name="users" color={color} />
       }
