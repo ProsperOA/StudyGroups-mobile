@@ -20,7 +20,7 @@ interface DropwdownMenuProps {
   open: boolean;
   viewAnimation?: string;
   cardAnimation?: string;
-
+  closed: any;
 }
 
 export class DropdownMenu extends React.Component<DropwdownMenuProps, any> {
@@ -47,7 +47,8 @@ export class DropdownMenu extends React.Component<DropwdownMenuProps, any> {
       <Animatable.View
         animation={this.props.viewAnimation}
         duration={250}
-        style={[{ marginTop: height > width ? 88 : 64 }, styles.mainView]}>
+        style={[{ marginTop: height > width ? 88 : 64 }, styles.mainView]}
+        onTouchStart={this.props.closed}>
         <Animatable.View
           animation={this.props.cardAnimation}
           duration={300}>
