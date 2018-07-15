@@ -8,3 +8,30 @@ export const hexToRGBA = (hex: string, opacity: number) => {
 
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 };
+
+export const parseDateTime = (dateTime: string): string => {
+  if (!dateTime) return '';
+
+  const parts = dateTime.split('-')
+  const time = parts[2].split('T')[1].split('.')[0];
+  const year = parts[0];
+  const month = parts[1];
+  const day = parts[2].split('T')[0];
+
+  return `${month}-${day}-${year} ${time24To12(time)}`;
+}
+
+// credit: https://stackoverflow.com/a/13899011
+export const time24To12 = (time: any): any => {
+  if (!time) return '';
+  // Check correct time format and split into components
+  time = time.toString().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
+  if (time.length > 1) { // If time format correct
+    time = time.slice(1);  // Remove full string match value
+    time.pop(); // remove trailing ":00"
+    time[5] = +time[0] < 12 ? ' am' : ' pm'; // Set AM/PM
+    time[0] = +time[0] % 12 || 12; // Adjust hours
+  }
+  return time.join(''); // return adjusted time or original string
+};
