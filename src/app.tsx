@@ -23,19 +23,37 @@ const TabsNavigator = createBottomTabNavigator(
     SearchStudyGroups: {
       screen: SearchStudyGroups,
       navigationOptions: {
-        tabBarIcon: (color: any) => <TabIcon name="users" color={color} />
+        tabBarIcon: (color: any) => (
+          <TabIcon
+            type="FontAwesome"
+            name="users"
+            color={color}
+            size={25} />
+        )
       }
     },
     Messages: {
       screen: Messages,
       navigationOptions: {
-        tabBarIcon: (color: any) => <TabIcon name="envelope" color={color} />
+        tabBarIcon: (color: any) => (
+          <TabIcon
+            type="Entypo"
+            name="message"
+            color={color}
+            size={30} />
+        )
       }
     },
     User: {
       screen: User,
       navigationOptions: {
-        tabBarIcon: (color: any) => <TabIcon name="user" color={color} />
+        tabBarIcon: (color: any) => (
+          <TabIcon
+            type="FontAwesome"
+            name="user"
+            color={color}
+            size={25} />
+        )
       }
     }
   },
