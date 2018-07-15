@@ -4,6 +4,7 @@ export const defaultToastConfig: any = {
   textStyle: {
     color:      '#fff',
     fontWeight: 'bold',
+    fontFamily: 'rubik-medium',
     textAlign:  'center'
   },
   position: 'bottom',
