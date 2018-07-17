@@ -33,8 +33,8 @@ export default class extends React.Component<StudyGroupsCardProps, StudyGroupsCa
   public render(): JSX.Element[] {
     return this.props.studyGroups.map((group: any, index: number) => {
       return (
-        <React.Fragment>
-          <Card key={index} headerText={group.name}>
+        <React.Fragment key={index}>
+          <Card headerText={group.name}>
             <View style={{ flex: 1, flexDirection: 'column' }}>
               <View style={{ flex: 0.6, flexDirection: 'row' }}>
                 <View style={{ flex: 0.5 }}>
