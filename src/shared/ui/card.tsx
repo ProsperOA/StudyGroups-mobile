@@ -4,22 +4,23 @@ import {
   StyleSheet,
   View
 } from 'react-native';
-import { DARK_GRAY, LIGHT_GRAY } from '../styles';
+import { DARK_GRAY } from '../styles';
 
 interface CardProps {
   key?: string | number;
   cardStyle?: any;
-  headerText: string;
+  headerText?: string;
   children: JSX.Element;
 }
 
 export const Card = (props: CardProps): JSX.Element => (
   <View style={[styles.mainView, props.cardStyle]}>
-    <View style={styles.header}>
-      <Text style={styles.headerText}>
-        {props.headerText}
-      </Text>
-    </View>
+    {props.headerText &&
+      <View style={styles.header}>
+        <Text style={styles.headerText}>
+          {props.headerText}
+        </Text>
+      </View>}
     <View style={styles.body}>
       {props.children}
     </View>
