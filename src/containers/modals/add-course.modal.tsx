@@ -19,7 +19,6 @@ import * as UI                  from '../../shared/ui';
 import globalStyles             from '../../shared/styles';
 import { AddCourseForm }        from '../../models/forms/add-course.form';
 import { Course, CourseAction } from '../../models/course.model';
-import { HeaderCancelButton }   from '../../shared/ui';
 
 const Form = t.form.Form;
 
@@ -58,7 +57,7 @@ export default class extends React.Component<AddCourseModalProps, AddCourseModal
           <Container>
             <Header style={globalStyles.primaryBG}>
               <Left>
-                <HeaderCancelButton cancel={this.onCloseModal} />
+                <UI.HeaderCancelButton cancel={this.onCloseModal} />
               </Left>
               <UI.HeaderTitle title={`${this.state.newCourse ? 'Add' : 'Edit'} Course`} />
               <Right />
