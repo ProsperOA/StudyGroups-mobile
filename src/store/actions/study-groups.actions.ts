@@ -2,6 +2,7 @@ import { ActionCreator, Dispatch }   from 'redux';
 import { AxiosResponse, AxiosError } from 'axios';
 
 import * as notificationService from '../../shared/services/notification.service';
+import { StudyGroupsFilter } from '../../models/filters/study-groups.filter';
 
 import * as types from './types';
 import axios      from '../../shared/axios';
@@ -40,9 +41,33 @@ export const getStudyGroupsStart: ActionCreator<IGetStudyGroupsStart> =
     type: types.GET_STUDY_GROUPS_START
 });
 
-export const getStudyGroups = (): any =>
+export const getStudyGroups = (filter: StudyGroupsFilter): any =>
   (dispatch: Dispatch<IGetStudyGroupsSuccess | IGetStudyGroupsFailed>): void => {
-    axios.get('/study_groups')
+    const {
+      name,
+      location,
+      instructor,
+      term,
+      pageIndex:      page_index,
+      pageSize:       page_size,
+      availableSpots: available_spots,
+      courseCode:     course_code,
+      courseName:     course_name,
+    } = filter;
+
+    const data = {
+      page_index,
+      page_size,
+      name,
+      course_code,
+      course_name,
+      instructor,
+      term,
+      location,
+      available_spots
+    };
+
+    axios.get('/study_groups', {params: data})
       .then(({ data }: AxiosResponse) => dispatch(getStudyGroupsSuccess(data.data)))
       .catch(({ response }: AxiosError) => {
         const error = response ? response.data.message : 'unable to get study groups';
