@@ -47,12 +47,11 @@ export default (state: AuthState = initialState, action: AuthAction | UserAction
       };
     case types.UPDATE_PROFILE_SUCCESS:
     case types.UPLOAD_AVATAR_SUCCESS:
+    case types.UPDATE_COURSES_SUCCESS:
       return {...state, user: action.payload};
     case types.LOGOUT:
     case types.DELETE_ACCOUNT_SUCCESS:
       return initialState;
-    case types.UPDATE_COURSES_SUCCESS:
-      return {...state, user: action.payload};
     default:
       return state;
   }
