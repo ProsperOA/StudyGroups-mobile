@@ -9,6 +9,7 @@ export const SearchStudyGroupsForm = {
     code:       t.maybe(t.String),
     instructor: t.maybe(t.String),
     term:       t.maybe(t.String),
+    location:   t.maybe(t.String)
   }),
   options: {
     stylesheet:  flatInputStyleSheet,
@@ -30,6 +31,10 @@ export const SearchStudyGroupsForm = {
       term: {
         maxLength: 10,
         label:     'Term'
+      },
+      location: {
+        maxLength:  40,
+        label:     'Location'
       }
     }
   }

@@ -18,13 +18,18 @@ import {
 import * as actions                      from '../../store/actions';
 import navService                        from '../../shared/services/navigation.service';
 import StudyGroupsCard                   from './study-groups-card.component';
-import globalStyles, { INFO, DARK_GRAY, PRIMARY } from '../../shared/styles';
 import { AppState }                      from '../../store/reducers';
 import { Card }                          from '../../shared/ui';
 import { DropdownMenu, Spinner }         from '../../shared/ui';
 import { DropdownMenuItem }              from '../../shared/ui/dropdown-menu';
 import { StudyGroupsFilter }             from '../../models/filters/study-groups.filter';
 import { SearchStudyGroupsForm }         from '../../models/forms/search-study-groups.form';
+import globalStyles, {
+  INFO,
+  DARK_GRAY,
+  PRIMARY,
+  WARNING_DARK
+} from '../../shared/styles';
 
 interface SearchStudyGroupsProps {
   studyGroups:    any;
@@ -108,7 +113,8 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
       name: courseName,
       code: courseCode,
       instructor,
-      term
+      term,
+      location
     } = value;
 
     const filter = {
@@ -116,7 +122,8 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
       courseCode: courseCode || '',
       courseName: courseName || '',
       instructor: instructor || '',
-      term: term || ''
+      term: term || '',
+      location: location || ''
     };
 
     this.setState({ filter });
@@ -129,7 +136,8 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
       courseName: '',
       courseCode: '',
       instructor: '',
-      term: ''
+      term: '',
+      location: ''
     }
 
     this.setState({
@@ -240,7 +248,13 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
                 disabled={this.state.dropdownMenuOpen}
                 onPress={() => this.onFiltersBtnPress(!this.state.showFilters)}
                 transparent>
-                <Text style={styles.filtersBtnText}>filters</Text>
+                <Text
+                  style={[
+                    {color: this.state.showFilters ? WARNING_DARK : PRIMARY},
+                    styles.filtersBtnText
+                  ]}>
+                  filters
+                </Text>
               </Button>
             </View>
           </View>
@@ -277,7 +291,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end'
   },
   filtersBtnText: {
-    color: PRIMARY,
     fontSize: 20,
     fontFamily: 'rubik-medium',
     paddingLeft: 0,
