@@ -65,7 +65,8 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
       courseCode: '',
       courseName: '',
       instructor: '',
-      term: ''
+      term: '',
+      meetingDate: ''
     }
   };
   public searchInputRef: any;
@@ -114,16 +115,18 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
       code: courseCode,
       instructor,
       term,
-      location
+      location,
+      meetingDate
     } = value;
 
-    const filter = {
+    const filter: StudyGroupsFilter = {
       ...this.state.filter,
       courseCode: courseCode || '',
       courseName: courseName || '',
       instructor: instructor || '',
       term: term || '',
-      location: location || ''
+      location: location || '',
+      meetingDate: meetingDate || ''
     };
 
     this.setState({ filter });
@@ -153,6 +156,7 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
   };
 
   public renderFilters = (): JSX.Element => (
+    // FIXME: can't scroll past buttons
     <Animatable.View
       style={{display: !this.state.showFilters ? 'none' : 'flex'}}
       ref={(ref: any) => this.filtersRef = ref}>
@@ -258,14 +262,14 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
               </Button>
             </View>
           </View>
-          {this.renderFilters()}
-          {this.props.studyGroups
-            ? <ScrollView contentContainerStyle={{flex: 1}} style={{flex: 0.975}}>
-                <Animatable.View animation="slideInUp" duration={500}>
+          <ScrollView contentContainerStyle={{flex: 1}} style={{flex: 0.975}}>
+            {this.renderFilters()}
+            {this.props.studyGroups
+              ? <Animatable.View animation="slideInUp" duration={500}>
                   <StudyGroupsCard studyGroups={this.props.studyGroups} />
                 </Animatable.View>
-              </ScrollView>
-            : <Text>no study groups found</Text>}
+              : <Text>no study groups found</Text>}
+          </ScrollView>
         </Content>
       </Container>
     );

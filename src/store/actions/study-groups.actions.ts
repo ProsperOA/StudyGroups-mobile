@@ -53,6 +53,7 @@ export const getStudyGroups = (filter: StudyGroupsFilter): any =>
       availableSpots: available_spots,
       courseCode:     course_code,
       courseName:     course_name,
+      meetingDate:    meeting_date
     } = filter;
 
     const data = {
@@ -64,7 +65,8 @@ export const getStudyGroups = (filter: StudyGroupsFilter): any =>
       instructor,
       term,
       location,
-      available_spots
+      available_spots,
+      meeting_date
     };
 
     axios.get('/study_groups', {params: data})

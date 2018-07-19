@@ -5,11 +5,13 @@ import { flatInputStyleSheet } from '../../shared/styles';
 
 export const SearchStudyGroupsForm = {
   type: t.struct({
-    name:       t.maybe(t.String),
-    code:       t.maybe(t.String),
-    instructor: t.maybe(t.String),
-    term:       t.maybe(t.String),
-    location:   t.maybe(t.String)
+    name:           t.maybe(t.String),
+    code:           t.maybe(t.String),
+    instructor:     t.maybe(t.String),
+    term:           t.maybe(t.String),
+    location:       t.maybe(t.String),
+    availableSpots: t.maybe(t.Number),
+    meetingDate:    t.maybe(t.Date)
   }),
   options: {
     stylesheet:  flatInputStyleSheet,
@@ -35,6 +37,13 @@ export const SearchStudyGroupsForm = {
       location: {
         maxLength:  40,
         label:     'Location'
+      },
+      availableSpots: {
+        label: 'Available Spots'
+      },
+      meetingDate: {
+        label:       'Meeting Date',
+        minimumDate:  new Date()
       }
     }
   }

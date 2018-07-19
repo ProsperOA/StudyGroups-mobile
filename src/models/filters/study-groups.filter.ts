@@ -7,4 +7,5 @@ export interface StudyGroupsFilter extends BaseFilter {
   courseName:     string;
   instructor:     string;
   term:           string;
+  meetingDate:    string;
 }
