@@ -1,10 +1,10 @@
 import * as React      from 'react';
 import * as Animatable from 'react-native-animatable';
+import * as t from 'tcomb-form-native';
 import { connect }     from 'react-redux';
 import { Dispatch }    from 'redux';
 import { StyleSheet, View, ScrollView }  from 'react-native';
 import {
-  Badge,
   Button,
   Container,
   Content,
@@ -24,6 +24,7 @@ import { Card }                          from '../../shared/ui';
 import { DropdownMenu, Spinner }         from '../../shared/ui';
 import { DropdownMenuItem }              from '../../shared/ui/dropdown-menu';
 import { StudyGroupsFilter }             from '../../models/filters/study-groups.filter';
+import { SearchStudyGroupsForm }         from '../../models/forms/search-study-groups.form';
 
 interface SearchStudyGroupsProps {
   studyGroups:    any;
@@ -36,14 +37,18 @@ interface SearchStudyGroupsProps {
 
 interface SearchStudyGroupsState  {
   searchValue:      string;
+  filterFormValue:  any;
   dropdownMenuOpen: boolean;
   showFilters:      boolean;
   filter:           StudyGroupsFilter;
 }
 
+const Form = t.form.Form;
+
 class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchStudyGroupsState> {
   public state: Readonly<SearchStudyGroupsState> = {
     searchValue:      '',
+    filterFormValue: '',
     dropdownMenuOpen: false,
     showFilters:      false,
     filter: {
@@ -59,6 +64,7 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
     }
   };
   public searchInputRef: any;
+  public filtersRef: any;
 
   public dropdownMenuItems: DropdownMenuItem[] = [
     {
@@ -84,14 +90,99 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
     navService.navigate(route);
   };
 
+  public onFiltersBtnPress = (showFilters: boolean): void => {
+    if (showFilters) {
+      this.setState({ showFilters });
+      this.filtersRef.slideInDown(250);
+    }
+    else {
+      this.filtersRef.fadeOut(100).then(() => this.setState({ showFilters }));
+    }
+  };
+
+  public onApplyFilters = (): void => {
+    const value = this.refs.filtersForm.getValue();
+    if (!value) return;
+
+    const {
+      name: courseName,
+      code: courseCode,
+      instructor,
+      term
+    } = value;
+
+    const filter = {
+      ...this.state.filter,
+      courseCode: courseCode || '',
+      courseName: courseName || '',
+      instructor: instructor || '',
+      term: term || ''
+    };
+
+    this.setState({ filter });
+    this.onFiltersBtnPress(false);
+    this.props.getStudyGroups(filter);
+  };
+
+  public onClearFilters = (): void => {
+    const filterFormValue = {
+      courseName: '',
+      courseCode: '',
+      instructor: '',
+      term: ''
+    }
+
+    this.setState({
+      ...this.state,
+      filterFormValue,
+      filter: {
+        ...this.state.filter,
+        ...filterFormValue
+      }
+    });
+
+    this.onFiltersBtnPress(false);
+  };
+
   public renderFilters = (): JSX.Element => (
-    <View>
-      <Animatable.View animation="slideInLeft" duration={500}>
-        <Card>
-          <Text>filters</Text>
-        </Card>
-      </Animatable.View>
-    </View>
+    <Animatable.View
+      style={{display: !this.state.showFilters ? 'none' : 'flex'}}
+      ref={(ref: any) => this.filtersRef = ref}>
+      <Card cardStyle={{height: 'auto'}}>
+        <React.Fragment>
+          <Form
+            ref="filtersForm"
+            type={SearchStudyGroupsForm.type}
+            options={SearchStudyGroupsForm.options}
+            value={this.state.filterFormValue}
+            onChange={(value: string) => this.setState({ filterFormValue: value })} />
+          <View style={{flex: 1, flexDirection: 'row'}}>
+            <View style={{flex: 0.5, marginRight: 7.5}}>
+              <Button
+                style={[
+                  {alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center'},
+                  globalStyles.btn,
+                  globalStyles.btnSecondary
+                ]}
+                onPress={this.onClearFilters}>
+                <Text style={globalStyles.btnText}>clear</Text>
+              </Button>
+            </View>
+            <View style={{flex: 0.5, marginLeft: 7.5}}>
+              <Button
+                style={[
+                  {alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center'},
+                  globalStyles.btn,
+                  globalStyles.btnSuccess
+                ]}
+                onPress={this.onApplyFilters}>
+                <Text style={globalStyles.btnText}>apply</Text>
+              </Button>
+            </View>
+          </View>
+        </React.Fragment>
+      </Card>
+    </Animatable.View>
   );
 
   public render(): JSX.Element {
@@ -147,13 +238,13 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
               <Button
                 style={styles.filterBtn}
                 disabled={this.state.dropdownMenuOpen}
-                onPress={() => this.setState({ showFilters: !this.state.showFilters })}
+                onPress={() => this.onFiltersBtnPress(!this.state.showFilters)}
                 transparent>
                 <Text style={styles.filtersBtnText}>filters</Text>
               </Button>
             </View>
           </View>
-          {this.state.showFilters && this.renderFilters()}
+          {this.renderFilters()}
           {this.props.studyGroups
             ? <ScrollView contentContainerStyle={{flex: 1}} style={{flex: 0.975}}>
                 <Animatable.View animation="slideInUp" duration={500}>
