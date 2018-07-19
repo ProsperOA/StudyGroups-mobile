@@ -1,24 +1,35 @@
 
-import { AddCourseForm } from './add-course.form';
+import * as t from 'tcomb-form-native';
+
+import { flatInputStyleSheet } from '../../shared/styles';
 
 export const SearchStudyGroupsForm = {
-  ...AddCourseForm,
+  type: t.struct({
+    name:       t.maybe(t.String),
+    code:       t.maybe(t.String),
+    instructor: t.maybe(t.String),
+    term:       t.maybe(t.String),
+  }),
   options: {
-    ...AddCourseForm.options,
+    stylesheet:  flatInputStyleSheet,
+    auto:       'labels',
     fields: {
-      ...AddCourseForm.options.fields,
       name: {
-        label: 'Course Name'
+        maxLength:  20,
+        label:     'Name'
       },
       code: {
-        label: 'Course Code',
-        help: 'e.g. ENGL 1234'
+        maxLength:  10,
+        label:     'Code',
+        help:      'e.g. ENGL 1234'
       },
       instructor: {
-        label: 'Instructor'
+        maxLength:  20,
+        label:     'Instructor'
       },
       term: {
-        label: 'term'
+        maxLength: 10,
+        label:     'Term'
       }
     }
   }
