@@ -32,7 +32,7 @@ import globalStyles, {
 } from '../../shared/styles';
 
 interface SearchStudyGroupsProps {
-  studyGroups:    string;
+  studyGroups:    any;
   loading:        boolean;
   getStudyGroups: (filter: StudyGroupsFilter) => (
     Dispatch<actions.IGetStudyGroupsSuccess | actions.IGetStudyGroupsFailed>
@@ -259,6 +259,7 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
         <Content scrollEnabled={false} style={{flex: 1, padding: 15}}>
           <View style={{flex: 0.025, flexDirection: 'row'}}>
             <View style={{flex: 0.5}}>
+              {/* TODO: change label to number of filters applied */}
               <Text># results</Text>
             </View>
             <View style={{flex: 0.5}}>
