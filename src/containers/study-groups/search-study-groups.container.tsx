@@ -94,7 +94,16 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
         studyGroupName: this.state.searchValue
       }
     }, () => this.props.getStudyGroups(this.state.filter));
+  };
 
+  public onClearSearchValue = (): void => {
+    this.setState({
+      searchValue: '',
+      filter: {
+        ...this.state.filter,
+        studyGroupName: ''
+      }
+    }, () => this.props.getStudyGroups(this.state.filter));
   };
 
   public onDropdownMenuItemPress = (route: string): void => {
@@ -230,7 +239,7 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
               ? <Animatable.View animation="fadeIn" duration={250}>
                   <Button
                     style={{height: 30, paddingTop: 0, paddingBottom: 0}}
-                    onPress={() => this.setState({ searchValue: '' })}
+                    onPress={this.onClearSearchValue}
                     transparent>
                     <Icon name="close" style={{color: DARK_GRAY}} />
                   </Button>
