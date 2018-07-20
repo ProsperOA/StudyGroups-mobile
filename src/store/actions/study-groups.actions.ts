@@ -44,10 +44,10 @@ export const getStudyGroupsStart: ActionCreator<IGetStudyGroupsStart> =
 export const getStudyGroups = (filter: StudyGroupsFilter): any =>
   (dispatch: Dispatch<IGetStudyGroupsSuccess | IGetStudyGroupsFailed>): void => {
     const {
-      name,
       location,
       instructor,
       term,
+      studyGroupName: study_group_name,
       pageIndex:      page_index,
       pageSize:       page_size,
       availableSpots: available_spots,
@@ -59,7 +59,7 @@ export const getStudyGroups = (filter: StudyGroupsFilter): any =>
     const data = {
       page_index,
       page_size,
-      name,
+      study_group_name,
       course_code,
       course_name,
       instructor,

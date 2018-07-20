@@ -32,7 +32,7 @@ import globalStyles, {
 } from '../../shared/styles';
 
 interface SearchStudyGroupsProps {
-  studyGroups:    any;
+  studyGroups:    string;
   loading:        boolean;
   getStudyGroups: (filter: StudyGroupsFilter) => (
     Dispatch<actions.IGetStudyGroupsSuccess | actions.IGetStudyGroupsFailed>
@@ -41,7 +41,7 @@ interface SearchStudyGroupsProps {
 }
 
 interface SearchStudyGroupsState  {
-  searchValue:      string;
+  searchValue:      any;
   filterFormValue:  any;
   dropdownMenuOpen: boolean;
   showFilters:      boolean;
@@ -52,14 +52,14 @@ const Form = t.form.Form;
 
 class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchStudyGroupsState> {
   public state: Readonly<SearchStudyGroupsState> = {
-    searchValue:      '',
+    searchValue: '',
     filterFormValue: '',
     dropdownMenuOpen: false,
     showFilters:      false,
     filter: {
       pageIndex: 0,
       pageSize: 30,
-      name: '',
+      studyGroupName: '',
       availableSpots: 1,
       location: '',
       courseCode: '',
@@ -87,8 +87,14 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
     this.props.getStudyGroups(this.state.filter);
   }
 
-  public onSearchStudyGroups = (event: any): void => {
-    this.setState({ searchValue: event.nativeEvent.text });
+  public onSearchStudyGroups = (): void => {
+    this.setState({
+      filter: {
+        ...this.state.filter,
+        studyGroupName: this.state.searchValue
+      }
+    }, () => this.props.getStudyGroups(this.state.filter));
+
   };
 
   public onDropdownMenuItemPress = (route: string): void => {
@@ -219,7 +225,7 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
               value={this.state.searchValue}
               style={{color: DARK_GRAY}}
               disabled={this.state.dropdownMenuOpen}
-              onChange={this.onSearchStudyGroups} />
+              onChangeText={(searchValue: string) => this.setState({ searchValue })} />
             {this.state.searchValue
               ? <Animatable.View animation="fadeIn" duration={250}>
                   <Button
@@ -231,7 +237,7 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
                 </Animatable.View>
               : null}
           </Item>
-          <Button transparent>
+          <Button onPress={this.onSearchStudyGroups} transparent>
             <Text style={styles.searchBtnText}>search</Text>
           </Button>
         </Header>
