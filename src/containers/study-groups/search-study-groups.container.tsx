@@ -187,7 +187,6 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
   };
 
   public renderFilters = (): JSX.Element => (
-    // FIXME: can't scroll past buttons
     <Animatable.View
       style={{display: !this.state.showFilters ? 'none' : 'flex'}}
       ref={(ref: any) => this.filtersRef = ref}>
