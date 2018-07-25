@@ -274,7 +274,9 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
         <Content scrollEnabled={false} style={{flex: 1, padding: 15}}>
           <View style={{flex: 0.025, flexDirection: 'row'}}>
             <View style={{flex: 0.5}}>
-              <Text>{this.state.filtersApplied} filters applied</Text>
+              <Text style={{color: DARK_GRAY, fontFamily: 'rubik-regular'}}>
+                {this.state.filtersApplied} filters applied
+              </Text>
             </View>
             <View style={{flex: 0.5}}>
               <Button
