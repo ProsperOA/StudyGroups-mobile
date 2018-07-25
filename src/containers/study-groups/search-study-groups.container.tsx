@@ -1,6 +1,7 @@
 import * as React      from 'react';
 import * as Animatable from 'react-native-animatable';
 import * as _          from 'lodash';
+import * as t          from 'tcomb-form-native';
 import { connect }     from 'react-redux';
 import { Dispatch }    from 'redux';
 import { StyleSheet, View, ScrollView }  from 'react-native';
