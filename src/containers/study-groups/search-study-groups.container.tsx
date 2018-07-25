@@ -272,8 +272,8 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
           viewAnimation="fadeIn"
           cardAnimation="slideInLeft"
           closed={() => this.setState({ dropdownMenuOpen: false })} />
-        <Content scrollEnabled={false} style={{flex: 1, padding: 15}}>
-          <View style={{flex: 0.025, flexDirection: 'row'}}>
+        <Content style={{flex: 1, padding: 15}}>
+          <View style={{flex: 0.025, flexDirection: 'row', marginBottom: 10}}>
             <View style={{flex: 0.5}}>
               <Text style={{color: DARK_GRAY, fontFamily: 'rubik-regular'}}>
                 {this.state.filtersApplied} filters applied
@@ -295,14 +295,14 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
               </Button>
             </View>
           </View>
-          <ScrollView contentContainerStyle={{flex: 1}} style={{flex: 0.975}}>
+          <View style={{flex: 0.975, paddingBottom: 15}}>
             {this.renderFilters()}
             {this.props.studyGroups
               ? <Animatable.View animation="slideInUp" duration={500}>
                   <StudyGroupsCard studyGroups={this.props.studyGroups} />
                 </Animatable.View>
               : <Text>no study groups found</Text>}
-          </ScrollView>
+          </View>
         </Content>
       </Container>
     );
