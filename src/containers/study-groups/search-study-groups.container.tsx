@@ -1,6 +1,6 @@
 import * as React      from 'react';
 import * as Animatable from 'react-native-animatable';
-import * as t from 'tcomb-form-native';
+import * as _          from 'lodash';
 import { connect }     from 'react-redux';
 import { Dispatch }    from 'redux';
 import { StyleSheet, View, ScrollView }  from 'react-native';
@@ -40,34 +40,37 @@ interface SearchStudyGroupsProps {
   getStudyGroupsStart: () => Dispatch<actions.IGetStudyGroupsStart>;
 }
 
-interface SearchStudyGroupsState  {
+interface SearchStudyGroupsState {
   searchValue:      any;
   filterFormValue:  any;
   dropdownMenuOpen: boolean;
   showFilters:      boolean;
   filter:           StudyGroupsFilter;
+  filtersApplied:   number;
 }
 
 const Form = t.form.Form;
 
 class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchStudyGroupsState> {
+  public pristineFilter = {
+    pageIndex: 0,
+    pageSize: 30,
+    studyGroupName: '',
+    availableSpots: 1,
+    location: '',
+    courseCode: '',
+    courseName: '',
+    instructor: '',
+    term: '',
+    meetingDate: ''
+  };
   public state: Readonly<SearchStudyGroupsState> = {
     searchValue: '',
     filterFormValue: '',
     dropdownMenuOpen: false,
     showFilters:      false,
-    filter: {
-      pageIndex: 0,
-      pageSize: 30,
-      studyGroupName: '',
-      availableSpots: 1,
-      location: '',
-      courseCode: '',
-      courseName: '',
-      instructor: '',
-      term: '',
-      meetingDate: ''
-    }
+    filter:           this.pristineFilter,
+    filtersApplied:   0
   };
   public searchInputRef: any;
   public filtersRef: any;
@@ -144,7 +147,19 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
       meetingDate: meetingDate || ''
     };
 
-    this.setState({ filter });
+    this.setState({ filter }, () => {
+      const f = _.omit({
+        ...this.state.filter
+      }, ['pageIndex', 'pageSize']);
+
+      let filtersApplied = 0;
+      Object.keys(f).forEach(key => {
+        if (f[key] !== this.pristineFilter[key]) filtersApplied += 1;
+      });
+
+      this.setState({ filtersApplied });
+    });
+
     this.onFiltersBtnPress(false);
     this.props.getStudyGroups(filter);
   };
@@ -259,8 +274,7 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
         <Content scrollEnabled={false} style={{flex: 1, padding: 15}}>
           <View style={{flex: 0.025, flexDirection: 'row'}}>
             <View style={{flex: 0.5}}>
-              {/* TODO: change label to number of filters applied */}
-              <Text># results</Text>
+              <Text>{this.state.filtersApplied} filters applied</Text>
             </View>
             <View style={{flex: 0.5}}>
               <Button
