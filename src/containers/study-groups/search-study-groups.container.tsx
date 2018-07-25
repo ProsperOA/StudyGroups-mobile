@@ -29,7 +29,8 @@ import globalStyles, {
   INFO,
   DARK_GRAY,
   PRIMARY,
-  WARNING_DARK
+  WARNING_DARK,
+  SUCCESS
 } from '../../shared/styles';
 
 interface SearchStudyGroupsProps {
@@ -190,7 +191,7 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
     <Animatable.View
       style={{display: !this.state.showFilters ? 'none' : 'flex'}}
       ref={(ref: any) => this.filtersRef = ref}>
-      <Card cardStyle={{height: 'auto'}}>
+      <Card cardStyle={{height: 'auto', shadowColor: PRIMARY}}>
         <React.Fragment>
           <Form
             ref="filtersForm"
