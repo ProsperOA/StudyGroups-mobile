@@ -10,6 +10,15 @@ import navService               from '../../shared/services/navigation.service';
 import { ChangePassword }       from '../../models/change-password.model';
 import { ProfileInfo }          from '../../models/profile-info.model';
 
+export interface IGetUserSuccess {
+  type:    types.GET_USER_SUCCESS,
+  payload: any;
+}
+
+export interface IGetUserFailed {
+  type: types.GET_USER_FAILED
+}
+
 export interface IUpdateProfileStart {
   type: types.UPDATE_PROFILE_START
 }
@@ -60,6 +69,8 @@ export interface IUpdateCoursesFailed {
 }
 
 export type UserAction =
+  | IGetUserSuccess
+  | IGetUserFailed
   | IUpdateProfileStart
   | IUpdateProfileSuccess
   | IUpdateProfileFailed
@@ -71,6 +82,17 @@ export type UserAction =
   | IDeleteAccountFailed
   | IUpdateCoursesSuccess
   | IUpdateCoursesFailed;
+
+const getUserSuccess: ActionCreator<IGetUserSuccess> =
+  (user: any): IGetUserSuccess => ({
+    type:    types.GET_USER_SUCCESS,
+    payload: user
+});
+
+const getUserFailed: ActionCreator<IGetUserFailed> =
+  (user: any): IGetUserFailed => ({
+    type: types.GET_USER_FAILED
+});
 
 const updateProfileSuccess: ActionCreator<IUpdateProfileSuccess> =
  (user: any): IUpdateProfileSuccess => ({
@@ -131,6 +153,15 @@ export const updateProfileStart: ActionCreator<IUpdateProfileStart> =
   (): IUpdateProfileStart => ({
     type: types.UPDATE_PROFILE_START
 });
+
+export const getUser = (userID: string): any =>
+  (dispatch: Dispatch<IGetUserSuccess | IGetUserFailed>) => {
+    axios.get(`/users/${userID}`)
+      .then(({ data }: AxiosResponse) => dispatch(getUserSuccess(data.data)))
+      .catch(({ response }: AxiosError) => {
+        dispatch(getUserFailed(response ? response.data.message : 'unable to get user'));
+      });
+};
 
 export const updateProfile = (userID: string, profileInfo: ProfileInfo): any =>
   (dispatch: Dispatch<UserAction>) => {

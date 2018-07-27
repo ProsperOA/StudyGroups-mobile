@@ -20,6 +20,8 @@ export {
 
 export {
   UserAction,
+  IGetUserSuccess,
+  IGetUserFailed,
   IUpdateProfileStart,
   IUpdateProfileSuccess,
   IUpdateProfileFailed,
@@ -32,6 +34,7 @@ export {
   IUpdateCoursesSuccess,
   IUpdateCoursesFailed,
 
+  getUser,
   updateProfileStart,
   updateProfile,
   uploadAvatar,
@@ -45,7 +48,10 @@ export {
   IGetStudyGroupsStart,
   IGetStudyGroupsSuccess,
   IGetStudyGroupsFailed,
+  IGetStudyGroupMembersSuccess,
+  IGetStudyGroupMembersFailed,
 
   getStudyGroups,
-  getStudyGroupsStart
+  getStudyGroupsStart,
+  getStudyGroupMembers
 } from './study-groups.actions';

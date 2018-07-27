@@ -20,10 +20,21 @@ export interface IGetStudyGroupsFailed {
   type: types.GET_STUDY_GROUPS_FAILED
 }
 
+export interface IGetStudyGroupMembersSuccess {
+  type:    types.GET_STUDY_GROUP_MEMBERS_SUCCESS,
+  payload: any;
+}
+
+export interface IGetStudyGroupMembersFailed {
+  type: types.GET_STUDY_GROUP_MEMBERS_FAILED
+}
+
 export type StudyGroupsAction =
   | IGetStudyGroupsStart
   | IGetStudyGroupsSuccess
-  | IGetStudyGroupsFailed;
+  | IGetStudyGroupsFailed
+  | IGetStudyGroupMembersSuccess
+  | IGetStudyGroupMembersFailed;
 
 const getStudyGroupsSuccess: ActionCreator<IGetStudyGroupsSuccess> =
   (studyGroups: any): IGetStudyGroupsSuccess => ({
@@ -34,6 +45,17 @@ const getStudyGroupsSuccess: ActionCreator<IGetStudyGroupsSuccess> =
 const getStudyGroupsFailed: ActionCreator<IGetStudyGroupsFailed> =
   (): IGetStudyGroupsFailed => ({
     type: types.GET_STUDY_GROUPS_FAILED
+});
+
+const getStudyGroupMembersSuccess: ActionCreator<IGetStudyGroupMembersSuccess> =
+  (members: any): IGetStudyGroupMembersSuccess => ({
+    type: types.GET_STUDY_GROUP_MEMBERS_SUCCESS,
+    payload: members
+});
+
+const getStudyGroupMembersFailed: ActionCreator<IGetStudyGroupMembersFailed> =
+  (): IGetStudyGroupMembersFailed => ({
+    type: types.GET_STUDY_GROUP_MEMBERS_FAILED
 });
 
 export const getStudyGroupsStart: ActionCreator<IGetStudyGroupsStart> =
@@ -84,3 +106,10 @@ export const getStudyGroups = (filter: StudyGroupsFilter): any =>
         dispatch(getStudyGroupsFailed());
       });
 };
+
+export const getStudyGroupMembers = (studyGroupID: string): any =>
+  (dispatch: Dispatch<IGetStudyGroupMembersSuccess | IGetStudyGroupMembersFailed>): void => {
+    axios.get(`/study_groups/${studyGroupID}/members`)
+      .then(({ data }: AxiosResponse) => dispatch(getStudyGroupMembersSuccess(data.data)))
+      .catch(() => dispatch(getStudyGroupMembersFailed()));
+}

@@ -4,7 +4,10 @@ import * as _          from 'lodash';
 import * as t          from 'tcomb-form-native';
 import { connect }     from 'react-redux';
 import { Dispatch }    from 'redux';
-import { StyleSheet, View, ScrollView }  from 'react-native';
+import {
+  StyleSheet,
+  View
+}  from 'react-native';
 import {
   Button,
   Container,
@@ -16,21 +19,20 @@ import {
   Text
 } from 'native-base';
 
-import * as actions                      from '../../store/actions';
-import navService                        from '../../shared/services/navigation.service';
-import StudyGroupsCard                   from './study-groups-card.component';
-import { AppState }                      from '../../store/reducers';
-import { Card }                          from '../../shared/ui';
-import { DropdownMenu, Spinner }         from '../../shared/ui';
-import { DropdownMenuItem }              from '../../shared/ui/dropdown-menu';
-import { StudyGroupsFilter }             from '../../models/filters/study-groups.filter';
-import { SearchStudyGroupsForm }         from '../../models/forms/search-study-groups.form';
+import * as actions              from '../../store/actions';
+import navService                from '../../shared/services/navigation.service';
+import StudyGroupsCard           from './study-groups-card.component';
+import { AppState }              from '../../store/reducers';
+import { Card }                  from '../../shared/ui';
+import { DropdownMenu, Spinner } from '../../shared/ui';
+import { DropdownMenuItem }      from '../../shared/ui/dropdown-menu';
+import { StudyGroupsFilter }     from '../../models/filters/study-groups.filter';
+import { SearchStudyGroupsForm } from '../../models/forms/search-study-groups.form';
 import globalStyles, {
   INFO,
   DARK_GRAY,
   PRIMARY,
-  WARNING_DARK,
-  SUCCESS
+  WARNING_DARK
 } from '../../shared/styles';
 
 interface SearchStudyGroupsProps {
