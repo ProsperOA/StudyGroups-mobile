@@ -9,17 +9,30 @@ import {
 } from 'react-navigation';
 
 import Auth                    from './containers/auth.container';
-import enhancer                from './store/middlewares';
+import Home                    from './containers/home.container';
 import SearchStudyGroups       from './containers/study-groups/search-study-groups.container';
 import Messages                from './containers/messages.container';
 import navService              from './shared/services/navigation.service';
-import rootReducer             from './store/reducers';
 import User                    from './containers/user/user.component';
+import enhancer                from './store/middlewares';
+import rootReducer             from './store/reducers';
 import { PRIMARY, LIGHT_GRAY } from './shared/styles';
 import { TabIcon             } from './shared/ui/tab-icon';
 
 const TabsNavigator = createBottomTabNavigator(
   {
+    Home: {
+      screen: Home,
+      navigationOptions: {
+        tabBarIcon: (color: any) => (
+          <TabIcon
+            type="FontAwesome"
+            name="home"
+            color={color}
+            size={30} />
+        )
+      }
+    },
     SearchStudyGroups: {
       screen: SearchStudyGroups,
       navigationOptions: {
