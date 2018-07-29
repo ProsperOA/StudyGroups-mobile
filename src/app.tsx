@@ -39,7 +39,7 @@ const TabsNavigator = createBottomTabNavigator(
         tabBarIcon: (color: any) => (
           <TabIcon
             type="FontAwesome"
-            name="users"
+            name="search"
             color={color}
             size={25} />
         )
