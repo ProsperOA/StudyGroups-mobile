@@ -24,8 +24,7 @@ import navService                from '../../shared/services/navigation.service'
 import StudyGroupsCard           from './study-groups-card.component';
 import { AppState }              from '../../store/reducers';
 import { Card }                  from '../../shared/ui';
-import { DropdownMenu, Spinner } from '../../shared/ui';
-import { DropdownMenuItem }      from '../../shared/ui/dropdown-menu';
+import { Spinner }               from '../../shared/ui';
 import { StudyGroupsFilter }     from '../../models/filters/study-groups.filter';
 import { SearchStudyGroupsForm } from '../../models/forms/search-study-groups.form';
 import globalStyles, {
@@ -78,16 +77,6 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
   };
   public searchInputRef: any;
   public filtersRef: any;
-
-  public dropdownMenuItems: DropdownMenuItem[] = [
-    {
-      value: 'search groups',
-      onPress: () => this.onDropdownMenuItemPress('SearchStudyGroups')
-    },
-    {
-      value: 'manage groups'
-    }
-  ];
 
   public componentDidMount(): void {
     this.props.getStudyGroupsStart();
@@ -236,14 +225,6 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
     return (
       <Container>
         <Header style={globalStyles.primaryBG} searchBar>
-          <Button
-            onPress={() => this.setState({ dropdownMenuOpen: !this.state.dropdownMenuOpen })}
-            transparent>
-            <Icon
-              type="FontAwesome"
-              name="ellipsis-v"
-              style={{color: '#fff', marginLeft: 0}} />
-          </Button>
           <Item style={styles.searchBar}>
             <Icon type="FontAwesome" name="search" style={{color: DARK_GRAY}} />
             <Input
@@ -268,12 +249,6 @@ class SearchStudyGroups extends React.Component<SearchStudyGroupsProps, SearchSt
             <Text style={styles.searchBtnText}>search</Text>
           </Button>
         </Header>
-        <DropdownMenu
-          open={this.state.dropdownMenuOpen}
-          items={this.dropdownMenuItems}
-          viewAnimation="fadeIn"
-          cardAnimation="slideInLeft"
-          closed={() => this.setState({ dropdownMenuOpen: false })} />
         <Content style={{flex: 1, padding: 15}}>
           <View style={{flex: 0.025, flexDirection: 'row', marginBottom: 10}}>
             <View style={{flex: 0.5}}>
