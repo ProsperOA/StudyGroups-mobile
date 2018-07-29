@@ -50,8 +50,11 @@ export {
   IGetStudyGroupsFailed,
   IGetStudyGroupMembersSuccess,
   IGetStudyGroupMembersFailed,
+  IGetUserStudyGroupsSuccess,
+  IGetUserStudyGroupsFailed,
 
   getStudyGroups,
   getStudyGroupsStart,
-  getStudyGroupMembers
+  getStudyGroupMembers,
+  getUserStudyGroups
 } from './study-groups.actions';

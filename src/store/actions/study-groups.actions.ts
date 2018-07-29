@@ -2,10 +2,11 @@ import { ActionCreator, Dispatch }   from 'redux';
 import { AxiosResponse, AxiosError } from 'axios';
 
 import * as notificationService from '../../shared/services/notification.service';
-import { StudyGroupsFilter } from '../../models/filters/study-groups.filter';
+import { StudyGroupsFilter }    from '../../models/filters/study-groups.filter';
 
-import * as types from './types';
-import axios      from '../../shared/axios';
+import * as types     from './types';
+import axios          from '../../shared/axios';
+import { BaseFilter } from '../../models/filters/base.filter';
 
 export interface IGetStudyGroupsStart {
   type: types.GET_STUDY_GROUPS_START
@@ -29,12 +30,23 @@ export interface IGetStudyGroupMembersFailed {
   type: types.GET_STUDY_GROUP_MEMBERS_FAILED
 }
 
+export interface IGetUserStudyGroupsSuccess {
+  type:    types.GET_USER_STUDY_GROUPS_SUCCESS;
+  payload: any;
+}
+
+export interface IGetUserStudyGroupsFailed {
+  type: types.GET_USER_STUDY_GROUPS_FAILED
+}
+
 export type StudyGroupsAction =
   | IGetStudyGroupsStart
   | IGetStudyGroupsSuccess
   | IGetStudyGroupsFailed
   | IGetStudyGroupMembersSuccess
-  | IGetStudyGroupMembersFailed;
+  | IGetStudyGroupMembersFailed
+  | IGetUserStudyGroupsSuccess
+  | IGetUserStudyGroupsFailed;
 
 const getStudyGroupsSuccess: ActionCreator<IGetStudyGroupsSuccess> =
   (studyGroups: any): IGetStudyGroupsSuccess => ({
@@ -56,6 +68,17 @@ const getStudyGroupMembersSuccess: ActionCreator<IGetStudyGroupMembersSuccess> =
 const getStudyGroupMembersFailed: ActionCreator<IGetStudyGroupMembersFailed> =
   (): IGetStudyGroupMembersFailed => ({
     type: types.GET_STUDY_GROUP_MEMBERS_FAILED
+});
+
+const getUserStudyGroupsSuccess: ActionCreator<IGetUserStudyGroupsSuccess> =
+  (studyGroups: any): IGetUserStudyGroupsSuccess => ({
+    type:    types.GET_USER_STUDY_GROUPS_SUCCESS,
+    payload: studyGroups
+});
+
+const getUserStudyGroupsFailed: ActionCreator<IGetUserStudyGroupsFailed> =
+  (): IGetUserStudyGroupsFailed => ({
+    type: types.GET_USER_STUDY_GROUPS_FAILED
 });
 
 export const getStudyGroupsStart: ActionCreator<IGetStudyGroupsStart> =
@@ -112,4 +135,16 @@ export const getStudyGroupMembers = (studyGroupID: string): any =>
     axios.get(`/study_groups/${studyGroupID}/members`)
       .then(({ data }: AxiosResponse) => dispatch(getStudyGroupMembersSuccess(data.data)))
       .catch(() => dispatch(getStudyGroupMembersFailed()));
-}
+};
+
+export const getUserStudyGroups = (userID: string, filter: BaseFilter): any =>
+  (dispatch: Dispatch<IGetUserStudyGroupsSuccess | IGetUserStudyGroupsFailed>): void => {
+    const data = {
+      page_index: filter.pageIndex,
+      pageSize:   filter.pageSize
+    };
+
+    axios.get(`/users/${userID}/study_groups`, {params: data})
+      .then(({ data }: AxiosResponse) => dispatch(getUserStudyGroupsSuccess(data.data)))
+      .catch(() => dispatch(getUserStudyGroupsFailed()));
+};
