@@ -10,7 +10,7 @@ interface CardProps {
   key?: string | number;
   cardStyle?: any;
   headerText?: string;
-  children: JSX.Element;
+  children: JSX.Element | JSX.Element[];
 }
 
 export const Card = (props: CardProps): JSX.Element => (
