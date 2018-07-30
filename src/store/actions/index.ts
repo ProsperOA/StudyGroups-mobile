@@ -52,9 +52,12 @@ export {
   IGetStudyGroupMembersFailed,
   IGetUserStudyGroupsSuccess,
   IGetUserStudyGroupsFailed,
+  IUpdateStudyGroupSuccess,
+  IUpdateStudyGroupFailed,
 
   getStudyGroups,
   getStudyGroupsStart,
   getStudyGroupMembers,
-  getUserStudyGroups
+  getUserStudyGroups,
+  updateStudyGroup
 } from './study-groups.actions';

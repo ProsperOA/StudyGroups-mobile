@@ -1,12 +1,12 @@
+import * as _                        from 'lodash';
 import { ActionCreator, Dispatch }   from 'redux';
 import { AxiosResponse, AxiosError } from 'axios';
 
+import * as types               from './types';
 import * as notificationService from '../../shared/services/notification.service';
+import axios                    from '../../shared/axios';
+import { BaseFilter }           from '../../models/filters/base.filter';
 import { StudyGroupsFilter }    from '../../models/filters/study-groups.filter';
-
-import * as types     from './types';
-import axios          from '../../shared/axios';
-import { BaseFilter } from '../../models/filters/base.filter';
 
 export interface IGetStudyGroupsStart {
   type: types.GET_STUDY_GROUPS_START
@@ -39,6 +39,15 @@ export interface IGetUserStudyGroupsFailed {
   type: types.GET_USER_STUDY_GROUPS_FAILED
 }
 
+export interface IUpdateStudyGroupSuccess {
+  type:    types.UPDATE_STUDY_GROUP_SUCCESS;
+  payload: any;
+}
+
+export interface IUpdateStudyGroupFailed {
+  type: types.UPDATE_STUDY_GROUP_FAILED
+}
+
 export type StudyGroupsAction =
   | IGetStudyGroupsStart
   | IGetStudyGroupsSuccess
@@ -46,7 +55,9 @@ export type StudyGroupsAction =
   | IGetStudyGroupMembersSuccess
   | IGetStudyGroupMembersFailed
   | IGetUserStudyGroupsSuccess
-  | IGetUserStudyGroupsFailed;
+  | IGetUserStudyGroupsFailed
+  | IUpdateStudyGroupSuccess
+  | IUpdateStudyGroupFailed;
 
 const getStudyGroupsSuccess: ActionCreator<IGetStudyGroupsSuccess> =
   (studyGroups: any): IGetStudyGroupsSuccess => ({
@@ -84,6 +95,17 @@ const getUserStudyGroupsFailed: ActionCreator<IGetUserStudyGroupsFailed> =
 export const getStudyGroupsStart: ActionCreator<IGetStudyGroupsStart> =
   (): IGetStudyGroupsStart => ({
     type: types.GET_STUDY_GROUPS_START
+});
+
+export const updateStudyGroupSuccess: ActionCreator<IUpdateStudyGroupSuccess> =
+  (studyGroup: any): IUpdateStudyGroupSuccess => ({
+    type:    types.UPDATE_STUDY_GROUP_SUCCESS,
+    payload: studyGroup
+});
+
+export const updateStudyGroupFailed: ActionCreator<IUpdateStudyGroupFailed> =
+  (): IUpdateStudyGroupFailed => ({
+    type: types.UPDATE_STUDY_GROUP_FAILED
 });
 
 export const getStudyGroups = (filter: StudyGroupsFilter): any =>
@@ -147,4 +169,11 @@ export const getUserStudyGroups = (userID: string, filter: BaseFilter): any =>
     axios.get(`/users/${userID}/study_groups`, {params: data})
       .then(({ data }: AxiosResponse) => dispatch(getUserStudyGroupsSuccess(data.data)))
       .catch(() => dispatch(getUserStudyGroupsFailed()));
+};
+
+export const updateStudyGroup = (studyGroup: any): any =>
+  (dispatch: Dispatch<IUpdateStudyGroupSuccess | IUpdateStudyGroupFailed>): void => {
+    axios.patch(`/study_groups/${studyGroup.id}`, studyGroup)
+      .then(({ data }: AxiosResponse) => dispatch(updateStudyGroupSuccess(data.data)))
+      .catch(() => dispatch(updateStudyGroupFailed()));
 };

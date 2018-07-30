@@ -5,7 +5,8 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View
+  View,
+  TouchableOpacity
 } from 'react-native';
 import {
   Button,
@@ -16,6 +17,7 @@ import {
 } from 'native-base';
 
 import * as actions    from '../store/actions';
+import ManageStudyGroupModal from './modals/manage-study-group.modal';
 import globalStyles, {
   DARK_GRAY,
   GRAY,
@@ -34,10 +36,15 @@ interface HomeProps {
   getUserStudyGroups: (userID: string, filter: BaseFilter) => (
     Dispatch<actions.IGetUserStudyGroupsSuccess | actions.IGetUserStudyGroupsFailed>
   );
+  updateStudyGroup: (studyGroup: any) => (
+    Dispatch<actions.IUpdateStudyGroupSuccess | actions.IUpdateStudyGroupFailed>
+  );
 }
 
 interface HomeState {
-  userStudyGroupsFilter: BaseFilter
+  userStudyGroupsFilter:     BaseFilter;
+  focusedStudyGroup:         any;
+  manageStudyGroupModalOpen: boolean;
 }
 
 class Home extends React.Component<HomeProps, HomeState> {
@@ -45,7 +52,9 @@ class Home extends React.Component<HomeProps, HomeState> {
     userStudyGroupsFilter: {
       pageIndex: 0,
       pageSize: 30
-    }
+    },
+    manageStudyGroupModalOpen: false,
+    focusedStudyGroup:         null
   };
 
   public componentWillMount(): void {
@@ -58,18 +67,29 @@ class Home extends React.Component<HomeProps, HomeState> {
     this.props.getUserStudyGroups(userID, filter);
   }
 
+  public onUserStudyGroupPress = (focusedStudyGroup: any): void => {
+    this.setState({
+      focusedStudyGroup,
+      manageStudyGroupModalOpen: true
+    });
+  };
+
+  public onUpdateStudyGroup = (studyGroup: any): void => {
+    this.props.updateStudyGroup(studyGroup);
+  };
+
   public renderUsersGroups = (): JSX.Element => {
     const { userGroups } = this.props;
 
     return (
       <React.Fragment>
         <View style={{flex: 0.2, flexDirection: 'row', marginBottom: 15}}>
-          <View style={{flex: 0.5}}>
+          <View style={{flex: 0.5, paddingLeft: 15}}>
             <Text style={styles.sectionHeader}>
               Your Groups
             </Text>
           </View>
-          <View style={{flex: 0.5}}>
+          <View style={{flex: 0.5, paddingRight: 15}}>
             <Button
               style={{alignSelf: 'flex-end', paddingTop: 0, paddingBottom: 0, height: 16}}
               transparent>
@@ -90,21 +110,23 @@ class Home extends React.Component<HomeProps, HomeState> {
               horizontal
               pagingEnabled>
               {userGroups.map((group: any, index: number) => (
-                <Card key={index} cardStyle={{height: 80, width: 150, marginLeft: 5, marginRight: 5}}>
-                  <Text style={styles.userGroupCardHeader}>
-                    {group.name}
-                  </Text>
-                  {group.members ?
-                    <Text style={styles.userGroupCardText}>
-                      {group.members.split(',').length} members
-                    </Text> :
-                    <Text style={styles.userGroupCardText}>no members</Text>}
-                  {group.waitlist ?
-                    <Text style={styles.userGroupCardText}>
-                      {group.waitlist.split(',').length} waitlisted
-                    </Text> :
-                    <Text style={styles.userGroupCardText}>waitlist empty</Text>}
-                </Card>
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => this.onUserStudyGroupPress(group)}>
+                  <Card cardStyle={{height: 80, width: 150, marginLeft: 5, marginRight: 5}}>
+                    <Text style={styles.userGroupCardHeader}>{group.name}</Text>
+                    {group.members ?
+                      <Text style={styles.userGroupCardText}>
+                        {group.members.split(',').length} members
+                      </Text> :
+                      <Text style={styles.userGroupCardText}>no members</Text>}
+                    {group.waitlist ?
+                      <Text style={styles.userGroupCardText}>
+                        {group.waitlist.split(',').length} waitlisted
+                      </Text> :
+                      <Text style={styles.userGroupCardText}>waitlist empty</Text>}
+                  </Card>
+                </TouchableOpacity>
               ))}
             </ScrollView> :
             <Button style={[
@@ -127,11 +149,16 @@ class Home extends React.Component<HomeProps, HomeState> {
         <Header style={globalStyles.primaryBG}>
           <HeaderTitle />
         </Header>
-        <Content style={{flex: 1, padding: 15}}>
+        <Content style={{flex: 1, paddingTop: 15, paddingBottom: 15}}>
           <View style={{flex: 0.3}}>
             {this.renderUsersGroups()}
           </View>
         </Content>
+        {this.state.manageStudyGroupModalOpen &&
+          <ManageStudyGroupModal
+            studyGroup={this.state.focusedStudyGroup}
+            updateStudyGroup={(studyGroup: any) => this.onUpdateStudyGroup(studyGroup)}
+            closed={() => this.setState({ manageStudyGroupModalOpen: false})} />}
       </Container>
     );
   }
@@ -170,7 +197,8 @@ const mapDispatchToProps = (dispatch: Dispatch<actions.StudyGroupsAction>) => ({
   getStudyGroupsStart: () => dispatch(actions.getStudyGroupsStart()),
   getUserStudyGroups: (userID: string, filter: BaseFilter) => (
     dispatch(actions.getUserStudyGroups(userID, filter))
-  )
+  ),
+  updateStudyGroup: (studyGroup: any) => dispatch(actions.updateStudyGroup(studyGroup))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
