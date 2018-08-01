@@ -1,4 +1,3 @@
-import * as _                        from 'lodash';
 import { ActionCreator, Dispatch }   from 'redux';
 import { AxiosResponse, AxiosError } from 'axios';
 
@@ -173,7 +172,18 @@ export const getUserStudyGroups = (userID: string, filter: BaseFilter): any =>
 
 export const updateStudyGroup = (studyGroup: any): any =>
   (dispatch: Dispatch<IUpdateStudyGroupSuccess | IUpdateStudyGroupFailed>): void => {
-    axios.patch(`/study_groups/${studyGroup.id}`, studyGroup)
-      .then(({ data }: AxiosResponse) => dispatch(updateStudyGroupSuccess(data.data)))
-      .catch(() => dispatch(updateStudyGroupFailed()));
+    axios.patch(`/study_groups/${studyGroup.id}`, {...studyGroup})
+      .then(() => dispatch(updateStudyGroupSuccess(studyGroup)))
+      .catch(({ response }: AxiosError) => {
+        const error = response ? response.data.message : 'unable to update study group';
+
+        const toastConfig = {
+          ...notificationService.defaultToastConfig,
+          type: 'danger',
+          text: error
+        };
+
+        notificationService.toast(toastConfig);
+        dispatch(updateStudyGroupFailed());
+      });
 };
