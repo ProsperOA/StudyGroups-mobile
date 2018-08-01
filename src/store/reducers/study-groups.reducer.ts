@@ -16,16 +16,6 @@ const initialState: Readonly<StudyGroupsState> = {
   loading:    false
 };
 
-const updateStudyGroups = (studyGroups: any[], newStudyGroup: any): any => {
-  const newStudyGroups = _.cloneDeep(studyGroups);
-
-  newStudyGroups.map(group => {
-    if (group.id === newStudyGroup.id) return newStudyGroup;
-  });
-
-  return newStudyGroups;
-};
-
 export default (state: StudyGroupsState = initialState, action: StudyGroupsAction): StudyGroupsState => {
   switch (action.type) {
     case types.GET_STUDY_GROUPS_START:
@@ -41,8 +31,13 @@ export default (state: StudyGroupsState = initialState, action: StudyGroupsActio
     case types.GET_USER_STUDY_GROUPS_FAILED:
       return {...state, loading: false};
     case types.UPDATE_STUDY_GROUP_SUCCESS:
-      const { userGroups } = state;
-      return {...state, userGroups: updateStudyGroups(userGroups, action.payload)};
+      const newStudyGroup = action.payload;
+      const newStudyGroups = [...state.userGroups];
+      const index = _.findIndex(state.userGroups, (group: any) => (
+        group.id === newStudyGroup.id
+      ));
+      newStudyGroups[index] = newStudyGroup;
+      return {...state, userGroups: newStudyGroups};
     case types.GET_STUDY_GROUP_MEMBERS_FAILED:
     default:
       return state;
