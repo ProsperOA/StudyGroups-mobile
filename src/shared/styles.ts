@@ -135,6 +135,16 @@ export default StyleSheet.create({
   // card styles
   card: {
     borderRadius: 12
+  },
+
+  // tabs
+  tabHeading: {
+    fontFamily: 'rubik-medium',
+    color: DARK_GRAY
+  },
+  tabHeadingActive: {
+    fontFamily: 'rubik-medium',
+    color: PRIMARY
   }
 
 });
