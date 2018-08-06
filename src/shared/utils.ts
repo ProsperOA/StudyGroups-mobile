@@ -1,3 +1,46 @@
+export const MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
+
+export const DAYS = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday'
+];
+
+export const formatDateTime = (date: Date): string => {
+  const dayOfMonth = date.getDate();
+  const dayOfWeek  = date.getDay();
+  const monthIndex = date.getMonth();
+  const year       = date.getFullYear();
+  let hours        = date.getHours();
+  let minutes: any = date.getMinutes();
+
+  const period = hours >= 12 ? 'pm' : 'am';
+  hours        = hours % 12;
+  hours        = hours ? hours : 12;                    // the hour '0' should be '12'
+  minutes      = minutes < 10 ? '0' + minutes : minutes;
+  const time   = `${hours}:${minutes} ${period}`;
+
+
+  return `${DAYS[dayOfWeek]} ${MONTHS[monthIndex]} ${dayOfMonth}, ${year} at ${time}`;
+};
+
 export const EMAIL_REGEX = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
 
 export const hexToRGBA = (hex: string, opacity: number) => {
