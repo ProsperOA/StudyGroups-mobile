@@ -11,6 +11,7 @@ import {
   View
 } from 'react-native';
 import {
+  ActionSheet,
   Button,
   Container,
   Content,
@@ -94,11 +95,21 @@ class Home extends React.Component<HomeProps, HomeState> {
   };
 
   public onRemoveStudyGroupMember = (user: any, section: StudyGroupSection): void => {
-    Alert.alert(
-      'Remove User',
-      `Are you sure you want to remove ${user.first_name}${user.last_name ? ` ${user.last_name}` : ''} from this study group?`,
-      [
-        {text: 'yes', onPress: () => {
+    const isWaitlist = section === 'waitlist';
+    const options = [
+      `remove user from ${isWaitlist ? 'waitlist' : 'group'}`,
+      'cancel'
+    ];
+    if (isWaitlist) options.unshift('add to study group');
+
+    ActionSheet.show(
+      {
+        options,
+        cancelButtonIndex: isWaitlist ? 2 : 1,
+        title: `${user.first_name}${user.last_name ? ` ${user.last_name}` : ''}`
+      },
+      (btnIndex: number) => {
+        if ((btnIndex === 0 && !isWaitlist) || (btnIndex === 1 && isWaitlist)) {
           const studyGroup = _.cloneDeep(this.state.focusedStudyGroup);
 
           const sec = studyGroup[section].split(',');
@@ -107,10 +118,11 @@ class Home extends React.Component<HomeProps, HomeState> {
 
           this.props.leaveStudyGroup(studyGroup, user.id, section);
           this.setState({ focusedStudyGroup: studyGroup });
-        }},
-        {text: 'no'},
-      ],
-      { cancelable: false }
+        }
+        else if (btnIndex === 0 && isWaitlist) {
+          // TODO: add user to study group
+        }
+      }
     );
   };
 

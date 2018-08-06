@@ -13,7 +13,6 @@ import {
   Container,
   Content,
   Header,
-  Icon,
   Left,
   List,
   ListItem,
@@ -29,8 +28,7 @@ import { StudyGroupSection }               from '../../models/study-group.model'
 import globalStyles, {
   PRIMARY,
   DARK_GRAY,
-  LIGHT_GRAY,
-  DANGER_DARK
+  LIGHT_GRAY
 } from '../../shared/styles';
 
 interface ManageStudyGroupModalProps {
@@ -86,22 +84,14 @@ class ManageStudyGroupModal extends React.Component<ManageStudyGroupModalProps, 
     users.map((user: any, index: number) => (
       <ListItem
         key={index}
-        style={{paddingRight: 15, marginBottom: 10}}
-        avatar>
+        onPress={() => this.props.removeStudyGroupMember(user, section)}
+        style={{paddingRight: 15, marginBottom: 10}} avatar>
         <Left>
           <Thumbnail circular source={{ uri: user.avatar }} />
         </Left>
         <Body>
           <Text>{user.first_name} {user.last_name}</Text>
         </Body>
-        <Right style={{paddingTop: 0, paddingBottom: 0, height: 46}}>
-          <Button
-            style={{paddingTop: 0, paddingBottom: 0, height: 35}}
-            onPress={() => this.props.removeStudyGroupMember(user, section)}
-            transparent>
-            <Icon name="close" style={{color: DANGER_DARK}} />
-          </Button>
-        </Right>
       </ListItem>
     ))
   );
