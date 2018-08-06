@@ -1,12 +1,14 @@
 import * as React   from 'react';
+import * as _       from 'lodash';
 import { connect }  from 'react-redux';
 import { Dispatch } from 'redux';
 import {
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
-  View,
-  TouchableOpacity
+  TouchableOpacity,
+  View
 } from 'react-native';
 import {
   Button,
@@ -27,17 +29,25 @@ import globalStyles, {
 import { AppState }                   from '../store/reducers';
 import { BaseFilter }                 from '../models/filters/base.filter';
 import { HeaderTitle, Spinner, Card } from '../shared/ui';
+import { StudyGroupSection } from '../models/study-group.model';
 
 interface HomeProps {
-  user:       any;
-  userGroups: any;
-  loading:    boolean;
+  user:              any;
+  userGroups:        any;
+  studyGroupMembers: any;
+  loading:           boolean;
   getStudyGroupsStart: () => Dispatch<actions.IGetStudyGroupsStart>;
   getUserStudyGroups: (userID: string, filter: BaseFilter) => (
     Dispatch<actions.IGetUserStudyGroupsSuccess | actions.IGetUserStudyGroupsFailed>
   );
+  getStudyGroupMembers: (studyGroupID: string) => (
+    Dispatch<actions.IGetStudyGroupMembersSuccess | actions.IGetStudyGroupMembersFailed>
+  );
   updateStudyGroup: (studyGroup: any) => (
     Dispatch<actions.IUpdateStudyGroupSuccess | actions.IUpdateStudyGroupFailed>
+  );
+  leaveStudyGroup: (studyGroup: any, userID: number, section: StudyGroupSection) => (
+    Dispatch<actions.ILeaveStudyGroupSuccess| actions.ILeaveStudyGroupFailed>
   );
 }
 
@@ -72,10 +82,36 @@ class Home extends React.Component<HomeProps, HomeState> {
       focusedStudyGroup,
       manageStudyGroupModalOpen: true
     });
+    this.props.getStudyGroupMembers(focusedStudyGroup.id);
   };
 
   public onUpdateStudyGroup = (studyGroup: any): void => {
     this.props.updateStudyGroup(studyGroup);
+    this.setState({
+      focusedStudyGroup: null,
+      manageStudyGroupModalOpen: false
+    });
+  };
+
+  public onRemoveStudyGroupMember = (user: any, section: StudyGroupSection): void => {
+    Alert.alert(
+      'Remove User',
+      `Are you sure you want to remove ${user.first_name}${user.last_name ? ` ${user.last_name}` : ''} from this study group?`,
+      [
+        {text: 'yes', onPress: () => {
+          const studyGroup = _.cloneDeep(this.state.focusedStudyGroup);
+
+          const sec = studyGroup[section].split(',');
+          sec.splice(sec.indexOf(user.id.toString()), 1);
+          studyGroup[section] = sec.join(',');
+
+          this.props.leaveStudyGroup(studyGroup, user.id, section);
+          this.setState({ focusedStudyGroup: studyGroup });
+        }},
+        {text: 'no'},
+      ],
+      { cancelable: false }
+    );
   };
 
   public renderUsersGroups = (): JSX.Element => {
@@ -157,7 +193,9 @@ class Home extends React.Component<HomeProps, HomeState> {
         {this.state.manageStudyGroupModalOpen &&
           <ManageStudyGroupModal
             studyGroup={this.state.focusedStudyGroup}
+            studyGroupMembers={this.props.studyGroupMembers}
             updateStudyGroup={(studyGroup: any) => this.onUpdateStudyGroup(studyGroup)}
+            removeStudyGroupMember={this.onRemoveStudyGroupMember}
             closed={() => this.setState({ manageStudyGroupModalOpen: false})} />}
       </Container>
     );
@@ -188,9 +226,10 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = ({ studyGroups, auth }: AppState) => ({
-  user:       auth.user,
-  userGroups: studyGroups.userGroups,
-  loading:    studyGroups.loading
+  user:              auth.user,
+  userGroups:        studyGroups.userGroups,
+  studyGroupMembers: studyGroups.users,
+  loading:           studyGroups.loading
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<actions.StudyGroupsAction>) => ({
@@ -198,7 +237,13 @@ const mapDispatchToProps = (dispatch: Dispatch<actions.StudyGroupsAction>) => ({
   getUserStudyGroups: (userID: string, filter: BaseFilter) => (
     dispatch(actions.getUserStudyGroups(userID, filter))
   ),
-  updateStudyGroup: (studyGroup: any) => dispatch(actions.updateStudyGroup(studyGroup))
+  getStudyGroupMembers: (studyGroupID: string) => (
+    dispatch(actions.getStudyGroupMembers(studyGroupID))
+  ),
+  updateStudyGroup: (studyGroup: any) => dispatch(actions.updateStudyGroup(studyGroup)),
+  leaveStudyGroup: (studyGroup: any, userID: number, section: StudyGroupSection) => (
+    dispatch(actions.leaveStudyGroup(studyGroup, userID, section))
+  )
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
