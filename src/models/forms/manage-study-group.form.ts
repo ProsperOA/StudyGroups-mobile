@@ -1,4 +1,5 @@
 import * as t from 'tcomb-form-native';
+import { formatDateTime } from '../../shared/utils';
 
 import { flatInputStyleSheet } from '../../shared/styles';
 
@@ -45,7 +46,11 @@ export default {
         maxLength: 40
       },
       meetingDate: {
-        minimumDate: new Date()
+        label: 'Meeting Date',
+        minimumDate: new Date(),
+        config: {
+          format: (date: Date) => formatDateTime(date)
+        }
       }
     }
   }
