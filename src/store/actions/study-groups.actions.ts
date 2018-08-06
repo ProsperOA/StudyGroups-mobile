@@ -6,6 +6,7 @@ import * as notificationService from '../../shared/services/notification.service
 import axios                    from '../../shared/axios';
 import { BaseFilter }           from '../../models/filters/base.filter';
 import { StudyGroupsFilter }    from '../../models/filters/study-groups.filter';
+import { StudyGroupSection }    from '../../models/study-group.model';
 
 export interface IGetStudyGroupsStart {
   type: types.GET_STUDY_GROUPS_START
@@ -47,6 +48,19 @@ export interface IUpdateStudyGroupFailed {
   type: types.UPDATE_STUDY_GROUP_FAILED
 }
 
+export interface ILeaveStudyGroupSuccess {
+  type: types.LEAVE_STUDY_GROUP_SUCCESS,
+  payload: {
+    studyGroup: any;
+    userID:     number;
+    section:    StudyGroupSection
+  };
+}
+
+export interface ILeaveStudyGroupFailed {
+  type: types.LEAVE_STUDY_GROUP_FAILED
+}
+
 export type StudyGroupsAction =
   | IGetStudyGroupsStart
   | IGetStudyGroupsSuccess
@@ -56,7 +70,9 @@ export type StudyGroupsAction =
   | IGetUserStudyGroupsSuccess
   | IGetUserStudyGroupsFailed
   | IUpdateStudyGroupSuccess
-  | IUpdateStudyGroupFailed;
+  | IUpdateStudyGroupFailed
+  | ILeaveStudyGroupSuccess
+  | ILeaveStudyGroupFailed;
 
 const getStudyGroupsSuccess: ActionCreator<IGetStudyGroupsSuccess> =
   (studyGroups: any): IGetStudyGroupsSuccess => ({
@@ -96,15 +112,30 @@ export const getStudyGroupsStart: ActionCreator<IGetStudyGroupsStart> =
     type: types.GET_STUDY_GROUPS_START
 });
 
-export const updateStudyGroupSuccess: ActionCreator<IUpdateStudyGroupSuccess> =
+const updateStudyGroupSuccess: ActionCreator<IUpdateStudyGroupSuccess> =
   (studyGroup: any): IUpdateStudyGroupSuccess => ({
     type:    types.UPDATE_STUDY_GROUP_SUCCESS,
     payload: studyGroup
 });
 
-export const updateStudyGroupFailed: ActionCreator<IUpdateStudyGroupFailed> =
+const updateStudyGroupFailed: ActionCreator<IUpdateStudyGroupFailed> =
   (): IUpdateStudyGroupFailed => ({
     type: types.UPDATE_STUDY_GROUP_FAILED
+});
+
+const leaveStudyGroupSuccess: ActionCreator<ILeaveStudyGroupSuccess> =
+  (studyGroup: any, userID: number, section: StudyGroupSection): ILeaveStudyGroupSuccess => ({
+    type: types.LEAVE_STUDY_GROUP_SUCCESS,
+    payload: {
+      studyGroup,
+      userID,
+      section
+    }
+});
+
+const leaveStudyGroupFailed: ActionCreator<ILeaveStudyGroupFailed> =
+  (): ILeaveStudyGroupFailed => ({
+    type: types.LEAVE_STUDY_GROUP_FAILED
 });
 
 export const getStudyGroups = (filter: StudyGroupsFilter): any =>
@@ -173,7 +204,16 @@ export const getUserStudyGroups = (userID: string, filter: BaseFilter): any =>
 export const updateStudyGroup = (studyGroup: any): any =>
   (dispatch: Dispatch<IUpdateStudyGroupSuccess | IUpdateStudyGroupFailed>): void => {
     axios.patch(`/study_groups/${studyGroup.id}`, {...studyGroup})
-      .then(() => dispatch(updateStudyGroupSuccess(studyGroup)))
+      .then(() => {
+        dispatch(updateStudyGroupSuccess(studyGroup));
+
+        const toastConfig = {
+          ...notificationService.defaultToastConfig,
+          type: 'success',
+          text: 'study group updated'
+        };
+        notificationService.toast(toastConfig);
+      })
       .catch(({ response }: AxiosError) => {
         const error = response ? response.data.message : 'unable to update study group';
 
@@ -185,5 +225,23 @@ export const updateStudyGroup = (studyGroup: any): any =>
 
         notificationService.toast(toastConfig);
         dispatch(updateStudyGroupFailed());
+      });
+};
+
+export const leaveStudyGroup = (studyGroup: any, userID: number, section: StudyGroupSection): any =>
+  (dispatch: Dispatch<ILeaveStudyGroupSuccess | ILeaveStudyGroupFailed>): void => {
+    axios.patch(`/study_groups/${studyGroup.id}/leave`, {user_id: userID})
+      .then(() => dispatch(leaveStudyGroupSuccess(studyGroup, userID, section)))
+      .catch(({ response }: AxiosError) => {
+        const error = response ? response.data.message : 'unable to leave study group';
+
+        const toastConfig = {
+          ...notificationService.defaultToastConfig,
+          type: 'danger',
+          text: error
+        };
+
+        notificationService.toast(toastConfig);
+        dispatch(leaveStudyGroupFailed());
       });
 };

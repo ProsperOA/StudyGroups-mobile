@@ -54,10 +54,13 @@ export {
   IGetUserStudyGroupsFailed,
   IUpdateStudyGroupSuccess,
   IUpdateStudyGroupFailed,
+  ILeaveStudyGroupSuccess,
+  ILeaveStudyGroupFailed,
 
   getStudyGroups,
   getStudyGroupsStart,
   getStudyGroupMembers,
   getUserStudyGroups,
-  updateStudyGroup
+  updateStudyGroup,
+  leaveStudyGroup
 } from './study-groups.actions';
