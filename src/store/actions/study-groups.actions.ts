@@ -48,6 +48,18 @@ export interface IUpdateStudyGroupFailed {
   type: types.UPDATE_STUDY_GROUP_FAILED
 }
 
+export interface IMoveUserFromWaitlistToMembersSuccess {
+  type:    types.MOVE_USER_FROM_WAITLIST_TO_MEMBERS_SUCCESS,
+  payload: {
+    studyGroup: any;
+    userID:     number;
+  };
+}
+
+export interface IMoveUserFromWaitlistToMembersFailed {
+  type: types.MOVE_USER_FROM_WAITLIST_TO_MEMBERS_FAILED
+}
+
 export interface ILeaveStudyGroupSuccess {
   type: types.LEAVE_STUDY_GROUP_SUCCESS,
   payload: {
@@ -71,6 +83,8 @@ export type StudyGroupsAction =
   | IGetUserStudyGroupsFailed
   | IUpdateStudyGroupSuccess
   | IUpdateStudyGroupFailed
+  | IMoveUserFromWaitlistToMembersSuccess
+  | IMoveUserFromWaitlistToMembersFailed
   | ILeaveStudyGroupSuccess
   | ILeaveStudyGroupFailed;
 
@@ -121,6 +135,17 @@ const updateStudyGroupSuccess: ActionCreator<IUpdateStudyGroupSuccess> =
 const updateStudyGroupFailed: ActionCreator<IUpdateStudyGroupFailed> =
   (): IUpdateStudyGroupFailed => ({
     type: types.UPDATE_STUDY_GROUP_FAILED
+});
+
+const moveUserFromWaitlistToMembersSuccess: ActionCreator<IMoveUserFromWaitlistToMembersSuccess> =
+  (studyGroup: any, userID: number): IMoveUserFromWaitlistToMembersSuccess => ({
+    type:    types.MOVE_USER_FROM_WAITLIST_TO_MEMBERS_SUCCESS,
+    payload: {studyGroup, userID}
+});
+
+const moveUserFromWaitlistToMembersFailed: ActionCreator<IMoveUserFromWaitlistToMembersFailed> =
+  (): IMoveUserFromWaitlistToMembersFailed => ({
+    type: types.MOVE_USER_FROM_WAITLIST_TO_MEMBERS_FAILED
 });
 
 const leaveStudyGroupSuccess: ActionCreator<ILeaveStudyGroupSuccess> =
@@ -184,6 +209,7 @@ export const getStudyGroups = (filter: StudyGroupsFilter): any =>
 
 export const getStudyGroupMembers = (studyGroupID: string): any =>
   (dispatch: Dispatch<IGetStudyGroupMembersSuccess | IGetStudyGroupMembersFailed>): void => {
+    console.log('getting study group members')
     axios.get(`/study_groups/${studyGroupID}/members`)
       .then(({ data }: AxiosResponse) => dispatch(getStudyGroupMembersSuccess(data.data)))
       .catch(() => dispatch(getStudyGroupMembersFailed()));
@@ -225,6 +251,27 @@ export const updateStudyGroup = (studyGroup: any): any =>
 
         notificationService.toast(toastConfig);
         dispatch(updateStudyGroupFailed());
+      });
+};
+
+export const moveUserFromWaitlistToMembers = (studyGroupID: number, userID: number): any =>
+  (dispatch: Dispatch<IMoveUserFromWaitlistToMembersSuccess | IMoveUserFromWaitlistToMembersFailed>): void => {
+    axios.patch(`/study_groups/${studyGroupID}/waitlist_to_members`, {user_id: userID})
+      .then(({ data }: AxiosResponse) => {
+        const studyGroup = data.data;
+        dispatch(moveUserFromWaitlistToMembersSuccess({studyGroup, userID}));
+      })
+      .catch(({ response }: AxiosError) => {
+        const error = response ? response.data.message : 'unable to join study group';
+
+        const toastConfig = {
+          ...notificationService.defaultToastConfig,
+          type: 'danger',
+          text: error
+        };
+
+        notificationService.toast(toastConfig);
+        dispatch(moveUserFromWaitlistToMembersFailed());
       });
 };
 

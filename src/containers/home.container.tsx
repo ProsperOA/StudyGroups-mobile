@@ -3,7 +3,6 @@ import * as _       from 'lodash';
 import { connect }  from 'react-redux';
 import { Dispatch } from 'redux';
 import {
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -19,18 +18,18 @@ import {
   Icon
 } from 'native-base';
 
-import * as actions    from '../store/actions';
-import ManageStudyGroupModal from './modals/manage-study-group.modal';
+import * as actions                   from '../store/actions';
+import ManageStudyGroupModal          from './modals/manage-study-group.modal';
+import { AppState }                   from '../store/reducers';
+import { BaseFilter }                 from '../models/filters/base.filter';
+import { HeaderTitle, Spinner, Card } from '../shared/ui';
+import { StudyGroupSection }          from '../models/study-group.model';
 import globalStyles, {
   DARK_GRAY,
   GRAY,
   LIGHT_GRAY,
   PRIMARY
 } from '../shared/styles';
-import { AppState }                   from '../store/reducers';
-import { BaseFilter }                 from '../models/filters/base.filter';
-import { HeaderTitle, Spinner, Card } from '../shared/ui';
-import { StudyGroupSection } from '../models/study-group.model';
 
 interface HomeProps {
   user:              any;
@@ -47,7 +46,10 @@ interface HomeProps {
   updateStudyGroup: (studyGroup: any) => (
     Dispatch<actions.IUpdateStudyGroupSuccess | actions.IUpdateStudyGroupFailed>
   );
-  leaveStudyGroup: (studyGroup: any, userID: number, section: StudyGroupSection) => (
+  moveUserFromWaitlistToMembers: (studyGroup: any, userID: number, section: StudyGroupSection) => (
+    Dispatch<actions.IMoveUserFromWaitlistToMembersSuccess| actions.IMoveUserFromWaitlistToMembersFailed>
+  );
+  removeUserFromStudyGroup: (studyGroup: any, userID: number, section: StudyGroupSection) => (
     Dispatch<actions.ILeaveStudyGroupSuccess| actions.ILeaveStudyGroupFailed>
   );
 }
@@ -116,11 +118,11 @@ class Home extends React.Component<HomeProps, HomeState> {
           sec.splice(sec.indexOf(user.id.toString()), 1);
           studyGroup[section] = sec.join(',');
 
-          this.props.leaveStudyGroup(studyGroup, user.id, section);
+          this.props.removeUserFromStudyGroup(studyGroup, user.id, section);
           this.setState({ focusedStudyGroup: studyGroup });
         }
         else if (btnIndex === 0 && isWaitlist) {
-          // TODO: add user to study group
+          this.props.moveUserFromWaitlistToMembers(this.state.focusedStudyGroup.id, user.id, section);
         }
       }
     );
@@ -253,7 +255,10 @@ const mapDispatchToProps = (dispatch: Dispatch<actions.StudyGroupsAction>) => ({
     dispatch(actions.getStudyGroupMembers(studyGroupID))
   ),
   updateStudyGroup: (studyGroup: any) => dispatch(actions.updateStudyGroup(studyGroup)),
-  leaveStudyGroup: (studyGroup: any, userID: number, section: StudyGroupSection) => (
+  moveUserFromWaitlistToMembers: (studyGroupID: number, userID: number) => (
+    dispatch(actions.moveUserFromWaitlistToMembers(studyGroupID, userID))
+  ),
+  removeUserFromStudyGroup: (studyGroup: any, userID: number, section: StudyGroupSection) => (
     dispatch(actions.leaveStudyGroup(studyGroup, userID, section))
   )
 });

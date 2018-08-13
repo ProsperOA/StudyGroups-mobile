@@ -54,6 +54,8 @@ export {
   IGetUserStudyGroupsFailed,
   IUpdateStudyGroupSuccess,
   IUpdateStudyGroupFailed,
+  IMoveUserFromWaitlistToMembersSuccess,
+  IMoveUserFromWaitlistToMembersFailed,
   ILeaveStudyGroupSuccess,
   ILeaveStudyGroupFailed,
 
@@ -62,5 +64,6 @@ export {
   getStudyGroupMembers,
   getUserStudyGroups,
   updateStudyGroup,
+  moveUserFromWaitlistToMembers,
   leaveStudyGroup
 } from './study-groups.actions';

@@ -20,16 +20,22 @@ export default (state: StudyGroupsState = initialState, action: StudyGroupsActio
   switch (action.type) {
     case types.GET_STUDY_GROUPS_START:
       return {...state, loading: true};
+
     case types.GET_STUDY_GROUPS_SUCCESS:
       return {...state, groups: action.payload, loading: false};
+
     case types.GET_STUDY_GROUPS_FAILED:
       return {...state, loading: false};
+
     case types.GET_STUDY_GROUP_MEMBERS_SUCCESS:
       return {...state, users: action.payload};
+
     case types.GET_USER_STUDY_GROUPS_SUCCESS:
       return {...state, userGroups: action.payload, loading: false};
+
     case types.GET_USER_STUDY_GROUPS_FAILED:
       return {...state, loading: false};
+
     case types.UPDATE_STUDY_GROUP_SUCCESS:
       let newStudyGroup = action.payload;
       let newStudyGroups = _.cloneDeep(state.userGroups);
@@ -39,6 +45,25 @@ export default (state: StudyGroupsState = initialState, action: StudyGroupsActio
       newStudyGroups[index] = newStudyGroup;
 
       return {...state, userGroups: newStudyGroups};
+
+    case types.MOVE_USER_FROM_WAITLIST_TO_MEMBERS_SUCCESS:
+      newStudyGroup = action.payload.studyGroup;
+      newStudyGroups = _.cloneDeep(state.userGroups);
+      let newUsers = _.cloneDeep(state.users);
+
+      const groupIndex = _.findIndex(state.userGroups, (group: any) => (
+        group.id === newStudyGroup.id
+      ));
+      const userIndex = _.findIndex(state.users.waitlist, (user: any) => (
+        user.id === action.payload.userID
+      ));
+
+      newStudyGroups[groupIndex] = newStudyGroup;
+      const user = newUsers.waitlist.splice(userIndex, 1)[0];
+      newUsers.members.unshift(user);
+
+      return {...state, userGroups: newStudyGroups, users: newUsers};
+
     case types.LEAVE_STUDY_GROUP_SUCCESS:
       const {studyGroup, userID, section} = action.payload;
       newStudyGroups = _.cloneDeep(state.userGroups);
@@ -47,13 +72,15 @@ export default (state: StudyGroupsState = initialState, action: StudyGroupsActio
       ));
       newStudyGroups[index] = studyGroup;
 
-      const newUsers = _.cloneDeep(state.users);
+      newUsers = _.cloneDeep(state.users);
       index = _.findIndex(state.users[section], (user: any) => (
         user.id === userID
       ));
       newUsers[section].splice(index, 1);
 
       return {...state, userGroups: newStudyGroups, users: newUsers};
+
+    case types.MOVE_USER_FROM_WAITLIST_TO_MEMBERS_FAILED:
     case types.LEAVE_STUDY_GROUP_FAILED:
     case types.GET_STUDY_GROUP_MEMBERS_FAILED:
     default:
