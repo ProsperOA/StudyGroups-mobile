@@ -35,11 +35,13 @@ interface ManageStudyGroupModalProps {
   studyGroup:        any;
   studyGroupMembers: any;
   closed:            any;
+  createStudyGroup:       (studyGroup: any) => void;
   updateStudyGroup:       (studyGroup: any) => void;
   removeStudyGroupMember: (user: any, section: StudyGroupSection) => void;
 }
 
 interface ManageStudyGroupModalState {
+  newGroup:          boolean;
   formValue:         any;
   formValueLocation: string;
 }
@@ -48,12 +50,15 @@ const Form = t.form.Form;
 
 class ManageStudyGroupModal extends React.Component<ManageStudyGroupModalProps, ManageStudyGroupModalState> {
   public state: Readonly<ManageStudyGroupModalState> = {
+    newGroup:          _.isEmpty(this.props.studyGroup),
     formValue:         null,
     formValueLocation: ''
   };
 
   public componentDidMount(): void {
     const { studyGroup } = this.props;
+    if (!studyGroup) return;
+    console.log(this.state.newGroup)
 
     this.setState({
       formValue: {
@@ -80,6 +85,23 @@ class ManageStudyGroupModal extends React.Component<ManageStudyGroupModalProps, 
     this.props.updateStudyGroup(studyGroup);
   };
 
+  public onCreateStudyGroup = (): void => {
+    const value = this.refs.updateStudyGroupForm.getValue();
+    if (!value) return;
+
+    const studyGroup = {
+      ...this.props.studyGroup,
+      name:          value.name,
+      meeting_date:  value.meetingDate,
+      members_limit: value.capacity,
+      description:   value.description,
+      location:      this.state.formValueLocation
+    };
+
+    console.log(studyGroup)
+    this.props.createStudyGroup(studyGroup);
+  };
+
   public renderStudyGroupUsers = (users: any, section: StudyGroupSection): JSX.Element[] => (
     users.map((user: any, index: number) => (
       <ListItem
@@ -90,7 +112,9 @@ class ManageStudyGroupModal extends React.Component<ManageStudyGroupModalProps, 
           <Thumbnail circular source={{ uri: user.avatar }} />
         </Left>
         <Body>
-          <Text>{user.first_name} {user.last_name}</Text>
+          <Text style={{color: DARK_GRAY, fontFamily: 'rubik-medium', fontSize: 17}}>
+            {user.first_name} {user.last_name}
+          </Text>
         </Body>
       </ListItem>
     ))
@@ -106,6 +130,13 @@ class ManageStudyGroupModal extends React.Component<ManageStudyGroupModalProps, 
 
   public render(): JSX.Element {
     const { studyGroup, studyGroupMembers } = this.props;
+    const { newGroup } = this.state;
+    let location = '';
+
+    if (!newGroup) {
+      if (studyGroup.location) location = studyGroup.location;
+    }
+
     let members  = [];
     let waitlist = [];
 
@@ -121,10 +152,10 @@ class ManageStudyGroupModal extends React.Component<ManageStudyGroupModalProps, 
             <Left>
               <HeaderCancelButton cancel={this.props.closed} />
             </Left>
-            <HeaderTitle title={this.props.studyGroup.name} style={{ flex: 3 }} />
+            <HeaderTitle title={newGroup ? 'New Group' : studyGroup.name} style={{ flex: 3 }} />
             <Right />
           </Header>
-          <Content>
+          <Content style={{paddingBottom: 15}}>
             <View style={{padding: 15}}>
               <Form
                 ref="updateStudyGroupForm"
@@ -140,7 +171,7 @@ class ManageStudyGroupModal extends React.Component<ManageStudyGroupModalProps, 
                 minLength={2}
                 autoFocus={false}
                 listViewDisplayed='false'
-                getDefaultValue={() => studyGroup.location || ''}
+                getDefaultValue={() => location}
                 onPress={({ structured_formatting: v }: any) => this.setState({
                   formValueLocation: [v.main_text, v.secondary_text].join(', ')
                 })}
@@ -186,36 +217,40 @@ class ManageStudyGroupModal extends React.Component<ManageStudyGroupModalProps, 
                 filterReverseGeocodingByTypes={['locality', 'administrative_area_level_3']}
                 debounce={200} />
             </View>
+
             <View style={{paddingTop: 15, paddingBottom: 15}}>
-              <Tabs tabBarUnderlineStyle={globalStyles.primaryBG}>
-                <Tab
-                  heading="members"
-                  textStyle={globalStyles.tabHeading}
-                  activeTabStyle={globalStyles.tabHeadingActive}>
-                  {members.length > 0 ?
-                    <List style={{paddingTop: 15}}>
-                      {this.renderStudyGroupUsers(members, 'members')}
-                    </List> :
-                    this.renderNoUsersText('no members')}
-                </Tab>
-                <Tab
-                  heading="waitlist"
-                  textStyle={globalStyles.tabHeading}
-                  activeTabStyle={globalStyles.tabHeadingActive}>
-                  {waitlist.length > 0 ?
-                    <List style={{paddingTop: 15}}>
-                      {this.renderStudyGroupUsers(waitlist, 'waitlist')}
-                    </List> :
-                    this.renderNoUsersText('waitlist empty')}
-                </Tab>
-              </Tabs>
+              {!this.state.newGroup &&
+                <Tabs tabBarUnderlineStyle={globalStyles.primaryBG}>
+                  <Tab
+                    heading="members"
+                    textStyle={globalStyles.tabHeading}
+                    activeTabStyle={globalStyles.tabHeadingActive}>
+                    {members.length > 0 ?
+                      <List style={{paddingTop: 15}}>
+                        {this.renderStudyGroupUsers(members, 'members')}
+                      </List> :
+                      this.renderNoUsersText('no members')}
+                  </Tab>
+                  <Tab
+                    heading="waitlist"
+                    textStyle={globalStyles.tabHeading}
+                    activeTabStyle={globalStyles.tabHeadingActive}>
+                    {waitlist.length > 0 ?
+                      <List style={{paddingTop: 15}}>
+                        {this.renderStudyGroupUsers(waitlist, 'waitlist')}
+                      </List> :
+                      this.renderNoUsersText('waitlist empty')}
+                  </Tab>
+                </Tabs>}
               <Button
                 style={[globalStyles.btn, globalStyles.btnSuccess, {
                   marginTop: 15, marginLeft: 15, marginRight: 15
                 }]}
-                onPress={this.onUpdateStudyGroup}
+                onPress={newGroup ? this.onCreateStudyGroup : this.onUpdateStudyGroup}
                 block>
-                <Text style={globalStyles.btnText}>update</Text>
+                <Text style={globalStyles.btnText}>
+                  {newGroup ? 'create' : 'update'}
+                </Text>
               </Button>
             </View>
           </Content>

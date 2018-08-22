@@ -35,6 +35,15 @@ export interface IGetUserStudyGroupsSuccess {
   payload: any;
 }
 
+export interface ICreateStudyGroupSuccess {
+  type:    types.CREATE_STUDY_GROUP_SUCCESS;
+  payload: any;
+}
+
+export interface ICreateStudyGroupFailed {
+  type: types.CREATE_STUDY_GROUP_FAILED
+}
+
 export interface IGetUserStudyGroupsFailed {
   type: types.GET_USER_STUDY_GROUPS_FAILED
 }
@@ -81,6 +90,8 @@ export type StudyGroupsAction =
   | IGetStudyGroupMembersFailed
   | IGetUserStudyGroupsSuccess
   | IGetUserStudyGroupsFailed
+  | ICreateStudyGroupSuccess
+  | ICreateStudyGroupFailed
   | IUpdateStudyGroupSuccess
   | IUpdateStudyGroupFailed
   | IMoveUserFromWaitlistToMembersSuccess
@@ -124,6 +135,18 @@ const getUserStudyGroupsFailed: ActionCreator<IGetUserStudyGroupsFailed> =
 export const getStudyGroupsStart: ActionCreator<IGetStudyGroupsStart> =
   (): IGetStudyGroupsStart => ({
     type: types.GET_STUDY_GROUPS_START
+});
+
+const createStudyGroupSuccess: ActionCreator<ICreateStudyGroupSuccess> =
+  (studyGroup: any): ICreateStudyGroupSuccess => ({
+    type:    types.CREATE_STUDY_GROUP_SUCCESS,
+    payload: studyGroup
+});
+
+
+const createStudyGroupFailed: ActionCreator<ICreateStudyGroupFailed> =
+  (): ICreateStudyGroupFailed => ({
+    type: types.CREATE_STUDY_GROUP_FAILED
 });
 
 const updateStudyGroupSuccess: ActionCreator<IUpdateStudyGroupSuccess> =
@@ -225,6 +248,24 @@ export const getUserStudyGroups = (userID: string, filter: BaseFilter): any =>
     axios.get(`/users/${userID}/study_groups`, {params: data})
       .then(({ data }: AxiosResponse) => dispatch(getUserStudyGroupsSuccess(data.data)))
       .catch(() => dispatch(getUserStudyGroupsFailed()));
+};
+
+export const createStudyGroup = (studyGroup: any): any =>
+  (dispatch: Dispatch<ICreateStudyGroupSuccess| ICreateStudyGroupFailed>): void => {
+    axios.post('/study_groups', {...studyGroup})
+      .then(() => dispatch(createStudyGroupSuccess(studyGroup)))
+      .catch(({ response }: AxiosError) => {
+        const error = response ? response.data.message : 'unable to update study group';
+
+        const toastConfig = {
+          ...notificationService.defaultToastConfig,
+          type: 'danger',
+          text: error
+        };
+
+        notificationService.toast(toastConfig);
+        dispatch(createStudyGroupFailed());
+      });
 };
 
 export const updateStudyGroup = (studyGroup: any): any =>

@@ -43,6 +43,9 @@ interface HomeProps {
   getStudyGroupMembers: (studyGroupID: string) => (
     Dispatch<actions.IGetStudyGroupMembersSuccess | actions.IGetStudyGroupMembersFailed>
   );
+  createStudyGroup: (studyGroup: any) => (
+    Dispatch<actions.ICreateStudyGroupSuccess| actions.ICreateStudyGroupFailed>
+  );
   updateStudyGroup: (studyGroup: any) => (
     Dispatch<actions.IUpdateStudyGroupSuccess | actions.IUpdateStudyGroupFailed>
   );
@@ -88,6 +91,12 @@ class Home extends React.Component<HomeProps, HomeState> {
     this.props.getStudyGroupMembers(focusedStudyGroup.id);
   };
 
+  public onCreateStudyGroup = (studyGroup: any): void => {
+    studyGroup.user_id = this.props.user.id;
+    this.props.createStudyGroup(studyGroup);
+    this.setState({ manageStudyGroupModalOpen: false });
+  };
+
   public onUpdateStudyGroup = (studyGroup: any): void => {
     this.props.updateStudyGroup(studyGroup);
     this.setState({
@@ -128,6 +137,13 @@ class Home extends React.Component<HomeProps, HomeState> {
     );
   };
 
+  public onNewGroupBtnPress = (): void => {
+    this.setState({
+      focusedStudyGroup: null,
+      manageStudyGroupModalOpen: true
+    });
+  };
+
   public renderUsersGroups = (): JSX.Element => {
     const { userGroups } = this.props;
 
@@ -142,6 +158,7 @@ class Home extends React.Component<HomeProps, HomeState> {
           <View style={{flex: 0.5, paddingRight: 15}}>
             <Button
               style={{alignSelf: 'flex-end', paddingTop: 0, paddingBottom: 0, height: 16}}
+              onPress={this.onNewGroupBtnPress}
               transparent>
               <Icon
                 type="Octicons"
@@ -208,6 +225,7 @@ class Home extends React.Component<HomeProps, HomeState> {
           <ManageStudyGroupModal
             studyGroup={this.state.focusedStudyGroup}
             studyGroupMembers={this.props.studyGroupMembers}
+            createStudyGroup={this.onCreateStudyGroup}
             updateStudyGroup={(studyGroup: any) => this.onUpdateStudyGroup(studyGroup)}
             removeStudyGroupMember={this.onRemoveStudyGroupMember}
             closed={() => this.setState({ manageStudyGroupModalOpen: false})} />}
@@ -255,6 +273,7 @@ const mapDispatchToProps = (dispatch: Dispatch<actions.StudyGroupsAction>) => ({
     dispatch(actions.getStudyGroupMembers(studyGroupID))
   ),
   updateStudyGroup: (studyGroup: any) => dispatch(actions.updateStudyGroup(studyGroup)),
+  createStudyGroup: (studyGroup: any) => dispatch(actions.createStudyGroup(studyGroup)),
   moveUserFromWaitlistToMembers: (studyGroupID: number, userID: number) => (
     dispatch(actions.moveUserFromWaitlistToMembers(studyGroupID, userID))
   ),

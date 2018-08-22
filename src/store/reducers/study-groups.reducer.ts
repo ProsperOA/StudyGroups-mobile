@@ -36,9 +36,15 @@ export default (state: StudyGroupsState = initialState, action: StudyGroupsActio
     case types.GET_USER_STUDY_GROUPS_FAILED:
       return {...state, loading: false};
 
+    case types.CREATE_STUDY_GROUP_SUCCESS:
+       let newStudyGroups = _.cloneDeep(state.userGroups);
+       newStudyGroups.unshift(action.payload);
+
+       return {...state, userGroups: newStudyGroups};
+
     case types.UPDATE_STUDY_GROUP_SUCCESS:
       let newStudyGroup = action.payload;
-      let newStudyGroups = _.cloneDeep(state.userGroups);
+      newStudyGroups = _.cloneDeep(state.userGroups);
       let index = _.findIndex(state.userGroups, (group: any) => (
         group.id === newStudyGroup.id
       ));
@@ -83,6 +89,7 @@ export default (state: StudyGroupsState = initialState, action: StudyGroupsActio
     case types.MOVE_USER_FROM_WAITLIST_TO_MEMBERS_FAILED:
     case types.LEAVE_STUDY_GROUP_FAILED:
     case types.GET_STUDY_GROUP_MEMBERS_FAILED:
+    case types.CREATE_STUDY_GROUP_FAILED:
     default:
       return state;
   }

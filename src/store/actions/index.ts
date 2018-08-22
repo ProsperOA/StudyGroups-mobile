@@ -52,6 +52,8 @@ export {
   IGetStudyGroupMembersFailed,
   IGetUserStudyGroupsSuccess,
   IGetUserStudyGroupsFailed,
+  ICreateStudyGroupSuccess,
+  ICreateStudyGroupFailed,
   IUpdateStudyGroupSuccess,
   IUpdateStudyGroupFailed,
   IMoveUserFromWaitlistToMembersSuccess,
@@ -63,6 +65,7 @@ export {
   getStudyGroupsStart,
   getStudyGroupMembers,
   getUserStudyGroups,
+  createStudyGroup,
   updateStudyGroup,
   moveUserFromWaitlistToMembers,
   leaveStudyGroup
