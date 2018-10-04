@@ -60,6 +60,8 @@ export {
   IMoveUserFromWaitlistToMembersFailed,
   ILeaveStudyGroupSuccess,
   ILeaveStudyGroupFailed,
+  IDeleteStudyGroupSuccess,
+  IDeleteStudyGroupFailed,
 
   getStudyGroups,
   getStudyGroupsStart,
@@ -68,5 +70,6 @@ export {
   createStudyGroup,
   updateStudyGroup,
   moveUserFromWaitlistToMembers,
-  leaveStudyGroup
+  leaveStudyGroup,
+  deleteStudyGroup
 } from './study-groups.actions';

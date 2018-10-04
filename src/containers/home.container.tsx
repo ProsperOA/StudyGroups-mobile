@@ -55,6 +55,9 @@ interface HomeProps {
   removeUserFromStudyGroup: (studyGroup: any, userID: number, section: StudyGroupSection) => (
     Dispatch<actions.ILeaveStudyGroupSuccess| actions.ILeaveStudyGroupFailed>
   );
+  deleteStudyGroup: (studyGroupID: number, userID: number) => (
+    Dispatch<actions.IDeleteAccountSuccess | actions.IDeleteAccountFailed>
+  );
 }
 
 interface HomeState {
@@ -102,6 +105,14 @@ class Home extends React.Component<HomeProps, HomeState> {
     this.setState({
       focusedStudyGroup: null,
       manageStudyGroupModalOpen: false
+    });
+  };
+
+  public onDeleteStudyGroup = (studyGroupID: number): void => {
+    this.props.deleteStudyGroup(studyGroupID, this.props.user.id);
+    this.setState({
+      manageStudyGroupModalOpen: false,
+      focusedStudyGroup: null
     });
   };
 
@@ -227,6 +238,7 @@ class Home extends React.Component<HomeProps, HomeState> {
             studyGroupMembers={this.props.studyGroupMembers}
             createStudyGroup={this.onCreateStudyGroup}
             updateStudyGroup={(studyGroup: any) => this.onUpdateStudyGroup(studyGroup)}
+            deleteStudyGroup={this.onDeleteStudyGroup}
             removeStudyGroupMember={this.onRemoveStudyGroupMember}
             closed={() => this.setState({ manageStudyGroupModalOpen: false})} />}
       </Container>
@@ -279,6 +291,9 @@ const mapDispatchToProps = (dispatch: Dispatch<actions.StudyGroupsAction>) => ({
   ),
   removeUserFromStudyGroup: (studyGroup: any, userID: number, section: StudyGroupSection) => (
     dispatch(actions.leaveStudyGroup(studyGroup, userID, section))
+  ),
+  deleteStudyGroup: (studyGroupID: number, userID: number) => (
+    dispatch(actions.deleteStudyGroup(studyGroupID, userID))
   )
 });
 

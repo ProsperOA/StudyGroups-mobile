@@ -82,6 +82,15 @@ export interface ILeaveStudyGroupFailed {
   type: types.LEAVE_STUDY_GROUP_FAILED
 }
 
+export interface IDeleteStudyGroupSuccess {
+  type:    types.DELETE_STUDY_GROUP_SUCCESS;
+  payload: number;
+}
+
+export interface IDeleteStudyGroupFailed {
+  type: types.DELETE_STUDY_GROUP_FAILED
+}
+
 export type StudyGroupsAction =
   | IGetStudyGroupsStart
   | IGetStudyGroupsSuccess
@@ -97,7 +106,9 @@ export type StudyGroupsAction =
   | IMoveUserFromWaitlistToMembersSuccess
   | IMoveUserFromWaitlistToMembersFailed
   | ILeaveStudyGroupSuccess
-  | ILeaveStudyGroupFailed;
+  | ILeaveStudyGroupFailed
+  | IDeleteStudyGroupSuccess
+  | IDeleteStudyGroupFailed;
 
 const getStudyGroupsSuccess: ActionCreator<IGetStudyGroupsSuccess> =
   (studyGroups: any): IGetStudyGroupsSuccess => ({
@@ -186,6 +197,17 @@ const leaveStudyGroupFailed: ActionCreator<ILeaveStudyGroupFailed> =
     type: types.LEAVE_STUDY_GROUP_FAILED
 });
 
+const deleteStudyGroupSuccess: ActionCreator<IDeleteStudyGroupSuccess> =
+  (studyGroupID: number): IDeleteStudyGroupSuccess => ({
+    type:    types.DELETE_STUDY_GROUP_SUCCESS,
+    payload: studyGroupID
+});
+
+const deleteStudyGroupFailed: ActionCreator<IDeleteStudyGroupFailed> =
+  (): IDeleteStudyGroupFailed => ({
+    type: types.DELETE_STUDY_GROUP_FAILED
+});
+
 export const getStudyGroups = (filter: StudyGroupsFilter): any =>
   (dispatch: Dispatch<IGetStudyGroupsSuccess | IGetStudyGroupsFailed>): void => {
     const {
@@ -232,7 +254,6 @@ export const getStudyGroups = (filter: StudyGroupsFilter): any =>
 
 export const getStudyGroupMembers = (studyGroupID: string): any =>
   (dispatch: Dispatch<IGetStudyGroupMembersSuccess | IGetStudyGroupMembersFailed>): void => {
-    console.log('getting study group members')
     axios.get(`/study_groups/${studyGroupID}/members`)
       .then(({ data }: AxiosResponse) => dispatch(getStudyGroupMembersSuccess(data.data)))
       .catch(() => dispatch(getStudyGroupMembersFailed()));
@@ -331,5 +352,23 @@ export const leaveStudyGroup = (studyGroup: any, userID: number, section: StudyG
 
         notificationService.toast(toastConfig);
         dispatch(leaveStudyGroupFailed());
+      });
+};
+
+export const deleteStudyGroup = (studyGroupID: number, userID: number): any =>
+  (dispatch: Dispatch<IDeleteStudyGroupSuccess | IDeleteStudyGroupFailed>): void => {
+    axios.post(`/study_groups/${studyGroupID}`, {user_id: userID})
+      .then(() => dispatch(deleteStudyGroupSuccess(studyGroupID)))
+      .catch(({ response }: AxiosError) => {
+        const error = response ? response.data.message : 'unable to delete study group';
+
+        const toastConfig = {
+          ...notificationService.defaultToastConfig,
+          type: 'danger',
+          text: error
+        };
+
+        notificationService.toast(toastConfig);
+        dispatch(deleteStudyGroupFailed());
       });
 };

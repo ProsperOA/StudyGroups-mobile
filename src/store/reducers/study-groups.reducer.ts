@@ -86,10 +86,20 @@ export default (state: StudyGroupsState = initialState, action: StudyGroupsActio
 
       return {...state, userGroups: newStudyGroups, users: newUsers};
 
+    case types.DELETE_STUDY_GROUP_SUCCESS:
+      const studyGroupID = action.payload;
+
+      newStudyGroups = _.cloneDeep(state.userGroups);
+      index = _.findIndex(newStudyGroups, (group: any) => group.id === studyGroupID);
+      newStudyGroups.splice(index, 1);
+
+      return {...state, userGroups: newStudyGroups};
+
     case types.MOVE_USER_FROM_WAITLIST_TO_MEMBERS_FAILED:
     case types.LEAVE_STUDY_GROUP_FAILED:
     case types.GET_STUDY_GROUP_MEMBERS_FAILED:
     case types.CREATE_STUDY_GROUP_FAILED:
+    case types.DELETE_STUDY_GROUP_FAILED:
     default:
       return state;
   }

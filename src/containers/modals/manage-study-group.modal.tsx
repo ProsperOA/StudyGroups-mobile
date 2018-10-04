@@ -3,6 +3,7 @@ import * as _                       from 'lodash';
 import * as t                       from 'tcomb-form-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import {
+  Alert,
   Modal,
   Text,
   View
@@ -37,6 +38,7 @@ interface ManageStudyGroupModalProps {
   closed:            any;
   createStudyGroup:       (studyGroup: any) => void;
   updateStudyGroup:       (studyGroup: any) => void;
+  deleteStudyGroup:       (studyGroupID: number) => void;
   removeStudyGroupMember: (user: any, section: StudyGroupSection) => void;
 }
 
@@ -58,7 +60,6 @@ class ManageStudyGroupModal extends React.Component<ManageStudyGroupModalProps, 
   public componentDidMount(): void {
     const { studyGroup } = this.props;
     if (!studyGroup) return;
-    console.log(this.state.newGroup)
 
     this.setState({
       formValue: {
@@ -98,8 +99,21 @@ class ManageStudyGroupModal extends React.Component<ManageStudyGroupModalProps, 
       location:      this.state.formValueLocation
     };
 
-    console.log(studyGroup)
     this.props.createStudyGroup(studyGroup);
+  };
+
+  public onDeleteStudyGroup = (studyGroup: any): void => {
+    const { deleteStudyGroup } = this.props;
+
+    Alert.alert(
+      `Delete ${studyGroup.name}?`,
+      '',
+      [
+        {text: 'No', onPress: () => {}},
+        {text: 'Yes', onPress: () => deleteStudyGroup(studyGroup.id)},
+      ],
+      { cancelable: true }
+    );
   };
 
   public renderStudyGroupUsers = (users: any, section: StudyGroupSection): JSX.Element[] => (
@@ -252,6 +266,17 @@ class ManageStudyGroupModal extends React.Component<ManageStudyGroupModalProps, 
                   {newGroup ? 'create' : 'update'}
                 </Text>
               </Button>
+              {!newGroup &&
+                <Button
+                  style={[globalStyles.btn, globalStyles.btnDanger, {
+                    marginTop: 15, marginLeft: 15, marginRight: 15
+                  }]}
+                  onPress={() => this.onDeleteStudyGroup(studyGroup)}
+                  block>
+                  <Text style={[globalStyles.btnText, globalStyles.btnDangerText]}>
+                    delete group
+                  </Text>
+                </Button>}
             </View>
           </Content>
         </Container>
