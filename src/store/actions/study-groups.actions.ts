@@ -253,7 +253,7 @@ export const getUserStudyGroups = (userID: string, filter: BaseFilter): any =>
 export const createStudyGroup = (studyGroup: any): any =>
   (dispatch: Dispatch<ICreateStudyGroupSuccess| ICreateStudyGroupFailed>): void => {
     axios.post('/study_groups', {...studyGroup})
-      .then(() => dispatch(createStudyGroupSuccess(studyGroup)))
+      .then(({ data }: AxiosResponse) => dispatch(createStudyGroupSuccess(data.data)))
       .catch(({ response }: AxiosError) => {
         const error = response ? response.data.message : 'unable to update study group';
 
